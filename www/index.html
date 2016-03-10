@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8">
+	<title>ODI</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic|Lora" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div id="appView">
+
+	<header class="header">
+		
+		<div class="container">
+			
+			<div class="row">
+				<div class="six columns">
+					<div class="site-name">
+						<h1>Public Political Documents</h1>
+						<div class="sub">Riksdagens documents</div>
+					</div>
+				</div>
+
+				<div class="six columns">
+
+					<nav id="site-navigation" class="main-navigation" role="navigation">
+						<div class="menu-menu-1-container">
+							<ul id="primary-menu" class="menu">
+								<li id="menu-item-15" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-15 current-menu-item"><a href="">About</a></li>
+								<li id="menu-item-16" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16"><a href="">How to use</a></li>
+							</ul>
+						</div>
+					</nav>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</header>
+
+	<div class="container search-container">
+		<div id="searchInput"></div>
+	</div>
+
+	<hr class="offset" />
+
+	<div class="container default-margins top-offset-border">
+		<div class="row">
+			<div class="twelve columns">
+				<h2>Results by year</h2>
+				<p>Search for...</p>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<script id="searchInputTemplate" type="text/template">
+
+	<div class="row">
+		<div class="ten columns">
+		
+			<div class="search-wrapper">
+
+				<div class="query-items">
+				</div>
+
+				<input type="text" class="query-input">
+			</div>
+
+		</div>
+		<div class="two columns">
+			<button class="button button-primary u-full-width search-button">Sök</button>
+		</div>
+	</div>
+	
+</script>
+
+<script id="queryItemTemplate" type="text/template">
+	<a href="#" class="item">
+		<div class="label"><%= queryString %></div>
+
+		<div class="remove-button">x</div>
+	</a>
+</script>
+
+<script id="queryItemsTemplate" type="text/template">
+
+	<% _.each(models, function(model, index) { %>
+		<div href="#" class="item" data-index="<%= index %>">
+			<div class="label">
+				<%= model.get('queryValue') %>
+
+				<!--<div class="remove-button"></div>-->
+			</div>
+
+			<div class="query-form">
+				<div class="overlay"></div>
+				<div class="row">
+					<div class="twelve columns">
+						<label>Search string:</label>
+						<input type="text" class="query-form-input u-full-width" value="<%= model.get('queryString') %>"/>
+
+						<label>Parties:</label>
+						<div class="query-parties check-list">
+
+							<label><input type="checkbox" name="query-parties" value="C" <%= model.get('parties').indexOf('C') > -1 ? 'checked' : '' %>>Centerpartiet (C)</label>
+							<label><input type="checkbox" name="query-parties" value="KD" <%= model.get('parties').indexOf('KD') > -1 ? 'checked' : '' %>>Kristdemokraterna (KD)</label>
+							<label><input type="checkbox" name="query-parties" value="L" <%= model.get('parties').indexOf('L') > -1 ? 'checked' : '' %>>Liberalerna (L)</label>
+							<label><input type="checkbox" name="query-parties" value="MP" <%= model.get('parties').indexOf('MP') > -1 ? 'checked' : '' %>>Miljöpartiet de gröna (MP)</label>
+							<label><input type="checkbox" name="query-parties" value="M" <%= model.get('parties').indexOf('M') > -1 ? 'checked' : '' %>>Moderata samlingspartiet (M)</label>
+							<label><input type="checkbox" name="query-parties" value="S" <%= model.get('parties').indexOf('S') > -1 ? 'checked' : '' %>>Socialdemokraterna (S)</label>
+							<label><input type="checkbox" name="query-parties" value="SD" <%= model.get('parties').indexOf('SD') > -1 ? 'checked' : '' %>>Sverigedemokraterna (SD)</label>
+							<label><input type="checkbox" name="query-parties" value="V" <%= model.get('parties').indexOf('V') > -1 ? 'checked' : '' %>>Vänsterpartiet (V)</label>
+						</div>
+					</div>
+				</div>
+				<div class="row form-footer">
+					<div class="twelve columns">
+						<a class="button button-primary form-save-button">Save</a>
+						<a class="button remove-button">Remove</a>
+						<a class="button form-cancel-button u-pull-right">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% }) %>
+</script>
+
+<script src="js/app.min.js"></script>
+
+</body>
+</html>
