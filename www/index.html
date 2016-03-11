@@ -55,15 +55,20 @@
 
 	<hr class="offset" />
 
-	<div class="container default-margins top-offset-border">
-		<div class="row">
-			<div class="twelve columns">
-				<h2>Results by year</h2>
-				<p>Search for...</p>
+	<div class="results-container">
+
+		<div class="container default-margins top-offset-border">
+			<div class="row">
+
+				<div class="twelve columns">
+					<div id="ngramContianer" class="ngram-container"></div>
+				</div>
+
 			</div>
 		</div>
-	</div>
 	
+	</div>
+
 </div>
 
 <script id="searchInputTemplate" type="text/template">
@@ -106,36 +111,60 @@
 			</div>
 
 			<div class="query-form">
-				<div class="overlay"></div>
-				<div class="row">
-					<div class="twelve columns">
-						<label>Search string:</label>
-						<input type="text" class="query-form-input u-full-width" value="<%= model.get('queryString') %>"/>
+				<div class="form-content">
+					<div class="overlay"></div>
+					<div class="row">
+						<div class="twelve columns">
+							<label>Search string:</label>
+							<input type="text" class="query-form-input u-full-width" value="<%= model.get('queryString') %>"/>
 
-						<label>Parties:</label>
-						<div class="query-parties check-list">
+							<label>Parties:</label>
+							<div class="query-parties check-list">
 
-							<label><input type="checkbox" name="query-parties" value="C" <%= model.get('parties').indexOf('C') > -1 ? 'checked' : '' %>>Centerpartiet (C)</label>
-							<label><input type="checkbox" name="query-parties" value="KD" <%= model.get('parties').indexOf('KD') > -1 ? 'checked' : '' %>>Kristdemokraterna (KD)</label>
-							<label><input type="checkbox" name="query-parties" value="L" <%= model.get('parties').indexOf('L') > -1 ? 'checked' : '' %>>Liberalerna (L)</label>
-							<label><input type="checkbox" name="query-parties" value="MP" <%= model.get('parties').indexOf('MP') > -1 ? 'checked' : '' %>>Miljöpartiet de gröna (MP)</label>
-							<label><input type="checkbox" name="query-parties" value="M" <%= model.get('parties').indexOf('M') > -1 ? 'checked' : '' %>>Moderata samlingspartiet (M)</label>
-							<label><input type="checkbox" name="query-parties" value="S" <%= model.get('parties').indexOf('S') > -1 ? 'checked' : '' %>>Socialdemokraterna (S)</label>
-							<label><input type="checkbox" name="query-parties" value="SD" <%= model.get('parties').indexOf('SD') > -1 ? 'checked' : '' %>>Sverigedemokraterna (SD)</label>
-							<label><input type="checkbox" name="query-parties" value="V" <%= model.get('parties').indexOf('V') > -1 ? 'checked' : '' %>>Vänsterpartiet (V)</label>
+								<label><input type="checkbox" name="query-parties" value="C" <%= model.get('parties').indexOf('C') > -1 ? 'checked' : '' %>>Centerpartiet (<strong>C</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="KD" <%= model.get('parties').indexOf('KD') > -1 ? 'checked' : '' %>>Kristdemokraterna (<strong>KD</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="L" <%= model.get('parties').indexOf('L') > -1 ? 'checked' : '' %>>Liberalerna (<strong>L</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="MP" <%= model.get('parties').indexOf('MP') > -1 ? 'checked' : '' %>>Miljöpartiet de gröna (<strong>MP</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="M" <%= model.get('parties').indexOf('M') > -1 ? 'checked' : '' %>>Moderata samlingspartiet (<strong>M</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="S" <%= model.get('parties').indexOf('S') > -1 ? 'checked' : '' %>>Socialdemokraterna (<strong>S</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="SD" <%= model.get('parties').indexOf('SD') > -1 ? 'checked' : '' %>>Sverigedemokraterna (<strong>SD</strong>)</label>
+								<label><input type="checkbox" name="query-parties" value="V" <%= model.get('parties').indexOf('V') > -1 ? 'checked' : '' %>>Vänsterpartiet (<strong>V</strong>)</label>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row form-footer">
-					<div class="twelve columns">
-						<a class="button button-primary form-save-button">Save</a>
-						<a class="button remove-button">Remove</a>
-						<a class="button form-cancel-button u-pull-right">Cancel</a>
+					<div class="row form-footer">
+						<div class="twelve columns">
+							<a class="button button-primary form-save-button">Save</a>
+							<a class="button remove-button">Remove</a>
+							<a class="button form-cancel-button u-pull-right">Cancel</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	<% }) %>
+</script>
+
+<script id="ngramViewTemplate" type="text/template">
+
+	<h2>Results by year</h2>
+	<p>Search for: <span class="search-term-label"></span></p>
+
+	<svg id="chartContainer" width="100%" height="500"></svg>
+
+	<div class="info-overlay"></div>
+	
+</script>
+
+<script id="ngramInfoTemplate" type="text/template">
+
+	<% _.each(data, function(item) { %>
+		<div class="item">
+			<div class="color" style="background-color: <%= item.color %>"></div>
+			<div class="label"><strong><%= item.key %></strong> <%= item.data.key_as_string %>: <%= item.data.doc_count %></div>
+		</div>
+	<% }) %>
+	
 </script>
 
 <script src="js/app.min.js"></script>

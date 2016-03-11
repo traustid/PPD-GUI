@@ -15,7 +15,17 @@ module.exports = Backbone.View.extend({
 
 	events: {
 		'keyup .query-input': 'queryInputKeyUp',
-		'input .query-input': 'queryInputChange'
+		'input .query-input': 'queryInputChange',
+		'click .search-button': 'searchButtonClick'
+	},
+
+	searchButtonClick: function() {
+		console.log('searchButtonClick')
+		this.trigger('search', {
+			queryString: _.map(this.collection.models, function(model) {
+				return model.get('queryValue')
+			}).join(', ')
+		});
 	},
 
 	queryInputKeyUp: function(event) {
@@ -91,8 +101,6 @@ module.exports = Backbone.View.extend({
 				this.collection.remove(this.collection.at($(item).data('index')));
 			}, this));
 			$(item).find('.label').click(_.bind(function() {
-				this.queryItems.find('.item').removeClass('form-open');
-
 				$(item).toggleClass('form-open');
 			}, this));
 
