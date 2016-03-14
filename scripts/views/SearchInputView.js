@@ -20,7 +20,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	searchButtonClick: function() {
-		console.log('searchButtonClick')
 		this.trigger('search', {
 			queryString: _.map(this.collection.models, function(model) {
 				return model.get('queryValue')
@@ -30,7 +29,12 @@ module.exports = Backbone.View.extend({
 
 	queryInputKeyUp: function(event) {
 		if (event.keyCode == 13) {
-			this.validateSingleQuery();
+			if (this.queryInput.val() == '') {
+				this.searchButtonClick();
+			}
+			else if (this.validateSingleQuery()) {
+				this.searchButtonClick();
+			}
 		}
 		if (event.keyCode == 8) {
 			console.log('backspace');
@@ -44,6 +48,11 @@ module.exports = Backbone.View.extend({
 		if (this.queryInput.val().match(/"(.*?)"( \([A-Z,|a-z,]+\))?/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
+
+			return true;
+		}
+		else {
+			return false;
 		}
 	},
 

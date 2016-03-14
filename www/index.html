@@ -158,10 +158,11 @@
 
 <script id="ngramInfoTemplate" type="text/template">
 
-	<% _.each(data, function(item) { %>
+	<p><strong><%= data[0].data.key_as_string %></strong></p>
+		<% _.each(data, function(item) { %>
 		<div class="item">
 			<div class="color" style="background-color: <%= item.color %>"></div>
-			<div class="label"><strong><%= item.key %></strong> <%= item.data.key_as_string %>: <%= item.data.doc_count %></div>
+			<div class="label"><strong><%= item.key %></strong>: <%= item.data.doc_count %></div>
 		</div>
 	<% }) %>
 	

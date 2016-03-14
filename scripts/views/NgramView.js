@@ -76,6 +76,16 @@ module.exports = Backbone.View.extend({
 			.attr('transform', 'translate(' + (this.graphMargins.left) + ',0)')
 			.call(yAxis);
 
+		this.verticalLine = this.vis.append('line')
+			.attr({
+				'x1': 0,
+				'y1': this.graphMargins.top,
+				'x2': 0,
+				'y2': this.graphHeight-this.graphMargins.bottom
+			})
+			.attr("stroke", "steelblue")
+			.attr('class', 'verticalLine');
+
 		var addLine = _.bind(function(lineData, color) {
 
 			var line1 = d3.svg.line()
@@ -191,9 +201,14 @@ module.exports = Backbone.View.extend({
 		        var year = xRange.domain()[j];
 
 		        app.overlayMessage(year, d3.mouse(this));
+
+				app.verticalLine.attr("transform", function () {
+					return "translate(" + xPos + ",0)";
+				});
 			});
 
 	},
+
 	overlayMessage: function(year, position) {
 		var data = _.map(this.collection.models, function(model) {
 			return {
@@ -212,11 +227,11 @@ module.exports = Backbone.View.extend({
 		}));
 
 		this.$el.find('.info-overlay').css({
-			'-webkit-transform': 'translate('+position[0]+'px, '+position[1]+'px)',
-			'-moz-transform': 'translate('+position[0]+'px, '+position[1]+'px)',
-			'-ms-transform': 'translate('+position[0]+'px, '+position[1]+'px)',
-			'-o-transform': 'translate('+position[0]+'px, '+position[1]+'px)',
-			'transform': 'translate('+position[0]+'px, '+position[1]+'px)'
+			'-webkit-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
+			'-moz-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
+			'-ms-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
+			'-o-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
+			'transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)'
 		})
 	},
 
