@@ -29,18 +29,22 @@ module.exports = Backbone.View.extend({
 
 	updateGraph: function() {
 		var app = this;
+
+		this.graphWidth = this.$el.parent().width();
+		this.graphHeight = (this.graphWidth/1120) * 500;
+
 		this.$el.find('.search-term-label').text(this.collection.queryString);
 
 		d3.selectAll('svg > *').remove();
 
-		var xRangeValues = _.union(_.map(this.collection.at(0).get('buckets'), function(bucket) {
+		this.xRangeValues = _.union(_.map(this.collection.at(0).get('buckets'), function(bucket) {
 				return bucket.key_as_string.substr(0, 4);
 			}), _.map(this.collection.at(1).get('buckets'), function(bucket) {
 				return bucket.key_as_string.substr(0, 4);
 			})
 		).sort();
 
-		var xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(xRangeValues);
+		var xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
 
 		var yRangeValues = _.union(_.map(this.collection.at(0).get('buckets'), function(bucket) {
 				return bucket.doc_count;
@@ -56,7 +60,7 @@ module.exports = Backbone.View.extend({
 		var xAxis = d3.svg.axis()
 			.scale(xRange)
 			.tickSize(1)
-			.tickValues([1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015])
+			.tickValues(this.xRangeValues)
 			.tickSubdivide(true);
 
 		var yAxis = d3.svg.axis()
@@ -83,6 +87,7 @@ module.exports = Backbone.View.extend({
 				'x2': 0,
 				'y2': this.graphHeight-this.graphMargins.bottom
 			})
+			.attr("transform", "translate("+this.graphMargins.left+",0)")
 			.attr("stroke", "steelblue")
 			.attr('class', 'verticalLine');
 
@@ -184,9 +189,17 @@ module.exports = Backbone.View.extend({
 
 		this.vis.append("rect")
 			.attr("class", "ngram-overlay")
-			.attr("width", this.graphWidth)
-			.attr("height", this.graphHeight)
+			.attr("x", this.graphMargins.left)
+			.attr("y", this.graphMargins.top)
+			.attr("width", this.graphWidth-this.graphMargins.right-this.graphMargins.left)
+			.attr("height", this.graphHeight-this.graphMargins.bottom-this.graphMargins.top)
 
+			.on("mouseenter", _.bind(function() {
+				this.$el.find('.info-overlay').addClass('visible');
+			}, this))
+			.on("mouseleave", _.bind(function() {
+				this.$el.find('.info-overlay').removeClass('visible');
+			}, this))
 			.on("mousemove", function() {
 				var xPos = d3.mouse(this)[0];
 
@@ -207,6 +220,7 @@ module.exports = Backbone.View.extend({
 				});
 			});
 
+		this.trigger('updateGraph');
 	},
 
 	overlayMessage: function(year, position) {
@@ -241,5 +255,11 @@ module.exports = Backbone.View.extend({
 		this.$el.html(template({}));
 
 		this.vis = d3.select('#chartContainer');
+
+		window.onresize = _.bind(function() {
+			if (this.collection.length > 0) {
+				this.updateGraph();
+			}
+		}, this);
 	}
 });
