@@ -49,9 +49,6 @@ module.exports = Backbone.View.extend({
 		if (!this.sliderView) {
 			this.initSlider();
 		}
-		else {
-			this.setSliderRange(this.ngramView.xRangeValues);
-		}
 
 		this.hitList.applyFilter({});
 	},
@@ -59,7 +56,7 @@ module.exports = Backbone.View.extend({
 	initSlider: function() {
 		this.sliderView = new SliderView({
 			el: this.$el.find('#sliderContainer'),
-			range: [Number(this.ngramView.xRangeValues[0]), Number(this.ngramView.xRangeValues[this.ngramView.xRangeValues.length-1])]
+			range: [1970, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
 			this.hitList.applyFilter({
@@ -79,7 +76,6 @@ module.exports = Backbone.View.extend({
 		});
 
 		this.searchInput.on('search', _.bind(function(event) {
-			console.log('on search');
 			this.router.navigate('search/'+event.queryString, {
 				trigger: true
 			});

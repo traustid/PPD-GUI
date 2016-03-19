@@ -7,12 +7,14 @@ var NgramCollection = require('./../collections/NgramCollection');
 module.exports = Backbone.View.extend({
 	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
 
+	graphYearTicks: [1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
+
 	graphWidth: 1120,
 	graphHeight: 500,
 
 	graphMargins: {
 		top: 20,
-		right: 20,
+		right: 0,
 		bottom: 20,
 		left: 20
 	},
@@ -37,30 +39,46 @@ module.exports = Backbone.View.extend({
 
 		d3.selectAll('svg > *').remove();
 
-		this.xRangeValues = _.union(_.map(this.collection.at(0).get('buckets'), function(bucket) {
-				return bucket.key_as_string.substr(0, 4);
-			}), _.map(this.collection.at(1).get('buckets'), function(bucket) {
-				return bucket.key_as_string.substr(0, 4);
-			})
-		).sort();
+		this.xRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
+			return bucket.key_as_string.substr(0, 4);
+		});
+		if (this.collection.length > 1) {
+			this.collection.each(_.bind(function(model) {
+				this.xRangeValues = _.union(
+					this.xRangeValues, 
+					_.map(this.collection.at(1).get('buckets'), function(bucket) {
+						return bucket.key_as_string.substr(0, 4);
+					})
+				);
+			}, this));
+			this.xRangeValues = this.xRangeValues.sort();
+		}
 
 		var xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
 
-		var yRangeValues = _.union(_.map(this.collection.at(0).get('buckets'), function(bucket) {
-				return bucket.doc_count;
-			}), _.map(this.collection.at(1).get('buckets'), function(bucket) {
-				return bucket.doc_count;
-			})
-		);
+		this.yRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
+			return bucket.doc_count;
+		});
+		if (this.collection.length > 1) {
+			this.collection.each(_.bind(function(model) {
+				this.yRangeValues = _.union(
+					this.yRangeValues, 
+					_.map(this.collection.at(1).get('buckets'), function(bucket) {
+						return bucket.doc_count;
+					})
+				);
+			}, this));
+			this.yRangeValues = this.yRangeValues.sort();
+		}
 
 		var yRange = d3.scale.linear().range([this.graphHeight - this.graphMargins.top, this.graphMargins.bottom]).domain([0,
-			d3.max(yRangeValues)
+			d3.max(this.yRangeValues)
 		]);
 
 		var xAxis = d3.svg.axis()
 			.scale(xRange)
 			.tickSize(1)
-			.tickValues(this.xRangeValues)
+			.tickValues(this.graphYearTicks)
 			.tickSubdivide(true);
 
 		var yAxis = d3.svg.axis()

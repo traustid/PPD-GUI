@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
 
 	events: {
 		'keyup .query-input': 'queryInputKeyUp',
-		'input .query-input': 'queryInputChange',
+//		'input .query-input': 'queryInputChange',
 		'click .search-button': 'searchButtonClick'
 	},
 
@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	validateSingleQuery: function(event) {
-		if (this.queryInput.val().match(/"(.*?)"( \([A-Z,|a-z,]+\))?/g)) {
+		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 
@@ -57,7 +57,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/"(.*?)"( \([A-Z,|a-z,]+\))?,/g) || this.queryInput.val().match(/"(.*?)"( \([A-Z,|a-z,]+\))/g)) {
+		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}
@@ -74,20 +74,18 @@ module.exports = Backbone.View.extend({
 	},
 
 	addQueryItem: function(queryValue) {
+		console.log(queryValue);
 		queryValue = queryValue.substr(queryValue.length-1) == ',' ? queryValue.substr(0, queryValue.length-1) : queryValue;
 
-		var queryString = queryValue.match(/"(.*?)"/g)[0];
-		queryString = queryString.substr(1, queryString.length-2);
+		var queryString = queryValue.split(' parti:(')[0];
 		
-		var partyStrings = queryValue.match(/(\([A-Z,|a-z,]+\))/g);
+		var partyStrings = queryValue.match(/parti:(\([A-Z,|a-z,]+\))/g);
 
 		var partyArray = [];
 
-		console.log(partyStrings)
 		if (partyStrings) {
-			console.log('split!')
-			var partyString = partyStrings[0].substr(1, partyStrings[0].length-2);
-			console.log(partyString);
+			var partyString = partyStrings[0].substr(7);
+			partyString = partyString.substr(0, partyString.length-1);
 			partyArray = partyString.split(',');
 		}
 
@@ -140,7 +138,7 @@ module.exports = Backbone.View.extend({
 		}, this));
 
 		this.collection.at(index).set({
-			queryValue: '"'+queryString+'"'+(selectedParties.length > 0 ? ' ('+selectedParties.join(',')+')' : ''),
+			queryValue: queryString+(selectedParties.length > 0 ? ' parti:('+selectedParties.join(',')+')' : ''),
 			queryString: queryString,
 			parties: selectedParties
 		});
