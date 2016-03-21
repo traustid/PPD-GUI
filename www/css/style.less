@@ -6,8 +6,16 @@
 @import "icons.css";
 @import "config.less";
 
+html.has-overlay {
+	overflow: hidden;
+}
+
 .text-center {
 	text-align: center;
+}
+
+.pconf {
+	width: 100% !important;
 }
 
 .wrapper {
@@ -15,8 +23,8 @@
 
 	overflow: hidden;
 
-	&.bg-green {
-		background: @color-light-green;
+	&.bg-gray {
+		background: @color-background-gray;
 	}
 
 	.arrow {
@@ -54,7 +62,7 @@
 .header {
 	height: 280px;
 
-	background: #f6f6f6;
+	background: @color-background-gray;
 
 	border-bottom: 1px solid @color-border;
 
@@ -148,10 +156,10 @@
 	padding: 50px 40px;
 	margin-top: -20px;
 
-	background: @color-light-green;
+	background: #6A609D;
 
 	border-radius: 3px;
-	border: 1px solid @color-border;
+	border: 1px solid @color-dark-border;
 
 	z-index: 5;
 
@@ -160,7 +168,7 @@
 
 		padding: 2px 8px;
 
-		border: 1px solid #999;
+		border: 1px solid @color-dark-border;
 		border-radius: 4px;
 
 		background: #fff;
@@ -316,6 +324,9 @@
 		margin-bottom: 0;
 
 		line-height: 50px;
+
+		background: #8279B0;
+		border-color: #635A8F;
 	}
 }
 
@@ -356,6 +367,8 @@ hr {
 }
 
 .ngram-container {
+	position: relative;
+
 	.ngram-overlay {
 		fill: none;
 		pointer-events: all;
@@ -403,39 +416,208 @@ hr {
 			display: inline-block;
 		}
 	}
+
+	.loading-overlay {
+		position: absolute;
+
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+		background-color: rgba(255, 255, 255, 0.79);
+		background-image: url('../img/loader.gif');
+		background-repeat: no-repeat;
+		background-position: center;
+
+		opacity: 0;
+
+		pointer-events: none;
+
+		.transition(all 200ms ease-in-out);
+	}
+
+	&.loading {
+		.loading-overlay {
+			opacity: 1;
+		}
+	}
 }
 
 .doc-list {
 	border: 1px solid #B7B7B7;
 	border-radius: 2px;
-	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
 
 	background: #fff;
 
 	.list-item {
 		position: relative;
 
-		padding: 25px;
+		border: 0px solid @color-border;
+
+		.transition(all 200ms ease-in-out);
 
 		&:not(:last-child) {
 			border-bottom: 1px solid @color-border;
 		}
 		
-		h3 {
-			font-size: 1.8rem;
-			font-weight: bold;
+		.item-title {
+			display: block;
+
+			height: 54px;
+
+			padding: 15px 25px;
+
+			color: #000;
+
+			background: #FAFAFA;
+
+			box-sizing: border-box;
+
+			cursor: pointer;
+
+			.title {
+				float: left;
+
+				font-size: 1.5rem;
+			}
+
+			.title-attribs {
+				float: right;
+
+				color: @color-text-gray;
+			}
+
+			.party-letter {
+				display: inline-block;
+
+				float: left;
+				
+				width: 28px;
+				height: 28px;
+
+				margin-right: 10px;
+
+				background: #747474;
+
+				color: #fff;
+				text-align: center;
+				line-height: 28px;
+
+				border-radius: 100%;
+			}
+
+			&:hover {
+				background: @color-background-gray;
+
+				.title-attribs {
+					color: #000;
+				}
+			}
 		}
 
-		.date {
+		.item-content {
+			max-height: 0;
 
+			overflow: hidden;
+
+			.transition(all 200ms ease-in-out);
+	
+			.date {
+
+			}
+
+			.name {
+
+			}
+
+			.party {
+
+			}
 		}
 
-		.name {
+		&.item-open {
+			margin-top: -5px;
+			margin-left: -10px;
+			margin-right: -10px;
 
+			background: #fff;
+
+			border: 1px solid @color-border;
+
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.31);
+
+			.item-title {
+				border-bottom: 1px solid @color-border;
+
+				background: #fff;
+			}
+
+			.title-attribs {
+				color: #000;
+			}
+
+			.item-content {
+				padding-top: 25px;
+				padding-bottom: 25px;
+
+				max-height: 1000px;
+			}
 		}
+	}
+}
 
-		.party {
+.text-viewer {
+	position: fixed;
 
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	z-index: 500;
+
+	visibility: hidden;
+
+	&.visible {
+		visibility: visible;
+	}
+	.text-content {
+		position: absolute;
+
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+		overflow-y: auto;
+
+		.container {
+			margin-top: 50px;
+			margin-bottom: 50px;
 		}
+	}
+
+	.close-button {
+		position: absolute;
+
+		top: 30px;
+		right: 50px;
+
+		font-size: 2.3rem;
+
+		cursor: pointer;
+	}
+
+	.overlay {
+		position: absolute;
+
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+		background: rgba(255,255,255,0.98);
 	}
 }

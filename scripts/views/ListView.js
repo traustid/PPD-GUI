@@ -2,39 +2,46 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 var _ = require('underscore');
 var ListCollection = require('./../collections/ListCollection');
+var ListItemView = require('./ListItemView.js');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
 		this.collection = new ListCollection();
 		this.collection.on('reset', this.render, this);
-		this.render();
+
+		this.renderUi();
 	},
 
-	search: function(query) {
-//		this.collection.search(query);
+	events: {
+		'click .item-title': 'itemTitleClick'
 	},
 
-	render: function() {
+	itemTitleClick: function(event) {
+		$(event.currentTarget).parent().toggleClass('item-open');
+	},
+
+	renderUi: function() {
 		var template = _.template($("#hitlistUiTemplate").html());
 
 		this.$el.html(template({}));
 	},
 
-	applyFilter: function(filter) {
-		console.log('applyFilter');
-		this.filter = filter;
-		this.listData = [0, 1, 2, 3, 4, 5, 6];
-		
-		this.renderList();
+	search: function(query) {
+		this.collection.search(query);
 	},
 
-	renderList: function() {
-		this.listData = [0, 1, 2, 3, 4, 5, 6];
+	render: function() {
+		this.$el.find('.list-container').html('');
 
-		var template = _.template($("#hitlistTemplate").html());
+		_.each(this.collection.models, _.bind(function(model) {
+			var newEl = $('<div class="list-item"/>');
+			this.$el.find('.list-container').append(newEl);
 
-		this.$el.find('.list-container').html(template({
-			models: this.listData
-		}));
+			var itemView = new ListItemView({
+				el: newEl,
+				model: model
+			});		
+		}, this));
+
 	}
 });

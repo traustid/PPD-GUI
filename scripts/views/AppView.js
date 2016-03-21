@@ -44,8 +44,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	ngramUpdate: function() {
-		console.log('ngramUpdate');
-
 		if (!this.sliderView) {
 			this.initSlider();
 		}

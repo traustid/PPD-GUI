@@ -26,10 +26,12 @@ module.exports = Backbone.View.extend({
 	},
 
 	search: function(query) {
+		this.$el.addClass('loading');
 		this.collection.search(query);
 	},
 
 	updateGraph: function() {
+		this.$el.removeClass('loading');
 		var app = this;
 
 		this.graphWidth = this.$el.parent().width();

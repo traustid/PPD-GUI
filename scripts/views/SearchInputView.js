@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
 
 	events: {
 		'keyup .query-input': 'queryInputKeyUp',
-//		'input .query-input': 'queryInputChange',
+		'input .query-input': 'queryInputChange',
 		'click .search-button': 'searchButtonClick'
 	},
 
@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
 		this.trigger('search', {
 			queryString: _.map(this.collection.models, function(model) {
 				return model.get('queryValue')
-			}).join(', ')
+			}).join(',')
 		});
 	},
 
