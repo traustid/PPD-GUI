@@ -15,11 +15,15 @@ module.exports = Backbone.View.extend({
 		this.render();
 
 		this.router.on('route:search', _.bind(function(query) {
+			console.log('route:search');
 			this.doSearch(query);
+
+			if (this.searchInput.getQueryString() != query) {
+				this.searchInput.resetQueryItems(query);
+			}
 		}, this));
 
 		Backbone.history.start();
-
 	},
 
 	doSearch: function(query) {

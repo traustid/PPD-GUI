@@ -21,10 +21,14 @@ module.exports = Backbone.View.extend({
 
 	searchButtonClick: function() {
 		this.trigger('search', {
-			queryString: _.map(this.collection.models, function(model) {
-				return model.get('queryValue')
-			}).join(',')
+			queryString: this.getQueryString()
 		});
+	},
+
+	getQueryString: function() {
+		return _.map(this.collection.models, function(model) {
+			return model.get('queryValue')
+		}).join(',');
 	},
 
 	queryInputKeyUp: function(event) {
@@ -71,6 +75,13 @@ module.exports = Backbone.View.extend({
 
 			this.collection.remove(lastItem);
 		}
+	},
+
+	resetQueryItems: function(queryString) {
+		this.collection.reset();
+		_.each(queryString.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g), _.bind(function(query) {
+			this.addQueryItem(query);
+		}, this));
 	},
 
 	addQueryItem: function(queryValue) {

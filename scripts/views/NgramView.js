@@ -25,6 +25,15 @@ module.exports = Backbone.View.extend({
 		this.render();
 	},
 
+	events: {
+		'click .include-total-docs': 'toggleTotalDocsClick'
+	},
+
+	toggleTotalDocsClick: function() {
+		this.collection.includeTotal = this.$el.find('.include-total-docs').is(":checked");
+		this.search(this.collection.queryString);
+	},
+
 	search: function(query) {
 		this.$el.addClass('loading');
 		this.collection.search(query);
