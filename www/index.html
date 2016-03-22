@@ -13,6 +13,8 @@
 
 	<link rel="stylesheet" href="css/style.css">
 
+	<script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+
 </head>
 <body>
 
@@ -25,7 +27,7 @@
 			<div class="row">
 				<div class="six columns">
 					<div class="site-name">
-						<h1>Public Political Documents</h1>
+						<h1>Riksdagens Motioner</h1>
 						<div class="sub">Riksdagens documents</div>
 					</div>
 				</div>
@@ -150,8 +152,13 @@
 				</div>
 
 				<div class="four columns">
-					<a href="" class="button u-full-width full-text-button"><span class="icon-sheet"></span> Full text</a><br/>
-					<a href="<%= model.get('_source').dokument.dokument_url_html %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Link to document</a>
+					<a href="" class="button u-full-width full-text-button"><span class="icon-sheet"></span> Läs hela</a><br/>
+					<a href="<%= model.get('_source').dokument.dokument_url_html %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (html)</a>
+
+					<% _.each(model.get('_source').dokbilaga.bilaga, function(file) { %>
+						<a href="<%= file.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= file.filtyp %>)</a>	
+					<% }) %>
+
 				</div>
 			</div>
 

@@ -15,7 +15,6 @@ module.exports = Backbone.View.extend({
 		this.render();
 
 		this.router.on('route:search', _.bind(function(query) {
-			console.log('route:search');
 			this.doSearch(query);
 
 			if (this.searchInput.getQueryString() != query) {
@@ -31,7 +30,8 @@ module.exports = Backbone.View.extend({
 
 		if (this.ngramView == undefined) {
 			this.ngramView = new NgramView({
-				el: this.$el.find('#ngramContianer')
+				el: this.$el.find('#ngramContianer'),
+				percentagesView: true
 			});
 			this.ngramView.on('updateGraph', this.ngramUpdate, this);
 		}

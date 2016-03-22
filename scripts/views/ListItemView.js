@@ -2,18 +2,6 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 var _ = require('underscore');
 
-$.fn.outerOffset = function () {
-    /// <summary>Returns an element's offset relative to its outer size; i.e., the sum of its left and top margin, padding, and border.</summary>
-    /// <returns type="Object">Outer offset</returns>
-    var margin = this.margin();
-    var padding = this.padding();
-    var border = this.border();
-    return Point(
-        margin.left + padding.left + border.left,
-        margin.top + padding.top + border.top
-    );
-};
-
 module.exports = Backbone.View.extend({
 	initialize: function(options) {
 		this.options = options;
@@ -22,7 +10,13 @@ module.exports = Backbone.View.extend({
 
 	events: {
 		'click .item-title': 'itemTitleClick',
-		'click .full-text-button': 'fullTextClick'
+		'click .full-text-button': 'fullTextClick',
+		'click': 'selfClick'
+	},
+
+	selfClick: function() {
+		console.log(this.model);
+		console.log(this.model.get('_source').dokintressent.intressent);
 	},
 
 	itemTitleClick: function(event) {
@@ -33,13 +27,19 @@ module.exports = Backbone.View.extend({
 		event.preventDefault();
 
 		var htmlEl = $(this.options.model.get('_source').dokument.html);
+		htmlEl.removeAttr('style');
 
 		if (htmlEl[0].tagName.toLowerCase() == 'style') {
+			$(htmlEl[1]).removeAttr('style');
 			var htmlString = $(htmlEl[1]).html();
 		}
 		else {
+			$(htmlEl[0]).removeAttr('style');
 			var htmlString = $(htmlEl[0]).html();
 		}
+
+//		htmlString = this.options.model.get('_source').dokument.html;
+
 
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({

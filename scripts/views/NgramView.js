@@ -16,10 +16,15 @@ module.exports = Backbone.View.extend({
 		top: 20,
 		right: 0,
 		bottom: 20,
-		left: 20
+		left: 40
 	},
 
-	initialize: function() {
+	initialize: function(options) {
+		console.log('NgramPercentagesView:initialize');
+
+		this.options = options;
+		this.percentagesView = this.options.percentagesView ? this.options.percentagesView : false;
+
 		this.collection = new NgramCollection();
 		this.collection.on('reset', this.updateGraph, this);
 		this.render();
@@ -67,20 +72,34 @@ module.exports = Backbone.View.extend({
 
 		var xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
 
-		this.yRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
-			return bucket.doc_count;
-		});
+		this.yRangeValues = _.map(this.collection.at(0).get('buckets'), _.bind(function(bucket) {
+			if (this.percentagesView) {
+				var totalByYear = this.collection.getTotalByYear(Number(bucket.key_as_string.substr(0, 4)));
+				return bucket.doc_count/totalByYear;
+			}
+			else {
+				return bucket.doc_count;
+			}
+		}, this));
 		if (this.collection.length > 1) {
 			this.collection.each(_.bind(function(model) {
 				this.yRangeValues = _.union(
 					this.yRangeValues, 
-					_.map(this.collection.at(1).get('buckets'), function(bucket) {
-						return bucket.doc_count;
-					})
+					_.map(this.collection.at(1).get('buckets'), _.bind(function(bucket) {
+						if (this.percentagesView) {
+							var totalByYear = this.collection.getTotalByYear(Number(bucket.key_as_string.substr(0, 4)));
+							return bucket.doc_count/totalByYear;
+						}
+						else {
+							return bucket.doc_count;
+						}
+					}, this))
 				);
 			}, this));
 			this.yRangeValues = this.yRangeValues.sort();
 		}
+
+		console.log(this.yRangeValues);
 
 		var yRange = d3.scale.linear().range([this.graphHeight - this.graphMargins.top, this.graphMargins.bottom]).domain([0,
 			d3.max(this.yRangeValues)
@@ -139,7 +158,14 @@ module.exports = Backbone.View.extend({
 					return xRange(Number(d.key_as_string.substr(0, 4)));
 				})
 				.y(_.bind(function(d) {
-					return (yRange(d.doc_count));
+					if (this.percentagesView) {					
+						var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
+						var percentage = d.doc_count/totalByYear;
+						return (yRange(percentage));
+					}
+					else {
+						return (yRange(d.doc_count));
+					}
 				}, this));
 
 			this.vis.append("path")
@@ -165,10 +191,18 @@ module.exports = Backbone.View.extend({
 				.attr('cx', function (d) {
 					return xRange(Number(d.key_as_string.substr(0, 4)));
 				})
-				.attr('cy', function (d) {
-					return yRange(d.doc_count);
-				})
+				.attr('cy', _.bind(function (d) {
+					if (this.percentagesView) {					
+						var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
+						var percentage = d.doc_count/totalByYear;
+						return (yRange(percentage));
+					}
+					else {
+						return (yRange(d.doc_count));
+					}
+				}, this))
 				.attr('r', 0)
+/*
 				.on('mouseover', function() {
 					tooltip.style('display', null);
 				})
@@ -181,6 +215,7 @@ module.exports = Backbone.View.extend({
 					tooltip.attr('transform', 'translate(' + xPosition + ',' + yPosition + ')');
 					tooltip.select('text').text(d.key_as_string.substr(0, 4)+': '+d.doc_count);
 				})
+*/
 				.transition()
 				.delay(750)
 				.duration(200)

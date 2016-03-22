@@ -4,7 +4,6 @@ var $ = require('jquery');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		console.log('SearchInputView:initialize');
 		this.collection = new Backbone.Collection();
 		this.collection.on('add', this.queryCollectionChange, this);
 		this.collection.on('remove', this.queryCollectionChange, this);
@@ -16,7 +15,7 @@ module.exports = Backbone.View.extend({
 	events: {
 		'keydown .query-input': 'queryInputKeyDown',
 		'keyup .query-input': 'queryInputKeyUp',
-//		'input .query-input': 'queryInputChange',
+		'input .query-input': 'queryInputChange',
 		'click .search-button': 'searchButtonClick'
 	},
 
@@ -28,7 +27,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g)) {
+		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) parti:\([A-Z,|a-z,]+?$/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}
@@ -42,7 +41,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputKeyUp: function(event) {
-		console.log(event.keyCode);
 		if (event.keyCode == 13) {
 			if (this.queryInput.val() == '') {
 				this.searchButtonClick();
@@ -94,7 +92,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	addQueryItem: function(queryValue) {
-		console.log(queryValue);
 		queryValue = queryValue.substr(queryValue.length-1) == ',' ? queryValue.substr(0, queryValue.length-1) : queryValue;
 
 		var queryString = queryValue.split(' parti:(')[0];
@@ -151,7 +148,6 @@ module.exports = Backbone.View.extend({
 		var selectedParties = [];
 
 		_.map(form.find('.query-parties input'), _.bind(function(input) {
-			console.log(input);
 			if (input.checked) {
 				selectedParties.push($(input).val());
 			}
