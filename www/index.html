@@ -75,9 +75,7 @@
 
 </div>
 
-<div id="textViewer" class="text-viewer">
-	
-</div>
+<div id="textViewer" class="text-viewer"></div>
 
 <script id="textViewerTemplate" type="text/template">
 
@@ -87,8 +85,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="twelve columns">
-					<h2><%= model.get('_source').dokument.titel %></h2>
-					<p><%= model.get('_source').dokument.html %></p>
+					<h2><%= title %></h2>
+					<p><%= html %></p>
 				</div>
 			</div>
 		</div>

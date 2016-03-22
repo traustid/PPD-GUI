@@ -14,24 +14,35 @@ module.exports = Backbone.View.extend({
 	},
 
 	events: {
+		'keydown .query-input': 'queryInputKeyDown',
 		'keyup .query-input': 'queryInputKeyUp',
-		'input .query-input': 'queryInputChange',
+//		'input .query-input': 'queryInputChange',
 		'click .search-button': 'searchButtonClick'
 	},
 
 	searchButtonClick: function() {
+		this.queryInput.val();
 		this.trigger('search', {
 			queryString: this.getQueryString()
 		});
 	},
 
-	getQueryString: function() {
-		return _.map(this.collection.models, function(model) {
-			return model.get('queryValue')
-		}).join(',');
+	queryInputChange: function(event) {
+		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g)) {
+			this.addQueryItem(this.queryInput.val());
+			this.queryInput.val('');
+		}
+	},
+
+	queryInputKeyDown: function(event) {
+		if (event.keyCode == 9) {
+			event.preventDefault();
+			this.validateSingleQuery();
+		}
 	},
 
 	queryInputKeyUp: function(event) {
+		console.log(event.keyCode);
 		if (event.keyCode == 13) {
 			if (this.queryInput.val() == '') {
 				this.searchButtonClick();
@@ -41,11 +52,16 @@ module.exports = Backbone.View.extend({
 			}
 		}
 		if (event.keyCode == 8) {
-			console.log('backspace');
 			if (this.queryInput.val() == '') {
 				this.editLastItem();
 			}
 		}
+	},
+
+	getQueryString: function() {
+		return _.map(this.collection.models, function(model) {
+			return model.get('queryValue')
+		}).join(',');
 	},
 
 	validateSingleQuery: function(event) {
@@ -57,13 +73,6 @@ module.exports = Backbone.View.extend({
 		}
 		else {
 			return false;
-		}
-	},
-
-	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g)) {
-			this.addQueryItem(this.queryInput.val());
-			this.queryInput.val('');
 		}
 	},
 
@@ -164,8 +173,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
-		console.log('SearchInputView:render');
-		console.log(this.$el);
+
 		var template = _.template($("#searchInputTemplate").html());
 
 		this.$el.html(template({}));
@@ -174,5 +182,9 @@ module.exports = Backbone.View.extend({
 		this.queryItems = this.$el.find('.query-items');
 
 		this.updateInputSize();
+
+		window.onresize = _.bind(function() {
+			this.updateInputSize();
+		}, this);
 	}
 });

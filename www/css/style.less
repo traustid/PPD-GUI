@@ -7,6 +7,8 @@
 @import "config.less";
 
 html.has-overlay {
+	padding-right: 20px;
+
 	overflow: hidden;
 }
 
@@ -583,10 +585,20 @@ hr {
 	z-index: 500;
 
 	visibility: hidden;
+	opacity: 0;
+
+	transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, visibility 0s linear 200ms;
+	-moz-transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, visibility 0s linear 200ms;
+	-webkit-transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, visibility 0s linear 200ms;
+	-o-transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, visibility 0s linear 200ms;
 
 	&.visible {
 		visibility: visible;
+		opacity: 1;
+
+		transition-delay: 0s;
 	}
+
 	.text-content {
 		position: absolute;
 
@@ -623,7 +635,6 @@ hr {
 		left: 0;
 		right: 0;
 		bottom: 0;
-
 		background: rgba(255,255,255,0.98);
 	}
 }
