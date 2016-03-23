@@ -23,9 +23,9 @@ module.exports = Backbone.Collection.extend({
 
 	parse: function(data) {
 		if (this.includeTotal) {
-			data.push(this.totalCollection.toJSON()[0]);
+			data.data.push(this.totalCollection.toJSON()[0]);
 		}
-		return data;
+		return data.data;
 	},
 
 	search: function(query) {

@@ -40,7 +40,6 @@ module.exports = Backbone.View.extend({
 
 //		htmlString = this.options.model.get('_source').dokument.html;
 
-
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({
 			title: this.options.model.get('_source').dokument.titel,
