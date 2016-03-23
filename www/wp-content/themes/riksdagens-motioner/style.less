@@ -42,6 +42,10 @@ a {
 	text-align: center;
 }
 
+.text-light {
+	color: @color-text-gray;
+}
+
 .results-component {
 	display: none;
 	.transition(all 200ms ease-in-out);
@@ -454,6 +458,15 @@ hr {
 
 		&.visible {
 			opacity: 1;
+		}
+
+		.item {
+			padding: 0 10px 3px 10px;
+			
+			&.highlight {
+				box-shadow: 0 1px 2px #7F7F7F;
+				background: @color-background-gray;
+			}
 		}
 
 		.color {

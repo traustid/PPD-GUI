@@ -16,7 +16,7 @@ module.exports = Backbone.View.extend({
 		top: 20,
 		right: 0,
 		bottom: 20,
-		left: 40
+		left: 50
 	},
 
 	initialize: function(options) {
@@ -118,6 +118,33 @@ module.exports = Backbone.View.extend({
 			.tickSubdivide(true);
 
 
+		this.vis
+			.on("mouseenter", _.bind(function() {
+				this.$el.find('.info-overlay').addClass('visible');
+			}, this))
+			.on("mouseleave", _.bind(function() {
+				this.$el.find('.info-overlay').removeClass('visible');
+			}, this))
+			.on("mousemove", function() {
+				var xPos = d3.mouse(this)[0];
+
+				var leftEdges = xRange.range();
+				var width = xRange.rangeBand();
+
+				var j;
+				for(j=0; xPos > (leftEdges[j] + width); j++) {
+
+				}
+
+		        var year = xRange.domain()[j];
+
+		        app.overlayMessage(year, d3.mouse(this));
+
+				app.verticalLine.attr("transform", function () {
+					return "translate(" + xPos + ",0)";
+				});
+			});
+
 		this.vis.append('svg:g')
 			.attr('class', 'x axis')
 			.attr('transform', 'translate(0,' + (this.graphHeight - this.graphMargins.bottom) + ')')
@@ -139,7 +166,7 @@ module.exports = Backbone.View.extend({
 			.attr("stroke", "steelblue")
 			.attr('class', 'verticalLine');
 
-		var addLine = _.bind(function(lineData, color) {
+		var addLine = _.bind(function(lineData, color, index) {
 
 			var line1 = d3.svg.line()
 //				.interpolate("cardinal")
@@ -174,7 +201,14 @@ module.exports = Backbone.View.extend({
 				.attr('fill', 'none')
 				.attr('stroke-width', 2)
 				.attr('stroke', color)
+				.attr("data-index", index)
 				.attr("d", line1)
+				.on("mouseenter", function() {
+					app.fadeLines(this);
+				})
+				.on("mouseleave", function() {
+					app.showLines();
+				})
 				.transition()
 				.duration(1000)
 				.attr("d", line);
@@ -184,7 +218,7 @@ module.exports = Backbone.View.extend({
 				.data(lineData);
 
 			data.attr('class', 'update');
-
+/*
 			data.enter()
 				.append('circle')
 				.attr('fill', color)
@@ -216,11 +250,12 @@ module.exports = Backbone.View.extend({
 					tooltip.select('text').text(d.key_as_string.substr(0, 4)+': '+d.doc_count);
 				})
 */
+/*
 				.transition()
 				.delay(750)
 				.duration(200)
 				.attr('r', 3);
-
+*/
 			data.exit().attr('class', 'exit').transition(750)
 				.ease('linear')
 				.attr('cy', 0)
@@ -248,9 +283,9 @@ module.exports = Backbone.View.extend({
 
 		_.each(this.collection.models, _.bind(function(model, index) {
 			model.set('color', this.colors[index]);
-			addLine(model.get('buckets'), this.colors[index]);
+			addLine(model.get('buckets'), this.colors[index], index);
 		}, this));
-
+/*
 		this.vis.append("rect")
 			.attr("class", "ngram-overlay")
 			.attr("x", this.graphMargins.left)
@@ -283,12 +318,24 @@ module.exports = Backbone.View.extend({
 					return "translate(" + xPos + ",0)";
 				});
 			});
-
+*/
 		this.trigger('updateGraph');
 	},
 
+	fadeLines: function(exclude) {
+//		this.$el.find('.info-overlay .item[data-index='+$(exclude).data('index')+']').addClass('highlight');
+		this.vis.selectAll('path.line').style("stroke-opacity", function () {
+			return (this === exclude) ? 1.0 : 0.2;
+		});
+	},
+
+	showLines: function() {
+//		this.$el.find('.info-overlay .item').removeClass('highlight');
+		this.vis.selectAll('path.line').style("stroke-opacity", 1);
+	},
+
 	overlayMessage: function(year, position) {
-		var data = _.map(this.collection.models, function(model) {
+		var legends = _.map(this.collection.models, _.bind(function(model) {
 			return {
 				color: model.get('color'),
 				key: model.get('key'),
@@ -296,20 +343,24 @@ module.exports = Backbone.View.extend({
 					return bucket.key_as_string == year;
 				})
 			};
-		});
+		}, this));
 
 		var template = _.template($("#ngramInfoTemplate").html());
 
 		this.$el.find('.info-overlay').html(template({
-			data: data
+			data: {
+				year: year,
+				total:this.collection.getTotalByYear(year),
+				legends: legends
+			}
 		}));
 
 		this.$el.find('.info-overlay').css({
-			'-webkit-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
-			'-moz-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
-			'-ms-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
-			'-o-transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)',
-			'transform': 'translate('+(position[0]+60)+'px, '+position[1]+'px)'
+			'-webkit-transform': 'translate('+(position[0]+60)+'px, 20px)',
+			'-moz-transform': 'translate('+(position[0]+60)+'px, 20px)',
+			'-ms-transform': 'translate('+(position[0]+60)+'px, 20px)',
+			'-o-transform': 'translate('+(position[0]+60)+'px, 20px)',
+			'transform': 'translate('+(position[0]+60)+'px, 20px)'
 		})
 	},
 
