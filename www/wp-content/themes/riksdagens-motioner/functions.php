@@ -127,6 +127,15 @@ function riksdagens_motioner_widgets_init() {
 		'before_title'  => '<h3 class="widget-title">',
 		'after_title'   => '</h3>',
 	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer', 'riksdagens-motioner' ),
+		'id'            => 'footer',
+		'description'   => '',
+		'before_widget' => '',
+		'after_widget'  => '',
+		'before_title'  => '<h3 class="widget-title">',
+		'after_title'   => '</h3>',
+	) );
 }
 add_action( 'widgets_init', 'riksdagens_motioner_widgets_init' );
 

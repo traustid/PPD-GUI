@@ -696,3 +696,21 @@ hr {
 .pconf {
 	width: 100% !important;
 }
+
+.footer {
+	.transition(all 200ms ease-in-out);
+	
+	.columns {
+		padding-top: 20px;
+		padding-bottom: 20px;
+
+		color: #6C6C6C;
+		font-weight: bold;
+		text-shadow: 0 2px 0px #fff;
+	}
+
+	.search-mode & {
+		border-top: 1px solid @color-border;
+    	background: @color-background-gray;
+	}
+}

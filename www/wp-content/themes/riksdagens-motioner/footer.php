@@ -13,6 +13,16 @@
 
 	</div>
 
+	<div class="footer">
+		<div class="container default-margins">
+			<div class="row">
+				<div class="twelve columns">
+					<?php dynamic_sidebar( 'footer' ); ?>
+				</div>
+			</div>
+		</div>
+	</div>
+
 <?php wp_footer(); ?>
 
 </body>

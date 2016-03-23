@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
 		this.render();
 
 		this.router.on('route:default', _.bind(function(query) {
-			this.$el.removeClass('search-mode');
+			$(document.body).removeClass('search-mode');
 		}, this));
 
 		this.router.on('route:search', _.bind(function(query) {
@@ -30,7 +30,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	doSearch: function(query) {
-		this.$el.addClass('search-mode');
+		$(document.body).addClass('search-mode');
 
 		if (this.ngramView == undefined) {
 			this.ngramView = new NgramView({
