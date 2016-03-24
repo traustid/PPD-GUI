@@ -5,11 +5,16 @@ var ListItemModel = require('./../models/ListItemModel');
 module.exports = Backbone.Collection.extend({
 	model: ListItemModel,
 
-	url: 'example-documents.json',
+	url: 'http://cdh-vir-1.it.gu.se:8900/motioner/hits',
 
-	search: function(query) {
+	search: function(query, timeRange) {
 		this.fetch({
-			reset: true
+			reset: true,
+			data: {
+				"searchPhrase": query,
+				"startDate": timeRange[0],
+				"endDate": timeRange[1]
+			}
 		});
 	},
 
@@ -18,6 +23,7 @@ module.exports = Backbone.Collection.extend({
 	},
 
 	parse: function(data) {
-		return data.responses[0].hits.hits;
+		console.log(data);
+		return data[0].hits;
 	}
 });

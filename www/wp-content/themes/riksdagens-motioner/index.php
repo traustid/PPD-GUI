@@ -175,9 +175,11 @@ get_header(); ?>
 					<a href="" class="button u-full-width full-text-button"><span class="icon-sheet"></span> Läs hela</a><br/>
 					<a href="<%= model.get('_source').dokument.dokument_url_html %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (html)</a>
 
-					<% _.each(model.get('_source').dokbilaga.bilaga, function(file) { %>
-						<a href="<%= file.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= file.filtyp %>)</a>	
-					<% }) %>
+					<% if (model.get('_source').dokbilaga) { %>
+						<% _.each(model.get('_source').dokbilaga.bilaga, function(file) { %>
+							<a href="<%= file.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= file.filtyp %>)</a>	
+						<% }) %>
+					<% } %>
 
 				</div>
 			</div>

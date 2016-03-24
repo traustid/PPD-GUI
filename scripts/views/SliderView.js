@@ -24,10 +24,13 @@ module.exports = Backbone.View.extend({
 		});
 	},
 
+	sliderValues: function() {
+		return [Number(this.slider.get()[0]), Number(this.slider.get()[1])];
+	},
+
 	sliderDelay: false,
 
 	render: function() {
-		console.log(this.options);
 		this.slider = noUiSlider.create(this.$el[0], {
 			start: this.options.range,
 			step: 1,
@@ -41,7 +44,7 @@ module.exports = Backbone.View.extend({
 		this.updateHandleValues();
 
 		this.slider.on('change', _.bind(function(event, ui) {
-			this.trigger('slide', {
+			this.trigger('change', {
 				values: [Number(this.slider.get()[0]), Number(this.slider.get()[1])]
 			});
 		}, this));
@@ -54,7 +57,7 @@ module.exports = Backbone.View.extend({
 
 				setTimeout(_.bind(function() {
 					this.sliderDelay = false;
-				}, this), 500);
+				}, this), 50);
 
 				this.trigger('slide', {
 					values: [Number(this.slider.get()[0]), Number(this.slider.get()[1])]

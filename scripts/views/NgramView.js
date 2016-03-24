@@ -70,7 +70,7 @@ module.exports = Backbone.View.extend({
 			this.xRangeValues = this.xRangeValues.sort();
 		}
 
-		var xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
+		this.xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
 
 		this.yRangeValues = _.map(this.collection.at(0).get('buckets'), _.bind(function(bucket) {
 			if (this.percentagesView) {
@@ -99,14 +99,12 @@ module.exports = Backbone.View.extend({
 			this.yRangeValues = this.yRangeValues.sort();
 		}
 
-		console.log(this.yRangeValues);
-
 		var yRange = d3.scale.linear().range([this.graphHeight - this.graphMargins.top, this.graphMargins.bottom]).domain([0,
 			d3.max(this.yRangeValues)
 		]);
 
 		var xAxis = d3.svg.axis()
-			.scale(xRange)
+			.scale(this.xRange)
 			.tickSize(1)
 			.tickValues(this.graphYearTicks)
 			.tickSubdivide(true);
@@ -117,6 +115,13 @@ module.exports = Backbone.View.extend({
 			.orient('left')
 			.tickSubdivide(true);
 
+		this.vis.append("rect")
+			.attr("class", "timerange-overlay")
+			.attr("x", this.graphMargins.left)
+			.attr("y", this.graphMargins.top)
+			.attr("width", this.graphWidth-this.graphMargins.right-this.graphMargins.left)
+			.attr("height", this.graphHeight-this.graphMargins.bottom-this.graphMargins.top)
+			.style("opacity", 0);
 
 		this.vis
 			.on("mouseenter", _.bind(function() {
@@ -128,15 +133,15 @@ module.exports = Backbone.View.extend({
 			.on("mousemove", function() {
 				var xPos = d3.mouse(this)[0];
 
-				var leftEdges = xRange.range();
-				var width = xRange.rangeBand();
+				var leftEdges = app.xRange.range();
+				var width = app.xRange.rangeBand();
 
 				var j;
 				for(j=0; xPos > (leftEdges[j] + width); j++) {
 
 				}
 
-		        var year = xRange.domain()[j];
+		        var year = app.xRange.domain()[j];
 
 		        app.overlayMessage(year, d3.mouse(this));
 
@@ -172,7 +177,7 @@ module.exports = Backbone.View.extend({
 //				.interpolate("cardinal")
 				.interpolate("monotone")
 				.x(function(d) {
-					return xRange(Number(d.key_as_string.substr(0, 4)));
+					return app.xRange(Number(d.key_as_string.substr(0, 4)));
 				})
 				.y(_.bind(function(d) {
 					return (yRange(0));
@@ -182,7 +187,7 @@ module.exports = Backbone.View.extend({
 //				.interpolate("cardinal")
 				.interpolate("monotone")
 				.x(function(d) {
-					return xRange(Number(d.key_as_string.substr(0, 4)));
+					return app.xRange(Number(d.key_as_string.substr(0, 4)));
 				})
 				.y(_.bind(function(d) {
 					if (this.percentagesView) {					
@@ -218,12 +223,12 @@ module.exports = Backbone.View.extend({
 				.data(lineData);
 
 			data.attr('class', 'update');
-/*
+
 			data.enter()
 				.append('circle')
 				.attr('fill', color)
 				.attr('cx', function (d) {
-					return xRange(Number(d.key_as_string.substr(0, 4)));
+					return app.xRange(Number(d.key_as_string.substr(0, 4)));
 				})
 				.attr('cy', _.bind(function (d) {
 					if (this.percentagesView) {					
@@ -236,7 +241,6 @@ module.exports = Backbone.View.extend({
 					}
 				}, this))
 				.attr('r', 0)
-/*
 				.on('mouseover', function() {
 					tooltip.style('display', null);
 				})
@@ -249,13 +253,11 @@ module.exports = Backbone.View.extend({
 					tooltip.attr('transform', 'translate(' + xPosition + ',' + yPosition + ')');
 					tooltip.select('text').text(d.key_as_string.substr(0, 4)+': '+d.doc_count);
 				})
-*/
-/*
 				.transition()
 				.delay(750)
 				.duration(200)
 				.attr('r', 3);
-*/
+
 			data.exit().attr('class', 'exit').transition(750)
 				.ease('linear')
 				.attr('cy', 0)
@@ -320,6 +322,15 @@ module.exports = Backbone.View.extend({
 			});
 */
 		this.trigger('updateGraph');
+	},
+
+	setTimeOverlay: function(values) {
+		this.vis.select('rect.timerange-overlay')
+			.attr('x', this.xRange(values[0]))
+			.attr('width', this.xRange(values[1])-this.xRange(values[0]))
+			.transition()
+			.duration(200)
+			.style('opacity', 0.05);
 	},
 
 	fadeLines: function(exclude) {

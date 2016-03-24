@@ -32,6 +32,10 @@ module.exports = Backbone.View.extend({
 	doSearch: function(query) {
 		$(document.body).addClass('search-mode');
 
+		if (!this.sliderView) {
+			this.initSlider();
+		}
+
 		if (this.ngramView == undefined) {
 			this.ngramView = new NgramView({
 				el: this.$el.find('#ngramContianer'),
@@ -48,15 +52,10 @@ module.exports = Backbone.View.extend({
 			});
 		}
 
-		this.hitList.search(query);
+		this.hitList.search(query, this.sliderView.sliderValues());
 	},
 
 	ngramUpdate: function() {
-		if (!this.sliderView) {
-			this.initSlider();
-		}
-
-		this.hitList.applyFilter({});
 	},
 
 	initSlider: function() {
@@ -65,14 +64,12 @@ module.exports = Backbone.View.extend({
 			range: [1970, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
-			this.hitList.applyFilter({
-				time: event.values
-			});
+			console.log('sliderView:change');
+			this.hitList.search(this.searchInput.getQueryString(), event.values)
+			this.ngramView.setTimeOverlay(event.values);
 		}, this));
 		this.sliderView.on('slide', _.bind(function(event) {
-			this.hitList.applyFilter({
-				time: event.values
-			});
+			this.ngramView.setTimeOverlay(event.values);
 		}, this));
 	},
 

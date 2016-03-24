@@ -26,11 +26,13 @@ module.exports = Backbone.View.extend({
 		this.$el.html(template({}));
 	},
 
-	search: function(query) {
-		this.collection.search(query);
+	search: function(query, timeRange) {
+		console.log('ListView:search');
+		this.collection.search(query, timeRange);
 	},
 
 	render: function() {
+		console.log('ListView:render');
 		this.$el.find('.list-container').html('');
 
 		_.each(this.collection.models, _.bind(function(model) {
