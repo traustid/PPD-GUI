@@ -29,16 +29,8 @@ module.exports = Backbone.View.extend({
 		var htmlEl = $(this.options.model.get('_source').dokument.html);
 		htmlEl.removeAttr('style');
 
-		if (htmlEl[0].tagName.toLowerCase() == 'style') {
-			$(htmlEl[1]).removeAttr('style');
-			var htmlString = $(htmlEl[1]).html();
-		}
-		else {
-			$(htmlEl[0]).removeAttr('style');
-			var htmlString = $(htmlEl[0]).html();
-		}
-
-//		htmlString = this.options.model.get('_source').dokument.html;
+		htmlString = this.options.model.get('_source').dokument.html;
+		htmlString = htmlString.split('<style>').join('<div style="display: none">').split('</style>').join('</div>');
 
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({

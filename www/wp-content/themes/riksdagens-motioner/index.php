@@ -129,7 +129,7 @@ get_header(); ?>
 			<div class="row">
 				<div class="twelve columns">
 					<h2 class="text-center">Search results</h2>
-					<p class="text-center">"utbildning" (M), 1984-2000</p>
+					<p class="text-center list-header-label"></p>
 				</div>
 			</div>
 		</div>
@@ -138,6 +138,8 @@ get_header(); ?>
 			<div class="row">
 
 				<div class="twelve columns doc-list list-container"></div>
+
+				<div class="loading-overlay"></div>
 			
 			</div>
 		</div>
@@ -158,7 +160,7 @@ get_header(); ?>
 						<div class="party-letter"><%= party %></div>
 					<% }); %>
 				<% } %>
-				<%= model.get('_source').dokument.publicerad %>
+				<%= model.get('_source').dokument.dateFormatted %>
 			</div>
 		</a>
 
@@ -175,10 +177,14 @@ get_header(); ?>
 					<a href="" class="button u-full-width full-text-button"><span class="icon-sheet"></span> Läs hela</a><br/>
 					<a href="<%= model.get('_source').dokument.dokument_url_html %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (html)</a>
 
-					<% if (model.get('_source').dokbilaga) { %>
+					<% if (model.get('_source').dokbilaga && model.get('_source').dokbilaga.length) { %>
 						<% _.each(model.get('_source').dokbilaga.bilaga, function(file) { %>
 							<a href="<%= file.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= file.filtyp %>)</a>	
 						<% }) %>
+					<% } %>
+
+					<% if (model.get('_source').dokbilaga && model.get('_source').dokbilaga.bilaga) { %>
+						<a href="<%= model.get('_source').dokbilaga.bilaga.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= model.get('_source').dokbilaga.bilaga.filtyp %>)</a>	
 					<% } %>
 
 				</div>

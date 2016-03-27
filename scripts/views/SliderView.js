@@ -28,6 +28,11 @@ module.exports = Backbone.View.extend({
 		return [Number(this.slider.get()[0]), Number(this.slider.get()[1])];
 	},
 
+	setSliderValues: function(values) {
+		this.slider.set(values);
+		this.updateHandleValues();
+	},
+
 	sliderDelay: false,
 
 	render: function() {

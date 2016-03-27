@@ -29,10 +29,13 @@ module.exports = Backbone.View.extend({
 	search: function(query, timeRange) {
 		console.log('ListView:search');
 		this.collection.search(query, timeRange);
+
+		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
+
+		this.$el.addClass('loading');
 	},
 
 	render: function() {
-		console.log('ListView:render');
 		this.$el.find('.list-container').html('');
 
 		_.each(this.collection.models, _.bind(function(model) {
@@ -45,5 +48,6 @@ module.exports = Backbone.View.extend({
 			});		
 		}, this));
 
+		this.$el.removeClass('loading');
 	}
 });

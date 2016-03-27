@@ -9,6 +9,9 @@ var SliderView = require('./SliderView');
 var ListView = require('./ListView');
 
 module.exports = Backbone.View.extend({
+	startYear: 1970,
+	endYear: 2016,
+
 	initialize: function() {
 		this.router = new AppRouter();
 
@@ -18,18 +21,26 @@ module.exports = Backbone.View.extend({
 			$(document.body).removeClass('search-mode');
 		}, this));
 
-		this.router.on('route:search', _.bind(function(query) {
-			this.doSearch(query);
+		this.router.on('route:search', _.bind(function(query, yearFrom, yearTo, document) {
+			console.log('route:search: query: '+query+', yearFrom: '+yearFrom+', yearTo: '+yearTo+', document: '+document);
 
-			if (this.searchInput.getQueryString() != query) {
-				this.searchInput.resetQueryItems(query);
+			this.search(query, yearFrom == null ? this.startYear : yearFrom, yearTo == null ? this.endYear : yearTo);
+
+/*
+			console.log(yearFrom);
+
+			if (yearFrom != null && yearTo != null) {
+				console.log('time!');
+				this.ngramView.setTimeOverlay([yearFrom, yearTo]);
+				this.hitList.search(query, [yearFrom, yearTo]);
 			}
+*/
 		}, this));
 
 		Backbone.history.start();
 	},
 
-	doSearch: function(query) {
+	search: function(query, yearFrom, yearTo) {
 		$(document.body).addClass('search-mode');
 
 		if (!this.sliderView) {
@@ -44,7 +55,9 @@ module.exports = Backbone.View.extend({
 			this.ngramView.on('updateGraph', this.ngramUpdate, this);
 		}
 
-		this.ngramView.search(query);
+		if (this.ngramView.lastQuery != query) {
+			this.ngramView.search(query);
+		}
 
 		if (this.hitList == undefined) {
 			this.hitList = new ListView({
@@ -52,7 +65,15 @@ module.exports = Backbone.View.extend({
 			});
 		}
 
-		this.hitList.search(query, this.sliderView.sliderValues());
+		if (this.searchInput.getQueryString() != query) {
+			this.searchInput.resetQueryItems(query);
+		}
+		this.hitList.search(query, [yearFrom, yearTo]);
+
+		if (this.sliderView.sliderValues[0] != yearFrom || this.sliderView.sliderValues[1] != yearTo) {
+			this.sliderView.setSliderValues([yearFrom, yearTo]);
+			this.ngramView.setTimeOverlay([yearFrom, yearTo]);
+		}
 	},
 
 	ngramUpdate: function() {
@@ -64,9 +85,9 @@ module.exports = Backbone.View.extend({
 			range: [1970, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
-			console.log('sliderView:change');
-			this.hitList.search(this.searchInput.getQueryString(), event.values)
-			this.ngramView.setTimeOverlay(event.values);
+			this.router.navigate('search/'+this.searchInput.getQueryString()	+'/'+event.values[0]+'/'+event.values[1], {
+				trigger: true
+			});
 		}, this));
 		this.sliderView.on('slide', _.bind(function(event) {
 			this.ngramView.setTimeOverlay(event.values);

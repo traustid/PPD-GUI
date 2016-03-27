@@ -19,6 +19,9 @@ module.exports = Backbone.View.extend({
 		left: 50
 	},
 
+	startYear: 1970,
+	endYear: 2016,
+
 	initialize: function(options) {
 		console.log('NgramPercentagesView:initialize');
 
@@ -39,7 +42,10 @@ module.exports = Backbone.View.extend({
 		this.search(this.collection.queryString);
 	},
 
+	lastQuery: '',
+
 	search: function(query) {
+		this.lastQuery = query;
 		this.$el.addClass('loading');
 		this.collection.search(query);
 	},
@@ -321,16 +327,30 @@ module.exports = Backbone.View.extend({
 				});
 			});
 */
+		if (this.timeOverlay) {
+			this.setTimeOverlay(this.timeOverlay);
+		}
 		this.trigger('updateGraph');
 	},
 
 	setTimeOverlay: function(values) {
-		this.vis.select('rect.timerange-overlay')
-			.attr('x', this.xRange(values[0]))
-			.attr('width', this.xRange(values[1])-this.xRange(values[0]))
-			.transition()
-			.duration(200)
-			.style('opacity', 0.05);
+		this.timeOverlay = values;
+		console.log(this.timeOverlay);
+		console.log([this.startYear, this.endYear]);
+		if (this.timeOverlay[0] == this.startYear && this.timeOverlay[1] == this.endYear) {
+			this.vis.select('rect.timerange-overlay')
+				.transition()
+				.duration(100)
+				.style('opacity', 0);
+		}
+		else {
+			this.vis.select('rect.timerange-overlay')
+				.attr('x', this.xRange(values[0]))
+				.attr('width', this.xRange(values[1])-this.xRange(values[0]))
+				.transition()
+				.duration(100)
+				.style('opacity', 0.05);			
+		}
 	},
 
 	fadeLines: function(exclude) {
