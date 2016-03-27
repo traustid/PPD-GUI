@@ -21,20 +21,13 @@ module.exports = Backbone.View.extend({
 			$(document.body).removeClass('search-mode');
 		}, this));
 
+		this.router.on('route:view', _.bind(function(document) {
+		}, this));
+
 		this.router.on('route:search', _.bind(function(query, yearFrom, yearTo, document) {
-			console.log('route:search: query: '+query+', yearFrom: '+yearFrom+', yearTo: '+yearTo+', document: '+document);
-
+			$('html').removeClass('has-overlay');
+			$('#textViewer').removeClass('visible');
 			this.search(query, yearFrom == null ? this.startYear : yearFrom, yearTo == null ? this.endYear : yearTo);
-
-/*
-			console.log(yearFrom);
-
-			if (yearFrom != null && yearTo != null) {
-				console.log('time!');
-				this.ngramView.setTimeOverlay([yearFrom, yearTo]);
-				this.hitList.search(query, [yearFrom, yearTo]);
-			}
-*/
 		}, this));
 
 		Backbone.history.start();
@@ -61,14 +54,18 @@ module.exports = Backbone.View.extend({
 
 		if (this.hitList == undefined) {
 			this.hitList = new ListView({
-				el: this.$el.find('#hitlistContainer')
+				el: this.$el.find('#hitlistContainer'),
+				router: this.router
 			});
 		}
 
 		if (this.searchInput.getQueryString() != query) {
 			this.searchInput.resetQueryItems(query);
 		}
-		this.hitList.search(query, [yearFrom, yearTo]);
+
+		if (this.query != this.hitList.lastQuery && yearFrom != this.hitList.timeRange[0] && yearTo != this.hitList.timeRange[1]) {
+			this.hitList.search(query, [yearFrom, yearTo]);
+		}
 
 		if (this.sliderView.sliderValues[0] != yearFrom || this.sliderView.sliderValues[1] != yearTo) {
 			this.sliderView.setSliderValues([yearFrom, yearTo]);

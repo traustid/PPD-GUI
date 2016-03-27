@@ -59,6 +59,10 @@ module.exports = Backbone.View.extend({
 		});
 
 		$('#textViewer').addClass('visible');
+
+		this.options.router.navigate('view/document', {
+			trigger: false
+		});
 	},
 
 	render: function() {

@@ -5,7 +5,8 @@ var ListCollection = require('./../collections/ListCollection');
 var ListItemView = require('./ListItemView.js');
 
 module.exports = Backbone.View.extend({
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
 		this.collection = new ListCollection();
 		this.collection.on('reset', this.render, this);
 
@@ -26,8 +27,13 @@ module.exports = Backbone.View.extend({
 		this.$el.html(template({}));
 	},
 
+	lastQuery: '',
+	timeRange: [],
+
 	search: function(query, timeRange) {
-		console.log('ListView:search');
+		this.lastQuery = query;
+		this.timeRange = timeRange;
+
 		this.collection.search(query, timeRange);
 
 		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
@@ -44,7 +50,8 @@ module.exports = Backbone.View.extend({
 
 			var itemView = new ListItemView({
 				el: newEl,
-				model: model
+				model: model,
+				router: this.options.router
 			});		
 		}, this));
 
