@@ -762,3 +762,26 @@ hr {
     	background: @color-background-gray;
 	}
 }
+
+.tabs {
+	&.result-tabs {
+		margin-bottom: 10px;
+	}
+	
+	a.tab {
+		display: inline-block;
+		
+		padding-bottom: 6px;
+		margin: 0 15px;
+
+		font-size: 1.3rem;
+		font-weight: bold;
+		color: #000;
+
+		cursor: pointer;
+
+		&.selected {
+			border-bottom: 4px solid @color-blue;
+		}
+	}
+}

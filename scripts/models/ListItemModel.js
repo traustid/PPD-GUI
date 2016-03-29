@@ -8,20 +8,22 @@ module.exports = Backbone.Model.extend({
 	},
 
 	parse: function(data) {
-		if (data._source.dokintressent) {		
-			if (data._source.dokintressent.intressent.partibet) {
-				data.parties = [data._source.dokintressent.intressent.partibet];
+		_.each(data.hits, _.bind(function(document) {
+			if (document._source.dokintressent) {		
+				if (document._source.dokintressent.intressent.partibet) {
+					document.parties = [document._source.dokintressent.intressent.partibet];
+				}
+				else {		
+					var parties = _.uniq(_.filter(_.pluck(document._source.dokintressent.intressent, 'partibet'), Boolean));
+					document.parties = parties;
+				}
 			}
-			else {		
-				var parties = _.uniq(_.filter(_.pluck(data._source.dokintressent.intressent, 'partibet'), Boolean));
-				data.parties = parties;
+			else {
+				document.parties = [];
 			}
-		}
-		else {
-			data.parties = [];
-		}
 
-		data._source.dokument.dateFormatted = this.formatDate(data._source.dokument.datum)
+			document._source.dokument.dateFormatted = this.formatDate(document._source.dokument.datum)
+		}, this));
 		return data;
 	}
 });

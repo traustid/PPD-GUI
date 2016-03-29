@@ -1,3 +1,5 @@
+var $ = require('jquery');
+
 (function($) {
 
   // Matches trailing non-space characters.
@@ -79,4 +81,4 @@
 
   };
 
-})(jQuery);
+})($);

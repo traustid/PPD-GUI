@@ -34,12 +34,20 @@ module.exports = Backbone.View.extend({
 	},
 
 	events: {
-		'click .include-total-docs': 'toggleTotalDocsClick'
+		'click .tabs.ngram-view-mode a.tab': 'ngramViewModeClick'
 	},
 
-	toggleTotalDocsClick: function() {
-		this.collection.includeTotal = this.$el.find('.include-total-docs').is(":checked");
-		this.search(this.collection.queryString);
+	ngramViewModeClick: function(event) {
+		this.$el.find('.tabs.ngram-view-mode a.tab').removeClass('selected');
+		$(event.currentTarget).addClass('selected');
+
+		var currentView = this.percentagesView;
+
+		this.percentagesView = $(event.currentTarget).data('viewmode') == 'relative';
+
+		if (currentView != this.percentagesView) {
+			this.updateGraph();
+		}
 	},
 
 	lastQuery: '',
@@ -335,8 +343,6 @@ module.exports = Backbone.View.extend({
 
 	setTimeOverlay: function(values) {
 		this.timeOverlay = values;
-		console.log(this.timeOverlay);
-		console.log([this.startYear, this.endYear]);
 		if (this.timeOverlay[0] == this.startYear && this.timeOverlay[1] == this.endYear) {
 			this.vis.select('rect.timerange-overlay')
 				.transition()

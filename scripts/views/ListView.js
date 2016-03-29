@@ -14,11 +14,20 @@ module.exports = Backbone.View.extend({
 	},
 
 	events: {
-		'click .item-title': 'itemTitleClick'
+		'click .item-title': 'itemTitleClick',
+		'click .result-tabs a.tab': 'resultTabClick'
 	},
 
 	itemTitleClick: function(event) {
 		$(event.currentTarget).parent().toggleClass('item-open');
+	},
+
+	resultTabClick: function(event) {
+		this.$el.find('.tabs.result-tabs a.tab').removeClass('selected');
+		$(event.currentTarget).addClass('selected');
+
+		this.resultIndex = $(event.currentTarget).data('resultindex');
+		this.renderList();
 	},
 
 	renderUi: function() {
@@ -29,6 +38,8 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 	timeRange: [],
+
+	resultIndex: 0,
 
 	search: function(query, timeRange) {
 		this.lastQuery = query;
@@ -42,15 +53,28 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
+		console.log('ListView:render');
+		this.resultIndex = 0;
+
+		var resultsTabsHtml = '';
+		_.each(this.collection.models, _.bind(function(model, index) {
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-resultindex="'+index+'">'+model.get('search_query')+'</a>';
+		}, this));
+		this.$el.find('.result-tabs').html(resultsTabsHtml);
+
+		this.renderList();
+	},
+
+	renderList: function() {
 		this.$el.find('.list-container').html('');
 
-		_.each(this.collection.models, _.bind(function(model) {
+		_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model) {
 			var newEl = $('<div class="list-item"/>');
 			this.$el.find('.list-container').append(newEl);
 
 			var itemView = new ListItemView({
 				el: newEl,
-				model: model,
+				model: new Backbone.Model(model),
 				router: this.options.router
 			});		
 		}, this));

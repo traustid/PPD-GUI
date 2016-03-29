@@ -135,13 +135,18 @@ get_header(); ?>
 		</div>
 
 		<div class="container default-margins">
+
+			<div class="row">
+				<div class="twelve columns tabs result-tabs"></div>
+			</div>
+
 			<div class="row">
 
 				<div class="twelve columns doc-list list-container"></div>
-
 				<div class="loading-overlay"></div>
 			
 			</div>
+
 		</div>
 
 	</div>	
@@ -170,7 +175,7 @@ get_header(); ?>
 
 
 				<div class="eight columns">
-					<p><%= model.get('_source').dokument.text ? model.get('_source').dokument.text.substr(0, 1000)+'<br/>...' : '' %></p>
+					<p><%= shortText %></p>
 				</div>
 
 				<div class="four columns">
@@ -276,7 +281,10 @@ get_header(); ?>
 <!--	<p class="text-center">Search for: <span class="search-term-label"></span></p>-->
 
 
-	<label><input class="include-total-docs" type="checkbox"> Include total documents</label>
+	<div class="ngram-tools ngram-view-mode tabs">
+		<a class="tab selected" data-viewmode="relative">Relative</a>
+		<a class="tab" data-viewmode="absolute">Absolute</a>
+	</div>
 
 	<svg id="chartContainer" width="100%" height="500"></svg>
 

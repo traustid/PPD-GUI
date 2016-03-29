@@ -63,7 +63,7 @@ module.exports = Backbone.View.extend({
 			this.searchInput.resetQueryItems(query);
 		}
 
-		if (this.query != this.hitList.lastQuery && yearFrom != this.hitList.timeRange[0] && yearTo != this.hitList.timeRange[1]) {
+		if (this.query != this.hitList.lastQuery || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1])) {
 			this.hitList.search(query, [yearFrom, yearTo]);
 		}
 
@@ -82,6 +82,7 @@ module.exports = Backbone.View.extend({
 			range: [1970, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
+
 			this.router.navigate('search/'+this.searchInput.getQueryString()	+'/'+event.values[0]+'/'+event.values[1], {
 				trigger: true
 			});

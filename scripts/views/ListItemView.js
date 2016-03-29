@@ -2,6 +2,8 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 var _ = require('underscore');
 
+require('../lib/jquery.truncate');
+
 module.exports = Backbone.View.extend({
 	initialize: function(options) {
 		this.options = options;
@@ -26,25 +28,21 @@ module.exports = Backbone.View.extend({
 	fullTextClick: function(event) {
 		event.preventDefault();
 
-		var htmlEl = $(this.options.model.get('_source').dokument.html);
-		htmlEl.removeAttr('style');
-
-		htmlString = this.options.model.get('_source').dokument.html;
-		htmlString = htmlString.split('<style>').join('<div style="display: none">').split('</style>').join('</div>');
+		var htmlString = this.model.get('_source').dokument.html;
+		var htmlEl = $(htmlString);
+		htmlEl.find('style').remove();
+		htmlString = htmlEl.html();
 
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({
-			title: this.options.model.get('_source').dokument.titel,
+			title: this.model.get('_source').dokument.titel,
 			html: htmlString
 		}));
 
 		$('html').addClass('has-overlay');
 
 		$('#textViewer .close-button').click(_.bind(function() {
-			$('html').removeClass('has-overlay');
-
-			$('#textViewer').removeClass('visible');
-			$('#textViewer').html('');
+			history.go(-1);
 		}, this));
 
 		_.each($('#textViewer .text-content a'), function(link) {
@@ -67,8 +65,19 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		var template = _.template($("#listItemTemplate").html());
+
+		var htmlString = this.model.get('_source').dokument.html;
+		var htmlEl = $(htmlString);
+		htmlEl.find('style').remove();
+		htmlString = htmlEl.html();
+
+		htmlString = $.truncate(htmlString, {
+			length: 400
+		});
+
 		this.$el.html(template({
-			model: this.options.model
+			model: this.model,
+			shortText: htmlString
 		}));
 	}
 });
