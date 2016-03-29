@@ -7,7 +7,7 @@ var NgramCollection = require('./../collections/NgramCollection');
 module.exports = Backbone.View.extend({
 	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
 
-	graphYearTicks: [1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
+	graphYearTicks: [1971, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
 
 	graphWidth: 1120,
 	graphHeight: 500,
@@ -19,7 +19,7 @@ module.exports = Backbone.View.extend({
 		left: 50
 	},
 
-	startYear: 1970,
+	startYear: 1971,
 	endYear: 2016,
 
 	initialize: function(options) {
@@ -373,9 +373,23 @@ module.exports = Backbone.View.extend({
 
 	overlayMessage: function(year, position) {
 		var legends = _.map(this.collection.models, _.bind(function(model) {
+			console.log(model);
+
+			var filterStrings = [];
+			if (model.get('filters') && model.get('filters').length > 0) {
+				filterStrings = _.map(model.get('filters'), function(filter) {
+					var filterString = '';
+					for (var name in filter) {
+						filterString += name+':('+(filter[name].join(','))+')';
+					}
+					return filterString;
+				});
+			}
+
 			return {
 				color: model.get('color'),
 				key: model.get('key'),
+				filterStrings: filterStrings,
 				data: _.find(model.get('buckets'), function(bucket) {
 					return bucket.key_as_string == year;
 				})

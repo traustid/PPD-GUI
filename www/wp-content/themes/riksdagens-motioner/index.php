@@ -125,15 +125,6 @@ get_header(); ?>
 
 		<div class="arrow"></div>
 
-		<div class="container default-margins extra-top-margins narrow-bottom-margins">
-			<div class="row">
-				<div class="twelve columns">
-					<h2 class="text-center">Search results</h2>
-					<p class="text-center list-header-label"></p>
-				</div>
-			</div>
-		</div>
-
 		<div class="container default-margins">
 
 			<div class="row">
@@ -301,7 +292,7 @@ get_header(); ?>
 		<% _.each(data.legends, function(item, index) { %>
 		<div class="item" data-index="<%= index %>">
 			<div class="color" style="background-color: <%= item.color %>"></div>
-			<div class="label"><strong><%= item.key %></strong>: <%= item.data.doc_count %> <span class="text-light">(<%= Math.round((item.data.doc_count/data.total)*10000)/10000 %>%)</span></div>
+			<div class="label"><strong><%= item.key+' '+item.filterStrings.join(' ') %></strong>: <%= item.data.doc_count %> <span class="text-light">(<%= Math.round((item.data.doc_count/data.total)*10000)/10000 %>%)</span></div>
 		</div>
 	<% }) %>
 	

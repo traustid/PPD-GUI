@@ -53,12 +53,21 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
-		console.log('ListView:render');
 		this.resultIndex = 0;
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-resultindex="'+index+'">'+model.get('search_query')+'</a>';
+			var filterStrings = [];
+			if (model.get('filters') && model.get('filters').length > 0) {
+				filterStrings = _.map(model.get('filters'), function(filter) {
+					var filterString = '';
+					for (var name in filter) {
+						filterString += name+':('+(filter[name].join(','))+')';
+					}
+					return filterString;
+				});
+			}
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-resultindex="'+index+'"><span class="line-color" style="border-color: '+this.options.colors[index]+'"></span>'+model.get('search_query')+' '+filterStrings.join(' ')+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 
@@ -68,7 +77,7 @@ module.exports = Backbone.View.extend({
 	renderList: function() {
 		this.$el.find('.list-container').html('');
 
-		_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model) {
+		_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model, index) {
 			var newEl = $('<div class="list-item"/>');
 			this.$el.find('.list-container').append(newEl);
 

@@ -20,7 +20,15 @@ module.exports = Backbone.View.extend({
 	},
 
 	searchButtonClick: function() {
-		this.queryInput.val();
+		if (this.queryInput.val() == '') {
+			this.search();
+		}
+		else if (this.validateSingleQuery()) {
+			this.search();
+		}
+	},
+
+	search: function() {
 		this.trigger('search', {
 			queryString: this.getQueryString()
 		});
@@ -43,10 +51,10 @@ module.exports = Backbone.View.extend({
 	queryInputKeyUp: function(event) {
 		if (event.keyCode == 13) {
 			if (this.queryInput.val() == '') {
-				this.searchButtonClick();
+				this.search();
 			}
 			else if (this.validateSingleQuery()) {
-				this.searchButtonClick();
+				this.search();
 			}
 		}
 		if (event.keyCode == 8) {

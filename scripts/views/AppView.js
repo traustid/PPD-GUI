@@ -9,7 +9,7 @@ var SliderView = require('./SliderView');
 var ListView = require('./ListView');
 
 module.exports = Backbone.View.extend({
-	startYear: 1970,
+	startYear: 1971,
 	endYear: 2016,
 
 	initialize: function() {
@@ -55,7 +55,8 @@ module.exports = Backbone.View.extend({
 		if (this.hitList == undefined) {
 			this.hitList = new ListView({
 				el: this.$el.find('#hitlistContainer'),
-				router: this.router
+				router: this.router,
+				colors: this.ngramView.colors
 			});
 		}
 
@@ -63,7 +64,7 @@ module.exports = Backbone.View.extend({
 			this.searchInput.resetQueryItems(query);
 		}
 
-		if (this.query != this.hitList.lastQuery || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1])) {
+		if ((query != this.hitList.lastQuery || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1]))) {
 			this.hitList.search(query, [yearFrom, yearTo]);
 		}
 
@@ -79,7 +80,7 @@ module.exports = Backbone.View.extend({
 	initSlider: function() {
 		this.sliderView = new SliderView({
 			el: this.$el.find('#sliderContainer'),
-			range: [1970, 2016]
+			range: [1971, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
 
