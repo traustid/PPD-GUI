@@ -138,6 +138,12 @@ get_header(); ?>
 			
 			</div>
 
+			<div class="row" style="margin-top: 20px">
+				<div class="twelve columns text-center">
+					<a class="button button-primary load-more-button">Load more</a>
+				</div>
+			</div>
+
 		</div>
 
 	</div>	

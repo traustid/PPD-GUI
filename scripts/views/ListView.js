@@ -9,13 +9,15 @@ module.exports = Backbone.View.extend({
 		this.options = options;
 		this.collection = new ListCollection();
 		this.collection.on('reset', this.render, this);
+		this.collection.on('hitsupdate', this.hitsUpdate, this)
 
 		this.renderUi();
 	},
 
 	events: {
 		'click .item-title': 'itemTitleClick',
-		'click .result-tabs a.tab': 'resultTabClick'
+		'click .result-tabs a.tab': 'resultTabClick',
+		'click .load-more-button': 'loadMoreClick'
 	},
 
 	itemTitleClick: function(event) {
@@ -27,7 +29,12 @@ module.exports = Backbone.View.extend({
 		$(event.currentTarget).addClass('selected');
 
 		this.resultIndex = $(event.currentTarget).data('resultindex');
+		this.collection.resultindex = this.resultindex;
 		this.renderList();
+	},
+
+	loadMoreClick: function() {
+		this.collection.addPage();
 	},
 
 	renderUi: function() {
@@ -74,7 +81,24 @@ module.exports = Backbone.View.extend({
 		this.renderList();
 	},
 
+	hitsUpdate: function() {
+		var newHits = this.collection.at(this.resultIndex).get('hits');
+		newHits = _.rest(newHits, this.collection.pageIndex);
+
+		_.each(newHits, _.bind(function(model, index) {
+			var newEl = $('<div class="list-item"/>');
+			this.$el.find('.list-container').append(newEl);
+
+			var itemView = new ListItemView({
+				el: newEl,
+				model: new Backbone.Model(model),
+				router: this.options.router
+			});		
+		}, this));
+	},
+
 	renderList: function() {
+		console.log(this.collection.length);
 		this.$el.find('.list-container').html('');
 
 		_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model, index) {

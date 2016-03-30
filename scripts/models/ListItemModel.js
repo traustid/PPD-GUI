@@ -3,8 +3,9 @@ var _ = require('underscore');
 
 module.exports = Backbone.Model.extend({
 	formatDate: function(dateStr) {
-		var d = new Date(dateStr);
-		return d.toLocaleDateString();
+//		var d = new Date(dateStr);
+//		return d.toLocaleDateString();
+		return dateStr.substr(0, 10);
 	},
 
 	parse: function(data) {

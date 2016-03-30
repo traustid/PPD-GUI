@@ -23,7 +23,7 @@
 
 <body <?php body_class(); ?>>
 
-<div id="appView">
+<div id="appViewContainer">
 
 	<header class="header">
 		
