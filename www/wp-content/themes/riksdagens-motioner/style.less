@@ -530,6 +530,16 @@ hr {
 	.transition(all 200ms ease-in-out);
 }
 
+.hitlist-container {
+
+	.loading-overlay {
+		top: 98px;
+		left: 41px;
+		right: 41px;
+		bottom: 41px;
+	}
+}
+
 .doc-list {
 	border: 1px solid #B7B7B7;
 	border-radius: 2px;
@@ -771,6 +781,8 @@ hr {
 		padding-bottom: 6px;
 		margin: 0 15px;
 
+		border-bottom: 4px solid transparent;
+
 		font-size: 1.3rem;
 		font-weight: bold;
 		color: #000;
@@ -778,7 +790,7 @@ hr {
 		cursor: pointer;
 
 		&.selected {
-			border-bottom: 4px solid @color-blue;
+			border-bottom-color: @color-blue;
 		}
 	}
 	

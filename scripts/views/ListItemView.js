@@ -30,8 +30,8 @@ module.exports = Backbone.View.extend({
 
 		var htmlString = this.model.get('_source').dokument.html;
 		var htmlEl = $(htmlString);
-		htmlEl.find('style').remove();
-		htmlString = htmlEl.html();
+//			htmlEl.find('style').remove();
+//		htmlString = htmlEl.html();
 
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({
@@ -49,7 +49,6 @@ module.exports = Backbone.View.extend({
 			$(link).click(function(event) {
 				event.preventDefault();
 				var scrollPos = $('#textViewer').offset().top-$(link).offset().top+$(document.body).scrollTop();
-				console.log(scrollPos);
 				$('#textViewer .text-content').animate({
 					scrollTop: scrollPos
 				}, 500);
@@ -68,11 +67,11 @@ module.exports = Backbone.View.extend({
 
 		var htmlString = this.model.get('_source').dokument.html;
 		var htmlEl = $(htmlString);
-		htmlEl.find('style').remove();
-		htmlString = htmlEl.html();
+//		htmlEl.find('style').remove();
+//		htmlString = htmlEl.html();
 
 		htmlString = $.truncate(htmlString, {
-			length: 400
+			length: 300
 		});
 
 		this.$el.html(template({

@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
 				el: this.$el.find('#ngramContianer'),
 				percentagesView: true
 			});
-			this.ngramView.on('updateGraph', this.ngramUpdate, this);
+			this.ngramView.on('updateGraph', this.onNgramUpdate, this);
 		}
 
 		if (this.ngramView.lastQuery != query) {
@@ -74,7 +74,7 @@ module.exports = Backbone.View.extend({
 		}
 	},
 
-	ngramUpdate: function() {
+	onNgramUpdate: function() {
 	},
 
 	initSlider: function() {
