@@ -30,8 +30,8 @@ module.exports = Backbone.View.extend({
 
 		var htmlString = this.model.get('_source').dokument.html;
 		var htmlEl = $(htmlString);
-//			htmlEl.find('style').remove();
-//		htmlString = htmlEl.html();
+
+		htmlString = htmlString.split('<style>').join('<!--').split('</style>').join('-->');
 
 		var template = _.template($("#textViewerTemplate").html());
 		$('#textViewer').html(template({
@@ -66,9 +66,8 @@ module.exports = Backbone.View.extend({
 		var template = _.template($("#listItemTemplate").html());
 
 		var htmlString = this.model.get('_source').dokument.html;
-		var htmlEl = $(htmlString);
-//		htmlEl.find('style').remove();
-//		htmlString = htmlEl.html();
+
+		htmlString = htmlString.split('<style>').join('<!--').split('</style>').join('-->');
 
 		htmlString = $.truncate(htmlString, {
 			length: 300
