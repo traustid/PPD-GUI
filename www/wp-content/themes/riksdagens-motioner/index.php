@@ -28,6 +28,10 @@ get_header(); ?>
 				<div class="twelve columns">
 					<div id="ngramContianer" class="ngram-container"></div>
 
+					<div id="regeringViewContainer">
+						<svg id="regeringChartContainer" width="100%" height="100"></svg>
+					</div>
+
 					<div id="sliderContainer" class="slider-container"></div>
 				</div>
 
@@ -134,6 +138,9 @@ get_header(); ?>
 			<div class="row">
 
 				<div class="twelve columns doc-list list-container"></div>
+
+				<div class="no-results-overlay">No results</div>
+
 				<div class="loading-overlay"></div>
 			
 			</div>
@@ -209,6 +216,8 @@ get_header(); ?>
 				</div>
 
 				<input type="text" class="query-input">
+
+				<a href="#" class="clear-input"><span class="icon-close"></span></a>
 			</div>
 
 		</div>

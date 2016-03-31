@@ -156,7 +156,7 @@ module.exports = Backbone.View.extend({
 				else {
 					return (yRange(d.doc_count));
 				}
-			}, this))
+			}, this));
 	},
 
 	updateGraph: function() {

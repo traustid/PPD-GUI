@@ -16,7 +16,16 @@ module.exports = Backbone.View.extend({
 		'keydown .query-input': 'queryInputKeyDown',
 		'keyup .query-input': 'queryInputKeyUp',
 		'input .query-input': 'queryInputChange',
-		'click .search-button': 'searchButtonClick'
+		'click .search-button': 'searchButtonClick',
+		'click .clear-input': 'clearInputClick'
+	},
+
+	clearInputClick: function(event) {
+		event.preventDefault();
+
+		this.queryInput.val('');
+		this.collection.reset();
+		this.render();
 	},
 
 	searchButtonClick: function() {

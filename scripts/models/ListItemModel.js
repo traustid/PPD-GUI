@@ -12,10 +12,12 @@ module.exports = Backbone.Model.extend({
 		_.each(data.hits, _.bind(function(document) {
 			if (document._source.dokintressent) {		
 				if (document._source.dokintressent.intressent.partibet) {
-					document.parties = [document._source.dokintressent.intressent.partibet];
+					document.parties = [document._source.dokintressent.intressent.partibet.toLowerCase()];
 				}
 				else {		
-					var parties = _.uniq(_.filter(_.pluck(document._source.dokintressent.intressent, 'partibet'), Boolean));
+					var parties = _.uniq(_.filter(_.map(document._source.dokintressent.intressent, function(intressent) {
+						return intressent.partibet ? intressent.partibet.toLowerCase() : undefined;
+					}), Boolean));
 					document.parties = parties;
 				}
 			}

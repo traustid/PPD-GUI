@@ -5,6 +5,7 @@ var $ = require('jquery');
 var SearchInputView = require('./SearchInputView');
 var AppRouter = require('./../router/AppRouter');
 var NgramView = require('./NgramView');
+var RegeringView = require('./RegeringView');
 var SliderView = require('./SliderView');
 var ListView = require('./ListView');
 
@@ -50,6 +51,12 @@ module.exports = Backbone.View.extend({
 
 		if (this.ngramView.lastQuery != query) {
 			this.ngramView.search(query);
+		}
+
+		if (this.regeringView == undefined) {
+			this.regeringView = new RegeringView({
+				el: this.$el.find('#regeringViewContainer')
+			});
 		}
 
 		if (this.hitList == undefined) {

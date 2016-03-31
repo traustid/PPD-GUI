@@ -5,6 +5,109 @@ var ListCollection = require('./../collections/ListCollection');
 var ListItemView = require('./ListItemView.js');
 
 module.exports = Backbone.View.extend({
+	parties: [
+		{
+			letter: "s",
+			name: "Socialdemokraterna"
+		},
+		{
+			letter: "m",
+			name: "Moderata samlingspartiet"
+		},
+		{
+			letter: "c",
+			name: "Centerpartiet"
+		},
+		{
+			letter: "fp",
+			name: "Folkpartiet"
+		},
+		{
+			letter: "kd",
+			name: "Kristdemokraterna"
+		},
+		{
+			letter: "v",
+			name: "Vänsterpartiet"
+		},
+		{
+			letter: "mp",
+			name: "Miljöpartiet de gröna"
+		},
+		{
+			letter: "vpk",
+			name: "Vänsterpartiet Kommunisterna"
+		},
+		{
+			letter: "sd",
+			name: "Sverigedemokraterna "
+		},
+		{
+			letter: "kds",
+			name: "Kristen demokratisk samling"
+		},
+		{
+			letter: "nyd",
+			name: "Ny Demokrati"
+		},
+		{
+			letter: "l",
+			name: "Liberalerna"
+		},
+		{
+			letter: "apk",
+			name: ""
+		},
+		{
+			letter: "ni",
+			name: ""
+		},
+		{
+			letter: "i",
+			name: ""
+		},
+		{
+			letter: "kr",
+			name: ""
+		},
+		{
+			letter: "bör",
+			name: ""
+		},
+		{
+			letter: "in",
+			name: ""
+		},
+		{
+			letter: "rn",
+			name: ""
+		},
+		{
+			letter: "vp",
+			name: ""
+		},
+		{
+			letter: "e",
+			name: ""
+		},
+		{
+			letter: "nt",
+			name: ""
+		},
+		{
+			letter: "tn",
+			name: ""
+		},
+		{
+			letter: "a",
+			name: ""
+		},
+		{
+			letter: "0",
+			name: ""
+		}
+	],
+
 	initialize: function(options) {
 		this.options = options;
 		this.collection = new ListCollection();
@@ -101,16 +204,22 @@ module.exports = Backbone.View.extend({
 		console.log(this.collection.length);
 		this.$el.find('.list-container').html('');
 
-		_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model, index) {
-			var newEl = $('<div class="list-item"/>');
-			this.$el.find('.list-container').append(newEl);
+		if (this.collection.at(this.resultIndex).get('hits').length == 0) {
+			this.$el.addClass('no-results');
+		}
+		else {
+			this.$el.removeClass('no-results');
+			_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model, index) {
+				var newEl = $('<div class="list-item"/>');
+				this.$el.find('.list-container').append(newEl);
 
-			var itemView = new ListItemView({
-				el: newEl,
-				model: new Backbone.Model(model),
-				router: this.options.router
-			});		
-		}, this));
+				var itemView = new ListItemView({
+					el: newEl,
+					model: new Backbone.Model(model),
+					router: this.options.router
+				});		
+			}, this));
+		}
 
 		this.$el.removeClass('loading');
 	}

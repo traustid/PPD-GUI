@@ -258,6 +258,16 @@ a {
 			}
 		}
 
+		.clear-input {
+			position: absolute;
+
+			right: 15px;
+			top: 15px;
+
+			font-size: 1.4rem;
+
+			text-decoration: none;
+		}
 
 		.query-items {
 			display: inline-block;
@@ -416,9 +426,11 @@ a {
 		padding-top: 40px;
 		padding-bottom: 40px;
 
-		.row {
-			margin-left: 40px;
-			margin-right: 40px;
+		@media (min-width: 768px) {
+			.row {
+				margin-left: 40px;
+				margin-right: 40px;
+			}
 		}
 	}
 
@@ -540,12 +552,38 @@ hr {
 	}
 }
 
+.no-results-overlay {
+	display: none;
+
+	position: absolute;
+
+	top: 98px;
+	left: 41px;
+	right: 41px;
+	bottom: 115px;
+
+	font-weight: bold;
+	color: #999;
+	text-align: center;
+	font-size: 2.3rem;
+	line-height: 200px;
+
+	.no-results & {
+		display: block;
+	}
+}
+
 .doc-list {
 	border: 1px solid #B7B7B7;
 	border-radius: 2px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
 
 	background: #fff;
+
+
+	.no-results & {
+		height: 200px;
+	}
 
 	.list-item {
 		position: relative;
@@ -637,6 +675,11 @@ hr {
 			overflow: hidden;
 
 			.transition(all 200ms ease-in-out);
+
+			@media (max-width: 768px) {
+				margin-left: 25px;
+    			margin-right: 25px;
+    		}
 	
 			.date {
 
@@ -653,14 +696,20 @@ hr {
 
 		&.item-open {
 			margin-top: -5px;
-			margin-left: -10px;
-			margin-right: -10px;
+
+			margin-left: -5px;
+			margin-right: -5px;
 
 			background: #fff;
 
 			border: 1px solid @color-border;
 
 			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.31);
+
+			@media (min-width: 768px) {
+				margin-left: -10px;
+				margin-right: -10px;
+			}
 
 			.item-title {
 				border-bottom: 1px solid @color-border;
