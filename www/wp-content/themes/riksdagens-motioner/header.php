@@ -32,7 +32,7 @@
 			<div class="row">
 				<div class="six columns">
 					<div class="site-name">
-						<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?><a/></h1>
+						<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 
 						<?php
 

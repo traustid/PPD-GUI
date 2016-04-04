@@ -70,7 +70,8 @@ module.exports = Backbone.View.extend({
 		htmlString = htmlString.split('<style>').join('<!--').split('</style>').join('-->');
 
 		htmlString = $.truncate(htmlString, {
-			length: 300
+			length: 300,
+			ellipsis: '<br/><a href="" class="button full-text-button">&hellip;</a>'
 		});
 
 		this.$el.html(template({

@@ -5,10 +5,18 @@ var d3 = require('d3');
 var NgramCollection = require('./../collections/NgramCollection');
 
 module.exports = Backbone.View.extend({
+
+	/*
+		Define colors to use in the graph.
+		Todo: implement D3.js color creation functionality
+	*/
 	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
 
 	graphYearTicks: [1971, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
 
+	/*
+		Graph size and visual margins
+	*/
 	graphWidth: 1120,
 	graphHeight: 500,
 
@@ -22,19 +30,31 @@ module.exports = Backbone.View.extend({
 	startYear: 1971,
 	endYear: 2016,
 
+	/*
+		Initialize the module
+	*/
 	initialize: function(options) {
 		this.options = options;
 		this.percentagesView = this.options.percentagesView ? this.options.percentagesView : false;
 
+		/*
+			Initialize the collection that handles API calls
+		*/
 		this.collection = new NgramCollection();
 		this.collection.on('reset', this.renderGraph, this);
 		this.render();
 	},
 
+	/*
+		Define DOM events
+	*/
 	events: {
 		'click .tabs.ngram-view-mode a.tab': 'ngramViewModeClick'
 	},
 
+	/*
+		DOM event handler: switch between relative and absolute view mode
+	*/
 	ngramViewModeClick: function(event) {
 		this.$el.find('.tabs.ngram-view-mode a.tab').removeClass('selected');
 		$(event.currentTarget).addClass('selected');
@@ -110,6 +130,7 @@ module.exports = Backbone.View.extend({
 			.scale(yRange)
 			.tickSize(1)
 			.orient('left')
+			.innerTickSize(-this.graphWidth)
 			.tickSubdivide(true);
 
 		this.vis.selectAll('g.y.axis')
@@ -176,7 +197,7 @@ module.exports = Backbone.View.extend({
 
 		this.$el.find('.search-term-label').text(this.collection.queryString);
 
-		d3.selectAll('svg > *').remove();
+		d3.selectAll('svg#chartContainer > *').remove();
 
 		this.xRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
 			return bucket.key_as_string.substr(0, 4);
@@ -193,7 +214,9 @@ module.exports = Backbone.View.extend({
 			this.xRangeValues = this.xRangeValues.sort();
 		}
 
-		this.xRange = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
+		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([1970, 2016]);
+
+//		this.xRangeOrdinal = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
 
 		this.createYRangeValues();
 
@@ -202,12 +225,17 @@ module.exports = Backbone.View.extend({
 		var xAxis = d3.svg.axis()
 			.scale(this.xRange)
 			.tickSize(1)
+			.innerTickSize(-(this.graphHeight-this.graphMargins.bottom-this.graphMargins.top))
 			.tickValues(this.graphYearTicks)
-			.tickSubdivide(true);
+			.tickSubdivide(true)
+			.tickFormat(function(d, i) {
+				return d;
+			});
 
 		var yAxis = d3.svg.axis()
 			.scale(yRange)
 			.tickSize(1)
+			.innerTickSize(-this.graphWidth)
 			.orient('left')
 			.tickSubdivide(true);
 
@@ -228,16 +256,18 @@ module.exports = Backbone.View.extend({
 			}, this))
 			.on("mousemove", function() {
 				var xPos = d3.mouse(this)[0];
+/*
 
 				var leftEdges = app.xRange.range();
-				var width = app.xRange.rangeBand();
+				var width = app.xRangeOrdinal.rangeBand();
 
 				var j;
 				for(j=0; xPos > (leftEdges[j] + width); j++) {
 
 				}
-
-		        var year = app.xRange.domain()[j];
+*/
+//		        var year = app.xRangeOrdinal.domain()[j];
+		        var year = Math.round(app.xRange.invert(xPos));
 
 		        app.overlayMessage(year, d3.mouse(this));
 
@@ -389,9 +419,10 @@ module.exports = Backbone.View.extend({
 				.style('opacity', 0);
 		}
 		else {
+
 			this.vis.select('rect.timerange-overlay')
-				.attr('x', this.xRange(values[0]))
-				.attr('width', this.xRange(values[1])-this.xRange(values[0]))
+				.attr('x', this.xRange(values[0]-0.5))
+				.attr('width', this.xRange(values[1]-0.5)-this.xRange(values[0]-0.5))
 				.transition()
 				.duration(100)
 				.style('opacity', 0.05);			

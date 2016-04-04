@@ -28,11 +28,27 @@ get_header(); ?>
 				<div class="twelve columns">
 					<div id="ngramContianer" class="ngram-container"></div>
 
-					<div id="regeringViewContainer">
-						<svg id="regeringChartContainer" width="100%" height="100"></svg>
+					<div id="regeringViewContainer" class="regering-chart-container">
+						<svg id="regeringChartContainer" width="100%" height="30"></svg>
+						<div class="regering-legends">
+							<div class="item">
+								<span class="color" style="background-color: #ffcf72"></span> Socialdemokratisk
+							</div>
+							<div class="item">
+								<span class="color" style="background-color: #d2ff72"></span> Center
+							</div>
+							<div class="item">
+								<span class="color" style="background-color: #adcdee"></span> Liberal
+							</div>
+							<div class="item">
+								<span class="color" style="background-color: #f49df1"></span> Moderat
+							</div>
+							<a href="https://sv.wikipedia.org/wiki/Sveriges_regering" target="_blank">Wikipedia: Sveriges regering</a>
+						</div>
 					</div>
 
 					<div id="sliderContainer" class="slider-container"></div>
+
 				</div>
 
 			</div>
@@ -147,6 +163,7 @@ get_header(); ?>
 
 			<div class="row" style="margin-top: 20px">
 				<div class="twelve columns text-center">
+					<p class="page-info"></p>
 					<a class="button button-primary load-more-button">Load more</a>
 				</div>
 			</div>
@@ -166,7 +183,7 @@ get_header(); ?>
 			<div class="title-attribs">
 				<% if (model.get('parties').length > 0) { %>
 					<% _.each(model.get('parties'), function(party) { %>
-						<div class="party-letter"><%= party %></div>
+						<div class="party-letter"><%= party.toUpperCase() %></div>
 					<% }); %>
 				<% } %>
 				<%= model.get('_source').dokument.dateFormatted %>

@@ -131,13 +131,13 @@ module.exports = Backbone.View.extend({
 		this.$el.find('.tabs.result-tabs a.tab').removeClass('selected');
 		$(event.currentTarget).addClass('selected');
 
-		this.resultIndex = $(event.currentTarget).data('resultindex');
-		this.collection.resultindex = this.resultindex;
+		this.resultIndex = $(event.currentTarget).data('result-index');
+		this.collection.resultIndex = this.resultIndex;
 		this.renderList();
 	},
 
 	loadMoreClick: function() {
-		this.collection.addPage();
+		this.collection.addPage(this.resultIndex);
 	},
 
 	renderUi: function() {
@@ -167,17 +167,8 @@ module.exports = Backbone.View.extend({
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
-			var filterStrings = [];
-			if (model.get('filters') && model.get('filters').length > 0) {
-				filterStrings = _.map(model.get('filters'), function(filter) {
-					var filterString = '';
-					for (var name in filter) {
-						filterString += name+':('+(filter[name].join(','))+')';
-					}
-					return filterString;
-				});
-			}
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-resultindex="'+index+'"><span class="line-color" style="border-color: '+this.options.colors[index]+'"></span>'+model.get('search_query')+' '+filterStrings.join(' ')+'</a>';
+
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.options.colors[index]+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 
@@ -186,7 +177,7 @@ module.exports = Backbone.View.extend({
 
 	hitsUpdate: function() {
 		var newHits = this.collection.at(this.resultIndex).get('hits');
-		newHits = _.rest(newHits, this.collection.pageIndex);
+		newHits = _.rest(newHits, this.collection.at(this.resultIndex).get('from_index'));
 
 		_.each(newHits, _.bind(function(model, index) {
 			var newEl = $('<div class="list-item"/>');
@@ -198,12 +189,13 @@ module.exports = Backbone.View.extend({
 				router: this.options.router
 			});		
 		}, this));
+
+		this.$el.find('.page-info').html(' '+Number(this.collection.at(this.resultIndex).get('from_index')+20)+' of '+this.collection.at(this.resultIndex).get('total_hit_count'));
 	},
 
 	renderList: function() {
-		console.log(this.collection.length);
 		this.$el.find('.list-container').html('');
-
+		console.log(this.collection.at(this.resultIndex))
 		if (this.collection.at(this.resultIndex).get('hits').length == 0) {
 			this.$el.addClass('no-results');
 		}
@@ -220,6 +212,9 @@ module.exports = Backbone.View.extend({
 				});		
 			}, this));
 		}
+
+
+		this.$el.find('.page-info').html(' '+Number(this.collection.at(this.resultIndex).get('from_index')+20)+' of '+this.collection.at(this.resultIndex).get('total_hit_count'));
 
 		this.$el.removeClass('loading');
 	}

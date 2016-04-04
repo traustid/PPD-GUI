@@ -130,7 +130,10 @@ a {
 .header {
 	height: 280px;
 
-	background: @color-background-gray;
+	background-color: @color-background-gray;
+	background-image: url('img/site-header.jpg');
+	background-size: cover;
+	background-position: center;
 
 	border-bottom: 1px solid @color-border;
 
@@ -164,7 +167,7 @@ a {
 
 			font-size: 3.4rem;
 			font-weight: bold;
-			color: #5d5d5d;
+			color: #fff;
 			font-family: 'Lora', serif;
 
 			.transition(all 300ms ease-in-out);
@@ -175,7 +178,7 @@ a {
 		}
 
 		.sub {
-			color: #5d5d5d;
+			color: #fff;
 			font-size: 2rem;
 
 			.transition(all 300ms ease-in-out);
@@ -212,12 +215,12 @@ a {
 				margin-right: 35px;
 
 				a {
-					color: #000;
+					color: #fff;
 					text-decoration: none;
 					font-weight: bold;
 				}
 
-				&.current-menu-item {
+				&.current-menu-item, &.current_page_item {
 					border-bottom: 4px solid @color-blue;
 				}
 			}
@@ -906,6 +909,62 @@ hr {
 					opacity: 1;
 				}
 			}
+		}
+	}
+}
+
+.regering-chart-container {
+	margin-top: 10px;
+
+	.regering-legends {
+		margin-left: 50px;
+
+		a {
+			float: right;
+
+			font-size: 12px;
+		}
+
+		.item {
+			display: inline-block;
+			font-size: 14px;
+			margin-right: 20px;
+
+			.color {
+				display: inline-block;
+				width: 14px;
+				height: 14px;
+				border-radius: 2px;
+				margin-right: 2px;
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
+}
+
+.axis {
+
+	line {
+		stroke-width: 0.5;
+		stroke: #000;
+		opacity: 0.5;
+	}
+
+	text {
+		fill: #5D5D5D;
+		font-size: 14px;
+	}
+
+	&.x {
+		text {
+			.transform(translateY(5px));
+		}
+	}
+
+	&.y {
+		text {
+			.transform(translateX(-5px));
 		}
 	}
 }

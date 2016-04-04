@@ -5,13 +5,29 @@ var d3 = require('d3');
 
 module.exports = Backbone.View.extend({
 	graphWidth: 1120,
-	graphHeight: 500,
+	graphHeight: 26,
+
+	colors: {
+		S: '#ffcf72',
+		C: '#d2ff72',
+		L: '#adcdee',
+		M: '#f49df1'
+	},
+
+	graphMargins: {
+		top: 20,
+		right: 0,
+		bottom: 20,
+		left: 50
+	},
 
 	startYear: 1971,
 	endYear: 2016,
 
 	initialize: function(options) {
 		this.options = options;
+
+		this.render();
 
 		this.collection = new Backbone.Collection();
 		this.collection.url = 'regering.json';
@@ -22,40 +38,74 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
-		this.render();
+		console.log('RegeringView:renderGraph');
 
 		var app = this;
 
 		this.graphWidth = this.$el.parent().width();
-		this.graphHeight = (this.graphWidth/1120) * 500;
 
 		this.xRangeValues = _.map(this.collection.models, function(model) {
 			return model.get('from').substr(0, 4);
 		});
 
-		this.xRange = d3.scale.ordinal().rangeRoundBands([0, this.graphWidth], 0.1).domain(this.xRangeValues);
+		if (this.collection.length > 1) {
+			this.collection.each(_.bind(function(model) {
+				this.xRangeValues = _.union(
+					this.xRangeValues, 
+					_.map(this.collection.at(1).get('buckets'), function(bucket) {
+						return bucket.key_as_string.substr(0, 4);
+					})
+				);
+			}, this));
+			this.xRangeValues = this.xRangeValues.sort();
+		}
+
+		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([1970, 2016]);
 
 		this.vis.selectAll('rect')
 			.data(this.collection.models)
 			.enter()
 			.append('rect')
-			.attr('class', 'point')
-			.attr('fill', '#333')
-			.attr('cx', function (d) {
-				console.log(d);
-				console.log(d.get('from'));
-				return app.xRange(Number(d.get('from').substr(0, 4)));
-			});
+			.attr('x', function (d) {
+				console.log('cx');
+				return app.xRange(Number(d.get('from').substr(0, 4)))-1;
+			})
+			.attr('y', 0)
+			.attr('width', function (d) {
+				return app.xRange(Number(d.get('to').substr(0, 4)))-(app.xRange(Number(d.get('from').substr(0, 4))))+1;
+			})
+			.attr('height', this.graphHeight)
+			.style('fill', _.bind(function(d) {
+				return this.colors[d.get('code')];
+			}, this))
+			;
+
+		this.vis.selectAll('text')
+			.data(this.collection.models)
+			.enter()
+			.append('text')
+			.attr('x', function (d) {
+				console.log('cx');
+				return app.xRange(Number(d.get('from').substr(0, 4)))+8;
+			})
+			.attr('y', 18)
+			.text(function(d) {
+				return d.get('code');
+			})
+			.style('fill', '#666')
+			.style('font-size', '12px')
+			;
 
 		this.trigger('renderGraph');
 	},
 
 	render: function() {
+		console.log('RegeringView:render');
 		this.vis = d3.select('#regeringChartContainer');
 
 		window.onresize = _.bind(function() {
 			if (this.collection.length > 0) {
-				this.renderGraph();
+//				this.renderGraph();
 			}
 		}, this);
 	}
