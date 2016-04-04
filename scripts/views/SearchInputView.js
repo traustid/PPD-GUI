@@ -149,9 +149,20 @@ module.exports = Backbone.View.extend({
 				$(item).removeClass('form-open');
 			}, this));
 
+			$(item).find('.query-form-input').keyup(_.bind(function() {
+				if (event.keyCode == 13) {
+					this.updateForm($(item).data('index'));
+					$(item).removeClass('form-open');
+
+					this.searchButtonClick();
+				}
+			}, this));
+
 			$(item).find('.form-save-button').click(_.bind(function() {
 				this.updateForm($(item).data('index'));
 				$(item).removeClass('form-open');
+
+				this.searchButtonClick();
 			}, this));
 		}, this));
 

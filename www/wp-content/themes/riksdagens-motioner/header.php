@@ -26,6 +26,8 @@
 <div id="appViewContainer">
 
 	<header class="header">
+
+		<div 
 		
 		<div class="container">
 			

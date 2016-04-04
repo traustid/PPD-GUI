@@ -181,11 +181,7 @@ get_header(); ?>
 
 			<div class="title"><strong><%= model.get('_source').dokument.titel %></strong> <%= model.get('_source').dokument.subtitel %></div>
 			<div class="title-attribs">
-				<% if (model.get('parties').length > 0) { %>
-					<% _.each(model.get('parties'), function(party) { %>
-						<div class="party-letter"><%= party.toUpperCase() %></div>
-					<% }); %>
-				<% } %>
+				<%= partyLetters %>
 				<%= model.get('_source').dokument.dateFormatted %>
 			</div>
 		</a>
@@ -287,7 +283,7 @@ get_header(); ?>
 					</div>
 					<div class="row form-footer">
 						<div class="twelve columns">
-							<a class="button button-primary form-save-button">Save</a>
+							<a class="button button-primary form-save-button">Update</a>
 							<a class="button remove-button">Remove</a>
 							<a class="button form-cancel-button u-pull-right">Cancel</a>
 						</div>
