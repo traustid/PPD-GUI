@@ -110,6 +110,15 @@ function riksdagens_motioner_widgets_init() {
 		'after_title'   => '</h2>',
 	) );
 	register_sidebar( array(
+		'name'          => esc_html__( 'Front page top', 'riksdagens-motioner' ),
+		'id'            => 'front-page-top',
+		'description'   => '',
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h3 class="widget-title">',
+		'after_title'   => '</h3>',
+	) );
+	register_sidebar( array(
 		'name'          => esc_html__( 'Front page 1', 'riksdagens-motioner' ),
 		'id'            => 'front-page-1',
 		'description'   => '',
@@ -130,6 +139,15 @@ function riksdagens_motioner_widgets_init() {
 	register_sidebar( array(
 		'name'          => esc_html__( 'Footer', 'riksdagens-motioner' ),
 		'id'            => 'footer',
+		'description'   => '',
+		'before_widget' => '',
+		'after_widget'  => '',
+		'before_title'  => '<h3 class="widget-title">',
+		'after_title'   => '</h3>',
+	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer right', 'riksdagens-motioner' ),
+		'id'            => 'footer-right',
 		'description'   => '',
 		'before_widget' => '',
 		'after_widget'  => '',

@@ -92,6 +92,14 @@ get_header(); ?>
 					get_template_part( 'template-parts/content', 'none' );
 
 				endif; ?>
+				<br/>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="twelve columns">
+
+				<?php dynamic_sidebar( 'front-page-top' ); ?>
 
 			</div>
 		</div>

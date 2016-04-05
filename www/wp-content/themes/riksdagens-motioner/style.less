@@ -124,7 +124,7 @@ a {
 
 .slider-container {
 	margin-top: 40px;
-	padding: 0 40px 0 75px;
+	padding: 0 0px 0 75px;
 }
 
 .header {
@@ -835,6 +835,17 @@ hr {
 		border-top: 1px solid @color-border;
     	background: @color-background-gray;
 	}
+
+	.logo-area {
+		margin-top: -9px;
+		margin-bottom: -16px;
+
+		text-align: right;
+
+		img:not(:first-child) {
+			margin-left: 30px;
+		}
+	}
 }
 
 .tabs {
@@ -959,7 +970,7 @@ hr {
 	line {
 		stroke-width: 0.5;
 		stroke: #000;
-		opacity: 0.5;
+		opacity: 0.2;
 	}
 
 	text {
@@ -977,5 +988,15 @@ hr {
 		text {
 			.transform(translateX(-5px));
 		}
+	}
+}
+
+.es-searches-list {
+	li {
+		display: inline-block;
+
+		margin: 0 10px 0 0;
+
+		list-style: none;
 	}
 }

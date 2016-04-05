@@ -411,6 +411,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	setTimeOverlay: function(values) {
+		console.log(values);
 		this.timeOverlay = values;
 		if (this.timeOverlay[0] == this.startYear && this.timeOverlay[1] == this.endYear) {
 			this.vis.select('rect.timerange-overlay')
@@ -421,8 +422,8 @@ module.exports = Backbone.View.extend({
 		else {
 
 			this.vis.select('rect.timerange-overlay')
-				.attr('x', this.xRange(values[0]-0.5))
-				.attr('width', this.xRange(values[1]-0.5)-this.xRange(values[0]-0.5))
+				.attr('x', this.xRange(Number(values[0])+0.5))
+				.attr('width', this.xRange(Number(values[1])-0.5)-this.xRange(Number(values[0])+0.5))
 				.transition()
 				.duration(100)
 				.style('opacity', 0.05);			

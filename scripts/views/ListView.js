@@ -92,7 +92,7 @@ module.exports = Backbone.View.extend({
 
 	renderList: function() {
 		this.$el.find('.list-container').html('');
-		console.log(this.collection.at(this.resultIndex))
+
 		if (this.collection.at(this.resultIndex).get('hits').length == 0) {
 			this.$el.addClass('no-results');
 		}

@@ -190,7 +190,6 @@ module.exports = Backbone.View.extend({
 		if (this.model.get('parties').length > 0) {
 			partyLetters = _.map(this.model.get('parties'), _.bind(function(party) {
 				var partyItem = _.findWhere(this.parties, {letter: party.toLowerCase()});
-				console.log(partyItem);
 				if (partyItem.logo) {
 					return '<div title="'+partyItem.name+'" class="party-letter image" style="background-image: url(img/'+partyItem.logo+')"></div>';
 				}
