@@ -5,118 +5,6 @@ var _ = require('underscore');
 require('../lib/jquery.truncate');
 
 module.exports = Backbone.View.extend({
-	parties: [
-		{
-			letter: "s",
-			name: "Socialdemokraterna",
-			logo: "partylogo-s.png"
-		},
-		{
-			letter: "m",
-			name: "Moderata samlingspartiet",
-			logo: "partylogo-m.png"
-		},
-		{
-			letter: "c",
-			name: "Centerpartiet",
-			logo: "partylogo-c.png"
-		},
-		{
-			letter: "fp",
-			name: "Folkpartiet",
-			logo: "partylogo-fp.png"
-		},
-		{
-			letter: "kd",
-			name: "Kristdemokraterna",
-			logo: "partylogo-kd.png"
-		},
-		{
-			letter: "v",
-			name: "Vänsterpartiet",
-			logo: "partylogo-v.png"
-		},
-		{
-			letter: "mp",
-			name: "Miljöpartiet de gröna",
-			logo: "partylogo-mp.png"
-		},
-		{
-			letter: "vpk",
-			name: "Vänsterpartiet Kommunisterna"
-		},
-		{
-			letter: "sd",
-			name: "Sverigedemokraterna ",
-			logo: "partylogo-sd.png"
-		},
-		{
-			letter: "kds",
-			name: "Kristen demokratisk samling"
-		},
-		{
-			letter: "nyd",
-			name: "Ny Demokrati",
-			logo: "partylogo-nyd.png"
-		},
-		{
-			letter: "l",
-			name: "Liberalerna"
-		},
-		{
-			letter: "apk",
-			name: "Arbetarpartiet kommunisterna"
-		},
-		{
-			letter: "ni",
-			name: ""
-		},
-		{
-			letter: "i",
-			name: ""
-		},
-		{
-			letter: "kr",
-			name: ""
-		},
-		{
-			letter: "bör",
-			name: ""
-		},
-		{
-			letter: "in",
-			name: ""
-		},
-		{
-			letter: "rn",
-			name: ""
-		},
-		{
-			letter: "vp",
-			name: "Vänsterpartiet"
-		},
-		{
-			letter: "e",
-			name: ""
-		},
-		{
-			letter: "nt",
-			name: ""
-		},
-		{
-			letter: "tn",
-			name: ""
-		},
-		{
-			letter: "a",
-			name: ""
-		},
-		{
-			letter: "0",
-			name: ""
-		}
-	],
-
 	initialize: function(options) {
 		this.options = options;
 		this.render();
@@ -189,7 +77,7 @@ module.exports = Backbone.View.extend({
 		var partyLetters = '';
 		if (this.model.get('parties').length > 0) {
 			partyLetters = _.map(this.model.get('parties'), _.bind(function(party) {
-				var partyItem = _.findWhere(this.parties, {letter: party.toLowerCase()});
+				var partyItem = _.findWhere(this.options.parties, {letter: party.toLowerCase()});
 				if (partyItem) {				
 					if (partyItem.logo) {
 						return '<div title="'+partyItem.name+'" class="party-letter image" style="background-image: url(img/'+partyItem.logo+')"></div>';

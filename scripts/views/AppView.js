@@ -10,6 +10,118 @@ var SliderView = require('./SliderView');
 var ListView = require('./ListView');
 
 module.exports = Backbone.View.extend({
+	parties: [
+		{
+			letter: "s",
+			name: "Socialdemokraterna",
+			logo: "partylogo-s.png"
+		},
+		{
+			letter: "m",
+			name: "Moderata samlingspartiet",
+			logo: "partylogo-m.png"
+		},
+		{
+			letter: "c",
+			name: "Centerpartiet",
+			logo: "partylogo-c.png"
+		},
+		{
+			letter: "fp",
+			name: "Folkpartiet",
+			logo: "partylogo-fp.png"
+		},
+		{
+			letter: "kd",
+			name: "Kristdemokraterna",
+			logo: "partylogo-kd.png"
+		},
+		{
+			letter: "v",
+			name: "Vänsterpartiet",
+			logo: "partylogo-v.png"
+		},
+		{
+			letter: "mp",
+			name: "Miljöpartiet de gröna",
+			logo: "partylogo-mp.png"
+		},
+		{
+			letter: "vpk",
+			name: "Vänsterpartiet Kommunisterna"
+		},
+		{
+			letter: "sd",
+			name: "Sverigedemokraterna ",
+			logo: "partylogo-sd.png"
+		},
+		{
+			letter: "kds",
+			name: "Kristen demokratisk samling"
+		},
+		{
+			letter: "nyd",
+			name: "Ny Demokrati",
+			logo: "partylogo-nyd.png"
+		},
+		{
+			letter: "l",
+			name: "Liberalerna"
+		},
+		{
+			letter: "apk",
+			name: "Arbetarpartiet kommunisterna"
+		},
+		{
+			letter: "ni",
+			name: ""
+		},
+		{
+			letter: "i",
+			name: ""
+		},
+		{
+			letter: "kr",
+			name: ""
+		},
+		{
+			letter: "bör",
+			name: ""
+		},
+		{
+			letter: "in",
+			name: ""
+		},
+		{
+			letter: "rn",
+			name: ""
+		},
+		{
+			letter: "vp",
+			name: "Vänsterpartiet"
+		},
+		{
+			letter: "e",
+			name: ""
+		},
+		{
+			letter: "nt",
+			name: ""
+		},
+		{
+			letter: "tn",
+			name: ""
+		},
+		{
+			letter: "a",
+			name: ""
+		},
+		{
+			letter: "0",
+			name: ""
+		}
+	],
+
 	startYear: 1971,
 	endYear: 2016,
 
@@ -63,7 +175,8 @@ module.exports = Backbone.View.extend({
 			this.hitList = new ListView({
 				el: this.$el.find('#hitlistContainer'),
 				router: this.router,
-				colors: this.ngramView.colors
+				colors: this.ngramView.colors,
+				parties: this.parties
 			});
 		}
 
@@ -102,7 +215,8 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		this.searchInput = new SearchInputView({
-			el: this.$el.find('#searchInput')
+			el: this.$el.find('#searchInput'),
+			parties: this.parties
 		});
 
 		this.searchInput.on('search', _.bind(function(event) {

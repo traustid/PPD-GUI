@@ -199,6 +199,16 @@ module.exports = Backbone.View.extend({
 
 		d3.selectAll('svg#chartContainer > *').remove();
 
+		if (this.collection.length == 0) {
+			this.trigger('zeroresults');
+			this.$el.addClass('no-results');
+
+			return;
+		}
+		else {
+			this.$el.removeClass('no-results');
+		}
+
 		this.xRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
 			return bucket.key_as_string.substr(0, 4);
 		});

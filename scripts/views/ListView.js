@@ -83,11 +83,16 @@ module.exports = Backbone.View.extend({
 			var itemView = new ListItemView({
 				el: newEl,
 				model: new Backbone.Model(model),
-				router: this.options.router
+				router: this.options.router,
+				parties: this.options.parties
 			});		
 		}, this));
 
-		this.$el.find('.page-info').html(' '+Number(this.collection.at(this.resultIndex).get('from_index')+20)+' of '+this.collection.at(this.resultIndex).get('total_hit_count'));
+		this.$el.find('.page-info').html(' '+(
+			Number(this.collection.at(this.resultIndex).get('from_index')+20) > this.collection.at(this.resultIndex).get('total_hit_count') ? 
+			this.collection.at(this.resultIndex).get('total_hit_count') :
+			Number(this.collection.at(this.resultIndex).get('from_index')+20)
+		)+' av '+this.collection.at(this.resultIndex).get('total_hit_count'));
 	},
 
 	renderList: function() {
@@ -105,13 +110,18 @@ module.exports = Backbone.View.extend({
 				var itemView = new ListItemView({
 					el: newEl,
 					model: new Backbone.Model(model),
-					router: this.options.router
+					router: this.options.router,
+					parties: this.options.parties
 				});		
 			}, this));
 		}
 
 
-		this.$el.find('.page-info').html(' '+Number(this.collection.at(this.resultIndex).get('from_index')+20)+' of '+this.collection.at(this.resultIndex).get('total_hit_count'));
+		this.$el.find('.page-info').html(' '+(
+			Number(this.collection.at(this.resultIndex).get('from_index')+20) > this.collection.at(this.resultIndex).get('total_hit_count') ? 
+			this.collection.at(this.resultIndex).get('total_hit_count') :
+			Number(this.collection.at(this.resultIndex).get('from_index')+20)
+		)+' av '+this.collection.at(this.resultIndex).get('total_hit_count'));
 
 		this.$el.removeClass('loading');
 	}

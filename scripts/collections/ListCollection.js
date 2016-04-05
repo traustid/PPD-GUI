@@ -39,29 +39,32 @@ module.exports = Backbone.Collection.extend({
 	},
 
 	addPage: function(resultIndex) {
-		this.at(resultIndex).set('from_index', this.at(resultIndex).get('from_index')+20);
-		this.searchData.fromIndex = this.at(resultIndex).get('from_index');
+		if (this.at(resultIndex).get('from_index')+20 < this.at(resultIndex).get('total_hit_count')) {
+			
+			this.at(resultIndex).set('from_index', this.at(resultIndex).get('from_index')+20);
+			this.searchData.fromIndex = this.at(resultIndex).get('from_index');
 
-		var tempCollection = new Backbone.Collection();
-		tempCollection.model = ListItemModel;
-		tempCollection.url = this.url;
-		tempCollection.on('reset', _.bind(function()  {
+			var tempCollection = new Backbone.Collection();
+			tempCollection.model = ListItemModel;
+			tempCollection.url = this.url;
+			tempCollection.on('reset', _.bind(function()  {
 
-			this.at(resultIndex).set('hits', _.union(this.at(resultIndex).get('hits'), tempCollection.at(0).get('hits')));
+				this.at(resultIndex).set('hits', _.union(this.at(resultIndex).get('hits'), tempCollection.at(0).get('hits')));
 
-			this.trigger('hitsupdate');
-		}, this));
+				this.trigger('hitsupdate');
+			}, this));
 
-		var searchData = {
-			searchPhrase: this.at(resultIndex).get('search_query')+' '+this.filtersToString(this.at(resultIndex).get('filters')),
-			startDate: this.searchData.startDate,
-			endDate: this.searchData.endDate,
-			fromIndex: this.searchData.fromIndex
-		};
+			var searchData = {
+				searchPhrase: this.at(resultIndex).get('search_query')+' '+this.filtersToString(this.at(resultIndex).get('filters')),
+				startDate: this.searchData.startDate,
+				endDate: this.searchData.endDate,
+				fromIndex: this.searchData.fromIndex
+			};
 
-		tempCollection.fetch({
-			data: searchData,
-			reset: true
-		});
+			tempCollection.fetch({
+				data: searchData,
+				reset: true
+			});
+		}
 	}
 });

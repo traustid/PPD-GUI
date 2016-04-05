@@ -249,13 +249,6 @@ get_header(); ?>
 	
 </script>
 
-<script id="queryItemTemplate" type="text/template">
-	<a href="#" class="item">
-		<div class="label"><%= queryString %></div>
-
-		<div class="remove-button">x</div>
-	</a>
-</script>
 
 <script id="queryItemsTemplate" type="text/template">
 
@@ -264,7 +257,7 @@ get_header(); ?>
 			<div class="label">
 				<%= model.get('queryValue') %>
 
-				<!--<div class="remove-button"></div>-->
+				<a class="remove-button"><span class="icon-close"></span></a>
 			</div>
 
 			<div class="query-form">
@@ -277,7 +270,14 @@ get_header(); ?>
 
 							<label>Parties:</label>
 							<div class="query-parties check-list">
+								<% _.each(parties, function(party) { 
+									if (party.name != '') { %>
 
+									<label><input type="checkbox" name="query-parties" value="<%= party.letter %>" <%= model.get('parties').indexOf(party.letter.toUpperCase()) > -1 ? 'checked' : '' %>><%= party.name %> (<strong><%= party.letter.toUpperCase() %></strong>)</label>
+
+									<% }
+								}) %>
+<!--
 								<label><input type="checkbox" name="query-parties" value="C" <%= model.get('parties').indexOf('C') > -1 ? 'checked' : '' %>>Centerpartiet (<strong>C</strong>)</label>
 								<label><input type="checkbox" name="query-parties" value="KD" <%= model.get('parties').indexOf('KD') > -1 ? 'checked' : '' %>>Kristdemokraterna (<strong>KD</strong>)</label>
 								<label><input type="checkbox" name="query-parties" value="L" <%= model.get('parties').indexOf('L') > -1 ? 'checked' : '' %>>Liberalerna (<strong>L</strong>)</label>
@@ -286,6 +286,7 @@ get_header(); ?>
 								<label><input type="checkbox" name="query-parties" value="S" <%= model.get('parties').indexOf('S') > -1 ? 'checked' : '' %>>Socialdemokraterna (<strong>S</strong>)</label>
 								<label><input type="checkbox" name="query-parties" value="SD" <%= model.get('parties').indexOf('SD') > -1 ? 'checked' : '' %>>Sverigedemokraterna (<strong>SD</strong>)</label>
 								<label><input type="checkbox" name="query-parties" value="V" <%= model.get('parties').indexOf('V') > -1 ? 'checked' : '' %>>Vänsterpartiet (<strong>V</strong>)</label>
+-->
 							</div>
 						</div>
 					</div>
@@ -316,6 +317,8 @@ get_header(); ?>
 	<svg id="chartContainer" width="100%" height="500"></svg>
 
 	<div class="info-overlay"></div>
+
+	<div class="no-results-overlay"><span class="label">No results</span></div>
 
 	<div class="loading-overlay"></div>
 	

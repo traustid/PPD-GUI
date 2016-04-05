@@ -3,7 +3,9 @@ var _ = require('underscore');
 var $ = require('jquery');
 
 module.exports = Backbone.View.extend({
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
+
 		this.collection = new Backbone.Collection();
 		this.collection.on('add', this.queryCollectionChange, this);
 		this.collection.on('remove', this.queryCollectionChange, this);
@@ -126,7 +128,9 @@ module.exports = Backbone.View.extend({
 		this.collection.add({
 			queryValue: queryValue,
 			queryString: queryString,
-			parties: partyArray
+			parties: _.map(partyArray, function(party) {
+				return party.toUpperCase();
+			})
 		});
 	},
 
@@ -134,7 +138,8 @@ module.exports = Backbone.View.extend({
 		var template = _.template($("#queryItemsTemplate").html());
 
 		this.queryItems.html(template({
-			models: this.collection.models
+			models: this.collection.models,
+			parties: this.options.parties
 		}));
 
 		_.each(this.queryItems.find('.item'), _.bind(function(item) {
@@ -177,7 +182,7 @@ module.exports = Backbone.View.extend({
 
 		_.map(form.find('.query-parties input'), _.bind(function(input) {
 			if (input.checked) {
-				selectedParties.push($(input).val());
+				selectedParties.push($(input).val().toUpperCase());
 			}
 		}, this));
 
