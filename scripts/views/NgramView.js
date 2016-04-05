@@ -382,7 +382,7 @@ module.exports = Backbone.View.extend({
 				.transition()
 				.delay(750)
 				.duration(200)
-				.attr('r', 3);
+				.attr('r', 2);
 
 			data.exit().attr('class', 'exit').transition(750)
 				.ease('linear')
@@ -432,8 +432,8 @@ module.exports = Backbone.View.extend({
 		else {
 
 			this.vis.select('rect.timerange-overlay')
-				.attr('x', this.xRange(Number(values[0])+0.5))
-				.attr('width', this.xRange(Number(values[1])-0.5)-this.xRange(Number(values[0])+0.5))
+				.attr('x', this.xRange(Number(values[0])+0.2))
+				.attr('width', this.xRange(Number(values[1])-0.2)-this.xRange(Number(values[0])+0.2))
 				.transition()
 				.duration(100)
 				.style('opacity', 0.05);			

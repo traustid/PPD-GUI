@@ -41,6 +41,7 @@ module.exports = Backbone.View.extend({
 			step: 1,
 			behaviour: 'drag',
 			connect: true,
+			margin: 1,
 			range: {
 				'min': this.options.range[0],
 				'max':  this.options.range[1]

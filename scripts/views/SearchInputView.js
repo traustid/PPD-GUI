@@ -148,6 +148,11 @@ module.exports = Backbone.View.extend({
 			}, this));
 			$(item).find('.label').click(_.bind(function() {
 				$(item).toggleClass('form-open');
+
+				if ($(item).hasClass('form-open')) {
+					$(item).find('.query-form-input').focus();
+					$(item).find('.query-form-input')[0].setSelectionRange(0, $(item).find('.query-form-input').val().length);
+				}
 			}, this));
 
 			$(item).find('.form-cancel-button').click(_.bind(function() {
