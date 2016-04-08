@@ -264,7 +264,7 @@ module.exports = Backbone.View.extend({
 			.on("mouseleave", _.bind(function() {
 				this.$el.find('.info-overlay').removeClass('visible');
 			}, this))
-			.on("mousemove", function() {
+			.on("mousemove", function(event) {
 				var xPos = d3.mouse(this)[0];
 /*
 
@@ -277,9 +277,10 @@ module.exports = Backbone.View.extend({
 				}
 */
 //		        var year = app.xRangeOrdinal.domain()[j];
+console.log(d3.event);
 		        var year = Math.round(app.xRange.invert(xPos));
 
-		        app.overlayMessage(year, d3.mouse(this));
+		        app.overlayMessage(year, [d3.event.clientX, d3.event.clientY]);
 
 				app.verticalLine.attr("transform", function () {
 					return "translate(" + xPos + ",0)";
@@ -486,12 +487,22 @@ module.exports = Backbone.View.extend({
 			}
 		}));
 
+		var xPos = (position[0]+60);
+		var yPos = (position[1]);
+
+		console.log(xPos+this.$el.find('.info-overlay').width());
+		console.log($(window).width());
+
+		if (xPos+this.$el.find('.info-overlay').width() > $(window).width()) {
+			xPos = xPos-this.$el.find('.info-overlay').width()-100;
+		}
+
 		this.$el.find('.info-overlay').css({
-			'-webkit-transform': 'translate('+(position[0]+60)+'px, 20px)',
-			'-moz-transform': 'translate('+(position[0]+60)+'px, 20px)',
-			'-ms-transform': 'translate('+(position[0]+60)+'px, 20px)',
-			'-o-transform': 'translate('+(position[0]+60)+'px, 20px)',
-			'transform': 'translate('+(position[0]+60)+'px, 20px)'
+			'-webkit-transform': 'translate('+xPos+'px, '+yPos+'px)',
+			'-moz-transform': 'translate('+xPos+'px, '+yPos+'px)',
+			'-ms-transform': 'translate('+xPos+'px, '+yPos+'px)',
+			'-o-transform': 'translate('+xPos+'px, '+yPos+'px)',
+			'transform': 'translate('+xPos+'px, '+yPos+'px)'
 		})
 	},
 
