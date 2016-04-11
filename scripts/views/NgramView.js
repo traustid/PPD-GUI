@@ -197,7 +197,7 @@ module.exports = Backbone.View.extend({
 
 		this.$el.find('.search-term-label').text(this.collection.queryString);
 
-		d3.selectAll('svg#chartContainer > *').remove();
+//		d3.selectAll('svg#chartContainer > *').remove();
 
 		if (this.collection.length == 0) {
 			this.trigger('zeroresults');
@@ -508,10 +508,13 @@ console.log(d3.event);
 
 	render: function() {
 		var template = _.template($("#ngramViewTemplate").html());
+		console.log(this);
+
 
 		this.$el.html(template({}));
+		this.$el.find('svg.chart-container').attr('id', 'chartContainer'+this.cid);
 
-		this.vis = d3.select('#chartContainer');
+		this.vis = d3.select('#chartContainer'+this.cid);
 
 		window.onresize = _.bind(function() {
 			if (this.collection.length > 0) {

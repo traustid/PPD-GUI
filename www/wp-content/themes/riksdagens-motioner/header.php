@@ -23,40 +23,36 @@
 
 <body <?php body_class(); ?>>
 
-<div id="appViewContainer">
-
-	<header class="header">
-
-		<div 
+<header class="header">
+	
+	<div class="container">
 		
-		<div class="container">
-			
-			<div class="row">
-				<div class="six columns">
-					<div class="site-name">
-						<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
+		<div class="row">
+			<div class="six columns">
+				<div class="site-name">
+					<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 
-						<?php
+					<?php
 
-						$description = get_bloginfo( 'description', 'display' );
-						if ( $description || is_customize_preview() ) : ?>
-							<div class="sub"><?php echo $description; /* WPCS: xss ok. */ ?></p>
-						<?php
-						endif; ?>
-
-					</div>
-				</div>
-
-				<div class="six columns">
-
-					<nav id="site-navigation" class="main-navigation" role="navigation">
-						<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
-					</nav>
+					$description = get_bloginfo( 'description', 'display' );
+					if ( $description || is_customize_preview() ) : ?>
+						<div class="sub"><?php echo $description; /* WPCS: xss ok. */ ?></div>
+					<?php
+					endif; ?>
 
 				</div>
+			</div>
+
+			<div class="six columns">
+
+				<nav id="site-navigation" class="main-navigation" role="navigation">
+					<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_id' => 'primary-menu' ) ); ?>
+				</nav>
 
 			</div>
 
 		</div>
 
-	</header>
+	</div>
+
+</header>
