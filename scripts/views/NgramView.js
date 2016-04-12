@@ -280,19 +280,44 @@ module.exports = Backbone.View.extend({
 				view.verticalLine.attr("transform", function () {
 					return "translate(" + xPos + ",0)";
 				});
+
+				// If we are draging, set the time overlay to current drag range
+				if (view.dragStart) {
+					view.setTimeOverlay([view.dragStart < year ? view.dragStart : year, view.dragStart > year ? view.dragStart : year]);
+				}
 			})
-			.on('click', function(event) {
+			.on('mousedown', function(event) {
 				// Get the current position of the mouse
 				var xPos = d3.mouse(this)[0];
 
 				// Convert x position of the mouse to a year on the x axis using our xRange scale object
 		        var year = Math.round(view.xRange.invert(xPos));
 
-		        console.log('click: '+year);
+		       // set dragStart to know in mousemove handler if we are draging the timerange or not
+		        view.dragStart = year;
+			})
+			.on('mouseup', function(event) {
+				// Get the current position of the mouse
+				var xPos = d3.mouse(this)[0];
 
-		        view.trigger('graphClick', {
-		        	year: year
-		        });
+				// Convert x position of the mouse to a year on the x axis using our xRange scale object
+		        var year = Math.round(view.xRange.invert(xPos));
+
+		        if (view.dragStart) {
+		        	// if we are finishing a drag on the graph, fire a 'timerange' event
+			        view.trigger('timerange', {
+			        	values: [view.dragStart < year ? view.dragStart : year, view.dragStart > year ? view.dragStart : year]
+			        });
+		        }
+		        else {
+		        	// othervise fire a normal 'click' event
+			        view.trigger('graphclick', {
+			        	year: year
+			        });
+		        }
+
+		        // unset dragStart var
+		        view.dragStart = undefined;
 			});
 
 
@@ -440,7 +465,7 @@ module.exports = Backbone.View.extend({
 		if (this.timeOverlay) {
 			this.setTimeOverlay(this.timeOverlay);
 		}
-		this.trigger('renderGraph'); // Trigger 'renderGraph' event.
+		this.trigger('rendergraph'); // Trigger 'renderGraph' event.
 	},
 
 	setTimeOverlay: function(values) {
