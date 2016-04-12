@@ -77,11 +77,17 @@ module.exports = Backbone.View.extend({
 	},
 
 	createLine: function(yProcessor) {
+		/*
+			Generate path data.
+			yProcessor: function that returns value for the y axis
+
+		*/
 		var app = this;
 
 		return d3.svg.line()
 			.interpolate("monotone")
 			.x(function(d) {
+				// Returns a pixel value for the x range based on the corrent year using the xRange scale object
 				return app.xRange(Number(d.key_as_string.substr(0, 4)));
 			})
 			.y(yProcessor)
@@ -189,6 +195,8 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
+		// Render the graph
+
 		this.$el.removeClass('loading');
 		var app = this;
 
@@ -197,8 +205,10 @@ module.exports = Backbone.View.extend({
 
 		this.$el.find('.search-term-label').text(this.collection.queryString);
 
-//		d3.selectAll('svg#chartContainer > *').remove();
+		// Remove all elements from our svg element
+		d3.selectAll('svg#chartContainer'+this.cid+' > *').remove();
 
+		// Check if we have results or not
 		if (this.collection.length == 0) {
 			this.trigger('zeroresults');
 			this.$el.addClass('no-results');
@@ -209,6 +219,7 @@ module.exports = Backbone.View.extend({
 			this.$el.removeClass('no-results');
 		}
 
+		// Collect all x values (year) from the result colleciton
 		this.xRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
 			return bucket.key_as_string.substr(0, 4);
 		});
@@ -224,14 +235,55 @@ module.exports = Backbone.View.extend({
 			this.xRangeValues = this.xRangeValues.sort();
 		}
 
+		// Create x range scale which we will use to position points on the graph
 		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([1970, 2016]);
 
-//		this.xRangeOrdinal = d3.scale.ordinal().rangeRoundBands([this.graphMargins.left, this.graphWidth - this.graphMargins.right], 0.1).domain(this.xRangeValues);
-
+		// Collect all y values from the result collection
 		this.createYRangeValues();
 
+		// Create y range scale which we will use to position points on the graph
 		var yRange = this.createYRange();
 
+		// Create the overlay rectangle which is used to display selected time range on the graph
+		this.vis.append("rect")
+			.attr("class", "timerange-overlay")
+			.attr("x", this.graphMargins.left)
+			.attr("y", this.graphMargins.top)
+			.attr("width", this.graphWidth-this.graphMargins.right-this.graphMargins.left)
+			.attr("height", this.graphHeight-this.graphMargins.bottom-this.graphMargins.top)
+			.style("opacity", 0);
+
+		// Bind mouse events to the graph
+		this.vis
+			.on("mouseenter", _.bind(function() {
+				this.$el.find('.info-overlay').addClass('visible'); // Make the Info/Legends box visibile when the mouse enters the graph
+			}, this))
+			.on("mouseleave", _.bind(function() {
+				this.$el.find('.info-overlay').removeClass('visible'); // Hide the Info/Legends box when the mouse leaves the graph
+			}, this))
+			.on("mousemove", function(event) {
+				/*
+					Move the vertical line on the x axis as the mouse moves on the graph.
+					Also move the Info/Legends box with relevant information about the year under the mouse.
+				*/
+
+				// Get the current position of the mouse
+				var xPos = d3.mouse(this)[0];
+
+				// Convert x position of the mouse to a year on the x axis using our xRange scale object
+		        var year = Math.round(app.xRange.invert(xPos));
+
+		        // Position the Info/Legends box and pass the x mouse position as a year as a parameter
+		        app.overlayMessage(year, [d3.event.clientX, d3.event.clientY]);
+
+		        // Move the vertical line to the x position of the mouse
+				app.verticalLine.attr("transform", function () {
+					return "translate(" + xPos + ",0)";
+				});
+			});
+
+
+		// Create the visual x axis
 		var xAxis = d3.svg.axis()
 			.scale(this.xRange)
 			.tickSize(1)
@@ -241,62 +293,24 @@ module.exports = Backbone.View.extend({
 			.tickFormat(function(d, i) {
 				return d;
 			});
+		this.vis.append('svg:g')
+			.attr('class', 'x axis')
+			.attr('transform', 'translate(0,' + (this.graphHeight - this.graphMargins.bottom) + ')')
+			.call(xAxis);
 
+		// Create the visual x axis
 		var yAxis = d3.svg.axis()
 			.scale(yRange)
 			.tickSize(1)
 			.innerTickSize(-this.graphWidth)
 			.orient('left')
 			.tickSubdivide(true);
-
-		this.vis.append("rect")
-			.attr("class", "timerange-overlay")
-			.attr("x", this.graphMargins.left)
-			.attr("y", this.graphMargins.top)
-			.attr("width", this.graphWidth-this.graphMargins.right-this.graphMargins.left)
-			.attr("height", this.graphHeight-this.graphMargins.bottom-this.graphMargins.top)
-			.style("opacity", 0);
-
-		this.vis
-			.on("mouseenter", _.bind(function() {
-				this.$el.find('.info-overlay').addClass('visible');
-			}, this))
-			.on("mouseleave", _.bind(function() {
-				this.$el.find('.info-overlay').removeClass('visible');
-			}, this))
-			.on("mousemove", function(event) {
-				var xPos = d3.mouse(this)[0];
-/*
-
-				var leftEdges = app.xRange.range();
-				var width = app.xRangeOrdinal.rangeBand();
-
-				var j;
-				for(j=0; xPos > (leftEdges[j] + width); j++) {
-
-				}
-*/
-//		        var year = app.xRangeOrdinal.domain()[j];
-console.log(d3.event);
-		        var year = Math.round(app.xRange.invert(xPos));
-
-		        app.overlayMessage(year, [d3.event.clientX, d3.event.clientY]);
-
-				app.verticalLine.attr("transform", function () {
-					return "translate(" + xPos + ",0)";
-				});
-			});
-
-		this.vis.append('svg:g')
-			.attr('class', 'x axis')
-			.attr('transform', 'translate(0,' + (this.graphHeight - this.graphMargins.bottom) + ')')
-			.call(xAxis);
-
 		this.vis.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + (this.graphMargins.left) + ',0)')
 			.call(yAxis);
 
+		// Add the vertical line to the svg
 		this.verticalLine = this.vis.append('line')
 			.attr({
 				'x1': 0,
@@ -309,14 +323,26 @@ console.log(d3.event);
 			.attr('class', 'verticalLine');
 
 		var addLine = _.bind(function(lineData, color, index) {
+			/*
+				Helper function to create a line on the graph.
 
+				lineData: buckets from the API
+				color: color value for the line
+				index: index of the line in the context of results items from the API (results.data.[...])
+				*/
+
+			/*
+				When the graph renders, y values animate from 0 to the correcct value.
+				In the becinning, we create a path data where y is always 0
+			*/
 			var line1 = this.createLine(_.bind(function(d) {
 					return (yRange(0));
 				}, this));
 
+			// Create path data with correct y values
 			var line = this.createLine(_.bind(function(d) {
-				if (this.percentagesView) {					
-					var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
+				if (this.percentagesView) { // Check if we are rendering relative values to the total document per year or absolute values
+					var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4))); // Get total documents per year
 					var percentage = d.doc_count/totalByYear;
 					return (yRange(percentage));
 				}
@@ -325,30 +351,29 @@ console.log(d3.event);
 				}
 			}, this));
 
-
+			// Appent the path element to the svg object
 			this.vis.append("path")
-				.datum(lineData)
+				.datum(lineData) // set the data/buckets to the path element.
 				.attr("class", "line line-"+index)
 				.attr('fill', 'none')
 				.attr('stroke-width', 2)
 				.attr('stroke', color)
 				.attr("data-index", index)
-				.attr("d", line1)
+				.attr("d", line1) // Set the path data with y values as 0 to the path "d" attribute.
 				.on("mouseenter", function() {
 					app.fadeLines(this);
 				})
 				.on("mouseleave", function() {
 					app.showLines();
 				})
-				.transition()
+				.transition() // Initialize animation.
 				.duration(1000)
-				.attr("d", line);
+				.attr("d", line); // Animate the line to the corrent y values.
 
+			// Appent the small circles to each data point on the line.
 			var circles = this.vis.append('g');
 			var data = circles.selectAll('circle')
 				.data(lineData);
-
-			data.attr('class', 'update');
 
 			data.enter()
 				.append('circle')
@@ -390,39 +415,25 @@ console.log(d3.event);
 				.attr('cy', 0)
 				.style('opacity', 0.2)
 				.remove();
-
-			var tooltip = this.vis.append('g')
-				.attr('class', 'tooltip')
-				.style('display', 'none');
-
-			tooltip.append('rect')
-				.attr('width', 100)
-				.attr('height', 20)
-				.attr('fill', '#333')
-				.style('opacity', 1);
-
-			tooltip.append('text')
-				.attr('x', 50)
-				.attr('dy', '1.2em')
-				.style('text-anchor', 'middle')
-				.attr('fill', 'white')
-				.attr('font-size', '12px');
-
 		}, this);
 
+		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
 			model.set('color', this.colors[index]);
 			addLine(model.get('buckets'), this.colors[index], index);
 		}, this));
 
+		// If the grahp has a set timerange, then adjust the time overlay.
 		if (this.timeOverlay) {
 			this.setTimeOverlay(this.timeOverlay);
 		}
-		this.trigger('renderGraph');
+		this.trigger('renderGraph'); // Trigger 'renderGraph' event.
 	},
 
 	setTimeOverlay: function(values) {
-		console.log(values);
+		/*
+			Adjust the visual time range overlay.
+		*/
 		this.timeOverlay = values;
 		if (this.timeOverlay[0] == this.startYear && this.timeOverlay[1] == this.endYear) {
 			this.vis.select('rect.timerange-overlay')
@@ -454,8 +465,10 @@ console.log(d3.event);
 	},
 
 	overlayMessage: function(year, position) {
+		/*
+			Position the info/legends box for the current year and feed the right data into it.
+		*/
 		var legends = _.map(this.collection.models, _.bind(function(model) {
-
 			var filterStrings = [];
 			if (model.get('filters') && model.get('filters').length > 0) {
 				filterStrings = _.map(model.get('filters'), function(filter) {
@@ -490,9 +503,6 @@ console.log(d3.event);
 		var xPos = (position[0]+60);
 		var yPos = (position[1]);
 
-		console.log(xPos+this.$el.find('.info-overlay').width());
-		console.log($(window).width());
-
 		if (xPos+this.$el.find('.info-overlay').width() > $(window).width()) {
 			xPos = xPos-this.$el.find('.info-overlay').width()-100;
 		}
@@ -507,12 +517,13 @@ console.log(d3.event);
 	},
 
 	render: function() {
+		/*
+			Render the graph.
+		*/
 		var template = _.template($("#ngramViewTemplate").html());
-		console.log(this);
-
 
 		this.$el.html(template({}));
-		this.$el.find('svg.chart-container').attr('id', 'chartContainer'+this.cid);
+		this.$el.find('svg.chart-container').attr('id', 'chartContainer'+this.cid); // Set a unique ID to the graph to enable multiple graphs to be displayed on a single page.
 
 		this.vis = d3.select('#chartContainer'+this.cid);
 

@@ -38,8 +38,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
-		console.log('RegeringView:renderGraph');
-
 		var app = this;
 
 		this.graphWidth = this.$el.parent().width();
@@ -67,7 +65,6 @@ module.exports = Backbone.View.extend({
 			.enter()
 			.append('rect')
 			.attr('x', function (d) {
-				console.log('cx');
 				return app.xRange(Number(d.get('from').substr(0, 4)))-1;
 			})
 			.attr('y', 0)
@@ -85,7 +82,6 @@ module.exports = Backbone.View.extend({
 			.enter()
 			.append('text')
 			.attr('x', function (d) {
-				console.log('cx');
 				return app.xRange(Number(d.get('from').substr(0, 4)))+8;
 			})
 			.attr('y', 18)
@@ -100,7 +96,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
-		console.log('RegeringView:render');
 		this.vis = d3.select('#regeringChartContainer');
 
 		window.onresize = _.bind(function() {

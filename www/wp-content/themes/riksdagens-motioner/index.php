@@ -112,14 +112,18 @@ get_header(); ?>
 		<div class="container default-margins extra-top-margins extra-bottom-margins">
 			
 			<div class="row">
-				<div class="six columns">				
+				<div class="<?php echo is_active_sidebar('front-page-1') && is_active_sidebar('front-page-2') ? 'six' : 'twelve' ?> columns">				
 
-					<?php dynamic_sidebar( 'front-page-1' ); ?>
+					<?php if (is_active_sidebar('front-page-1')) {
+						dynamic_sidebar( 'front-page-1' );
+					} ?>
 
 				</div>
-				<div class="six columns">				
+				<div class="<?php echo is_active_sidebar('front-page-1') && is_active_sidebar('front-page-2') ? 'six' : 'twelve' ?> columns">				
 
-					<?php dynamic_sidebar( 'front-page-2' ); ?>
+					<?php if (is_active_sidebar('front-page-2')) {
+						dynamic_sidebar( 'front-page-2' );
+					} ?>
 
 				</div>
 			</div>

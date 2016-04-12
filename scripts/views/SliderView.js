@@ -50,7 +50,6 @@ module.exports = Backbone.View.extend({
 		this.updateHandleValues();
 
 		this.slider.on('change', _.bind(function(event, ui) {
-			console.log('nouislider:change');
 			this.trigger('change', {
 				values: [Number(this.slider.get()[0]), Number(this.slider.get()[1])]
 			});
