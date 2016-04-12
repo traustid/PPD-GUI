@@ -82,13 +82,13 @@ module.exports = Backbone.View.extend({
 			yProcessor: function that returns value for the y axis
 
 		*/
-		var app = this;
+		var view = this;
 
 		return d3.svg.line()
 			.interpolate("monotone")
 			.x(function(d) {
 				// Returns a pixel value for the x range based on the corrent year using the xRange scale object
-				return app.xRange(Number(d.key_as_string.substr(0, 4)));
+				return view.xRange(Number(d.key_as_string.substr(0, 4)));
 			})
 			.y(yProcessor)
 	},
@@ -198,7 +198,7 @@ module.exports = Backbone.View.extend({
 		// Render the graph
 
 		this.$el.removeClass('loading');
-		var app = this;
+		var view = this;
 
 		this.graphWidth = this.$el.parent().width();
 		this.graphHeight = (this.graphWidth/1120) * 500;
@@ -271,15 +271,28 @@ module.exports = Backbone.View.extend({
 				var xPos = d3.mouse(this)[0];
 
 				// Convert x position of the mouse to a year on the x axis using our xRange scale object
-		        var year = Math.round(app.xRange.invert(xPos));
+		        var year = Math.round(view.xRange.invert(xPos));
 
 		        // Position the Info/Legends box and pass the x mouse position as a year as a parameter
-		        app.overlayMessage(year, [d3.event.clientX, d3.event.clientY]);
+		        view.overlayMessage(year, [d3.event.clientX, d3.event.clientY]);
 
 		        // Move the vertical line to the x position of the mouse
-				app.verticalLine.attr("transform", function () {
+				view.verticalLine.attr("transform", function () {
 					return "translate(" + xPos + ",0)";
 				});
+			})
+			.on('click', function(event) {
+				// Get the current position of the mouse
+				var xPos = d3.mouse(this)[0];
+
+				// Convert x position of the mouse to a year on the x axis using our xRange scale object
+		        var year = Math.round(view.xRange.invert(xPos));
+
+		        console.log('click: '+year);
+
+		        view.trigger('graphClick', {
+		        	year: year
+		        });
 			});
 
 
@@ -361,10 +374,10 @@ module.exports = Backbone.View.extend({
 				.attr("data-index", index)
 				.attr("d", line1) // Set the path data with y values as 0 to the path "d" attribute.
 				.on("mouseenter", function() {
-					app.fadeLines(this);
+					view.fadeLines(this);
 				})
 				.on("mouseleave", function() {
-					app.showLines();
+					view.showLines();
 				})
 				.transition() // Initialize animation.
 				.duration(1000)
@@ -380,7 +393,7 @@ module.exports = Backbone.View.extend({
 				.attr('class', 'point')
 				.attr('fill', color)
 				.attr('cx', function (d) {
-					return app.xRange(Number(d.key_as_string.substr(0, 4)));
+					return view.xRange(Number(d.key_as_string.substr(0, 4)));
 				})
 				.attr('cy', _.bind(function (d) {
 					if (this.percentagesView) {					

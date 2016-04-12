@@ -159,6 +159,9 @@ module.exports = Backbone.View.extend({
 				percentagesView: true
 			});
 			this.ngramView.on('updateGraph', this.onNgramUpdate, this);
+			this.ngramView.on('graphClick', _.bind(function(event) {
+				this.sliderView.setSliderValues([event.year, event.year+1], true);
+			}, this));
 		}
 
 		if (this.ngramView.lastQuery != query) {
@@ -203,7 +206,7 @@ module.exports = Backbone.View.extend({
 			range: [1971, 2016]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
-
+			console.log(event);
 			this.router.navigate('search/'+this.searchInput.getQueryString()	+'/'+event.values[0]+'/'+event.values[1], {
 				trigger: true
 			});

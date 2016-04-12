@@ -28,9 +28,20 @@ module.exports = Backbone.View.extend({
 		return [Number(this.slider.get()[0]), Number(this.slider.get()[1])];
 	},
 
-	setSliderValues: function(values) {
+	setSliderValues: function(values, trigger) {
+		console.log('trigger: '+trigger);
 		this.slider.set(values);
 		this.updateHandleValues();
+
+		if (trigger) {
+			this.triggerChange();
+		}
+	},
+
+	triggerChange: function() {
+		this.trigger('change', {
+			values: [Number(this.slider.get()[0]), Number(this.slider.get()[1])]
+		});
 	},
 
 	sliderDelay: false,
@@ -50,9 +61,7 @@ module.exports = Backbone.View.extend({
 		this.updateHandleValues();
 
 		this.slider.on('change', _.bind(function(event, ui) {
-			this.trigger('change', {
-				values: [Number(this.slider.get()[0]), Number(this.slider.get()[1])]
-			});
+			this.triggerChange();
 		}, this));
 
 		this.slider.on('slide', _.bind(function(event, ui) {
