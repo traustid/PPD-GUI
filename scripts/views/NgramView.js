@@ -294,7 +294,9 @@ module.exports = Backbone.View.extend({
 		        var year = Math.round(view.xRange.invert(xPos));
 
 		       // set dragStart to know in mousemove handler if we are draging the timerange or not
-		        view.dragStart = year;
+		       if (!view.options.disableDrag) {
+			        view.dragStart = year;
+		       }
 			})
 			.on('mouseup', function(event) {
 				// Get the current position of the mouse

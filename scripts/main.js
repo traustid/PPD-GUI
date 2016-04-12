@@ -16,7 +16,8 @@ $(function() {
 
 			var ngramView = new NgramView({
 				el: $(ngramContainer).find('.view-container'),
-				percentagesView: true
+				percentagesView: true,
+				disableDrag: true
 			});
 
 			ngramView.search($(ngramContainer).data('query'));
