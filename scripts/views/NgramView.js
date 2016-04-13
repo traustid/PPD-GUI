@@ -203,6 +203,8 @@ module.exports = Backbone.View.extend({
 		this.graphWidth = this.$el.parent().width();
 		this.graphHeight = (this.graphWidth/1120) * 500;
 
+		this.$el.find('svg.chart-container').attr('height', this.graphHeight);
+
 		this.$el.find('.search-term-label').text(this.collection.queryString);
 
 		// Remove all elements from our svg element
@@ -488,7 +490,7 @@ module.exports = Backbone.View.extend({
 				.attr('width', this.xRange(Number(values[1])-0.2)-this.xRange(Number(values[0])+0.2))
 				.transition()
 				.duration(100)
-				.style('opacity', 0.05);			
+				.style('opacity', 0.1);			
 		}
 	},
 
@@ -561,8 +563,9 @@ module.exports = Backbone.View.extend({
 			Render the graph.
 		*/
 		var template = _.template($("#ngramViewTemplate").html());
-
+	
 		this.$el.html(template({}));
+
 		this.$el.find('svg.chart-container').attr('id', 'chartContainer'+this.cid); // Set a unique ID to the graph to enable multiple graphs to be displayed on a single page.
 
 		this.vis = d3.select('#chartContainer'+this.cid);

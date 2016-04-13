@@ -24,7 +24,7 @@ get_header(); ?>
 
 	<div class="results-container wrapper results-component">
 
-		<div class="container default-margins top-offset-border">
+		<div class="container top-margins bottom-margins top-offset-border">
 			<div class="row">
 
 				<div class="twelve columns">
