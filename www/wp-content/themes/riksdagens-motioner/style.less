@@ -876,6 +876,39 @@ hr {
 	width: 100% !important;
 }
 
+.entry-header-wrapper {
+	border-bottom: 1px solid @color-border;
+	background: @color-background-gray;
+
+	.entry-title {
+		margin: 30px 0;
+
+		color: #605CA8;
+		font-size: 3rem;
+		font-weight: bold;
+
+		text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.05)
+	}
+}
+
+.entry-content {
+	h2, h3, h4, h5 {
+		clear: both;
+	}
+
+	img {
+	    border: 5px solid @color-background-gray;
+		border-radius: 3px;
+		box-shadow: 0 0 1px 0px rgba(0, 0, 0, 0.54);
+
+		&.alignleft {
+			float: left;
+
+			margin: 0 20px 20px 0;
+		}
+	}
+}
+
 .footer {
 	border-top: 1px solid @color-border;
 	background: @color-background-gray;
