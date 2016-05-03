@@ -14,10 +14,10 @@
 <div class="footer">
 	<div class="container default-margins">
 		<div class="row">
-			<div class="six columns">
+			<div class="five columns">
 				<?php dynamic_sidebar( 'footer' ); ?>
 			</div>
-			<div class="six columns logo-area">
+			<div class="seven columns logo-area">
 				<?php dynamic_sidebar( 'footer-right' ); ?>
 			</div>
 		</div>
