@@ -29,7 +29,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	setSliderValues: function(values, trigger) {
-		console.log('trigger: '+trigger);
 		this.slider.set(values);
 		this.updateHandleValues();
 

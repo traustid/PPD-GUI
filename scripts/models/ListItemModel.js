@@ -24,6 +24,37 @@ module.exports = Backbone.Model.extend({
 			else {
 				document.parties = [];
 			}
+			if (document._source.dokforslag) {
+				if (document._source.dokforslag.forslag[0]) {
+					document.proposals = _.compact(_.map(document._source.dokforslag.forslag, function(forslag) {
+						return forslag.kammarbeslutstyp || forslag.kammaren || forslag.utskottet ?
+							{
+								kammarbeslutstyp: forslag.kammarbeslutstyp,
+								kammaren: forslag.kammaren,
+								utskottet: forslag.utskottet,
+								behandlas_i: forslag.behandlas_i,
+								lydelse: forslag.lydelse,
+								number: forslag.nummer
+							} : null;
+					}));
+				}
+				else {
+					var forslag = document._source.dokforslag.forslag;
+
+					document.proposals = forslag.kammarbeslutstyp || forslag.kammaren || forslag.utskottet ?
+						[
+							{
+								kammarbeslutstyp: forslag.kammarbeslutstyp,
+								kammaren: forslag.kammaren,
+								utskottet: forslag.utskottet,
+								behandlas_i: forslag.behandlas_i,
+								lydelse: forslag.lydelse,
+								number: forslag.nummer
+							}
+						]: [];
+				}
+			}
+//			console.log(document.proposals);
 
 			document._source.dokument.dateFormatted = this.formatDate(document._source.dokument.datum)
 		}, this));

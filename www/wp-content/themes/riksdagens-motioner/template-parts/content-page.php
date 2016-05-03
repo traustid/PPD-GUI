@@ -14,7 +14,7 @@
 	<div class="entry-header-wrapper">
 		<div class="container default-margins">
 			<div class="row">
-				<div class="twelve columns">
+				<div class="ten columns">
 
 					<header class="entry-header">
 						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
@@ -27,7 +27,7 @@
 
 	<div class="container default-margins page-content">
 		<div class="row">
-			<div class="twelve columns">		
+			<div class="ten columns">		
 
 
 				<div class="entry-content">

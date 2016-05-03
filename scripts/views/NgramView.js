@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
 		top: 20,
 		right: 0,
 		bottom: 20,
-		left: 50
+		left: 60
 	},
 
 	startYear: 1971,
@@ -41,7 +41,7 @@ module.exports = Backbone.View.extend({
 			Initialize the collection that handles API calls
 		*/
 		this.collection = new NgramCollection();
-		this.collection.on('reset', this.renderGraph, this);
+		this.collection.on('reset', this.collectionReset, this);
 		this.render();
 	},
 
@@ -71,9 +71,22 @@ module.exports = Backbone.View.extend({
 	lastQuery: '',
 
 	search: function(query) {
+		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
+
 		this.lastQuery = query;
 		this.$el.addClass('loading');
 		this.collection.search(query);
+	},
+
+	collectionReset: function() {
+		if (this.collection.at(0).get('type') == 'wildcard') {
+			this.trigger('wildcardresults');
+			this.wildcardSearch = true;
+		}
+		else {
+			this.wildcardSearch = false;
+		}
+		this.renderGraph();
 	},
 
 	createLine: function(yProcessor) {

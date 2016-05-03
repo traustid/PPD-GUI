@@ -49,14 +49,21 @@ module.exports = Backbone.View.extend({
 	resultIndex: 0,
 
 	search: function(query, timeRange) {
-		this.lastQuery = query;
-		this.timeRange = timeRange;
+		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
 
-		this.collection.search(query, timeRange);
+		if (searchTerms[0].split(' parti:(')[0].indexOf('*') > -1) {
+//			Do nothing, wait for ngram to trigger wildcard results event
+		}
+		else {
+			this.lastQuery = query;
+			this.collection.search(query, timeRange);
+		}
+
+		this.timeRange = timeRange;
 
 		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
 
-		this.$el.addClass('loading');
+		this.$el.addClass('loading');			
 	},
 
 	render: function() {
@@ -115,7 +122,6 @@ module.exports = Backbone.View.extend({
 				});		
 			}, this));
 		}
-
 
 		this.$el.find('.page-info').html(' '+(
 			Number(this.collection.at(this.resultIndex).get('from_index')+20) > this.collection.at(this.resultIndex).get('total_hit_count') ? 

@@ -41,7 +41,8 @@ module.exports = Backbone.View.extend({
 
 	search: function() {
 		this.trigger('search', {
-			queryString: this.getQueryString()
+			queryString: this.getQueryString(),
+			query: this.collection.models
 		});
 	},
 
@@ -165,6 +166,9 @@ module.exports = Backbone.View.extend({
 					$(item).removeClass('form-open');
 
 					this.searchButtonClick();
+				}
+				if (event.keyCode == 27) {
+					$(item).removeClass('form-open');
 				}
 			}, this));
 

@@ -165,6 +165,11 @@ module.exports = Backbone.View.extend({
 			this.ngramView.on('timerange', _.bind(function(event) {
 				this.sliderView.setSliderValues([event.values[0], event.values[1]], true);
 			}, this));
+			this.ngramView.on('wildcardresults', _.bind(function() {
+				this.hitList.search(_.first(_.map(this.ngramView.collection.models, function(model) {
+					return model.get('key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '');
+				}), 4).join(','), [yearFrom, yearTo]);
+			}, this));
 		}
 
 		if (this.ngramView.lastQuery != query) {
@@ -191,7 +196,22 @@ module.exports = Backbone.View.extend({
 		}
 
 		if ((query != this.hitList.lastQuery || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1]))) {
-			this.hitList.search(query, [yearFrom, yearTo]);
+			/*
+				When updating the search, we have to ckeck if we are making a wildcard search or not.
+			*/
+
+			var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
+
+			if (this.ngramView.wildcardSearch && searchTerms[0].split(' parti:(')[0].indexOf('*') > -1) {
+
+				// Update hitlist based on wildcard results fron the ngramView
+				this.hitList.search(_.first(_.map(this.ngramView.collection.models, function(model) {
+					return model.get('key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '');
+				}), 4).join(','), [yearFrom, yearTo]);
+			}
+			else {
+				this.hitList.search(query, [yearFrom, yearTo]);
+			}
 		}
 
 		if (this.sliderView.sliderValues[0] != yearFrom || this.sliderView.sliderValues[1] != yearTo) {
