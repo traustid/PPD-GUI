@@ -70,16 +70,17 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query) {
+	search: function(query, queryMode) {
 		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
 
 		this.lastQuery = query;
+		this.lastQueryMode = queryMode;
 		this.$el.addClass('loading');
-		this.collection.search(query);
+		this.collection.search(query, queryMode);
 	},
 
 	collectionReset: function() {
-		if (this.collection.at(0).get('type') == 'wildcard') {
+		if (this.collection.length > 0 && this.collection.at(0).get('type') == 'wildcard') {
 			this.trigger('wildcardresults');
 			this.wildcardSearch = true;
 		}
@@ -225,6 +226,7 @@ module.exports = Backbone.View.extend({
 
 		// Check if we have results or not
 		if (this.collection.length == 0) {
+			console.log('no results');
 			this.trigger('zeroresults');
 			this.$el.addClass('no-results');
 

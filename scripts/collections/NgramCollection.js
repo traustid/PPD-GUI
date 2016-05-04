@@ -28,12 +28,16 @@ module.exports = Backbone.Collection.extend({
 		return data.data;
 	},
 
-	search: function(query) {
+	search: function(query, queryMode) {
 		this.queryString = query;
+
+		this.searchData = {
+			'searchPhrase': query,
+			'queryMode': queryMode == null ? 'exact' : queryMode
+		};
+
 		this.fetch({
-			data: $.param({
-				searchPhrase: query
-			}),
+			data: this.searchData,
 			reset: true
 		});
 	}

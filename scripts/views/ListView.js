@@ -42,13 +42,11 @@ module.exports = Backbone.View.extend({
 
 		this.$el.html(template({}));
 	},
-
-	lastQuery: '',
 	timeRange: [],
 
 	resultIndex: 0,
 
-	search: function(query, timeRange) {
+	search: function(query, timeRange, queryMode) {
 		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
 
 		if (searchTerms[0].split(' parti:(')[0].indexOf('*') > -1) {
@@ -56,7 +54,8 @@ module.exports = Backbone.View.extend({
 		}
 		else {
 			this.lastQuery = query;
-			this.collection.search(query, timeRange);
+			this.lastQueryMode = queryMode;
+			this.collection.search(query, timeRange, queryMode);
 		}
 
 		this.timeRange = timeRange;

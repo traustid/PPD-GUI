@@ -39,10 +39,19 @@ module.exports = Backbone.View.extend({
 		}
 	},
 
+	getQueryMode: function() {
+		return this.$el.find('.search-query-mode').val();
+	},
+
+	setQueryMode: function(queryMode) {
+		this.$el.find('.search-query-mode').val(queryMode);
+	},
+
 	search: function() {
 		this.trigger('search', {
 			queryString: this.getQueryString(),
-			query: this.collection.models
+			query: this.collection.models,
+			queryMode: this.getQueryMode()
 		});
 	},
 
@@ -208,10 +217,16 @@ module.exports = Backbone.View.extend({
 		var queryItemsSize = this.queryItems.width()
 
 		this.queryInput.width(thisWidth-queryItemsSize-46);
+
+		if (this.collection.length > 0) {
+			this.$el.find('.clear-input').css('display', 'block');
+		}
+		else {
+			this.$el.find('.clear-input').css('display', 'none');
+		}
 	},
 
 	render: function() {
-
 		var template = _.template($("#searchInputTemplate").html());
 
 		this.$el.html(template({}));

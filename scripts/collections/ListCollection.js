@@ -7,12 +7,13 @@ module.exports = Backbone.Collection.extend({
 
 	url: 'http://cdh-vir-1.it.gu.se:8900/motioner/hits',
 
-	search: function(query, timeRange) {
+	search: function(query, timeRange, queryMode) {
 		this.pageIndex = 0;
 		this.searchData = {
-			"searchPhrase": query,
-			"startDate": timeRange[0],
-			"endDate": timeRange[1]
+			'searchPhrase': query,
+			'startDate': timeRange[0],
+			'endDate': timeRange[1],
+			'queryMode': queryMode == null ? 'exact' : queryMode
 		};
 
 		this.fetch({
