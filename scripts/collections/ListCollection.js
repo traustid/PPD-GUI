@@ -59,6 +59,7 @@ module.exports = Backbone.Collection.extend({
 				searchPhrase: this.at(resultIndex).get('search_query')+' '+this.filtersToString(this.at(resultIndex).get('filters')),
 				startDate: this.searchData.startDate,
 				endDate: this.searchData.endDate,
+				queryMode: this.searchData.queryMode,
 				fromIndex: this.searchData.fromIndex
 			};
 

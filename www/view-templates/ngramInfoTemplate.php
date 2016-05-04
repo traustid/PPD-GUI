@@ -1,7 +1,7 @@
 <script id="ngramInfoTemplate" type="text/template">
 
 	<p><strong><%= data.year %></strong><br/>
-		Total documents: <%= data.total %></p>
+		Totalt antal dokument: <%= data.total %></p>
 		<% _.each(data.legends, function(item, index) { %>
 		<div class="item" data-index="<%= index %>">
 			<div class="color" style="background-color: <%= item.color %>"></div>

@@ -13,10 +13,10 @@
 					<div class="overlay"></div>
 					<div class="row">
 						<div class="twelve columns">
-							<label>Search string:</label>
+							<label>Söksträng:</label>
 							<input type="text" class="query-form-input u-full-width" value="<%= model.get('queryString') %>"/>
 
-							<label>Parties:</label>
+							<label>Parti:</label>
 							<div class="query-parties check-list">
 							
 								<% _.each(parties, function(party) { 
@@ -32,9 +32,9 @@
 					</div>
 					<div class="row form-footer">
 						<div class="twelve columns">
-							<a class="button button-primary form-save-button">Update</a>
-							<a class="button remove-button">Remove</a>
-							<a class="button form-cancel-button u-pull-right">Cancel</a>
+							<a class="button button-primary form-save-button">Uppdatera</a>
+							<a class="button remove-button">Ta bort</a>
+							<a class="button form-cancel-button u-pull-right">Avbryt</a>
 						</div>
 					</div>
 				</div>
