@@ -7,6 +7,7 @@ var ListItemView = require('./ListItemView.js');
 module.exports = Backbone.View.extend({
 	initialize: function(options) {
 		this.options = options;
+		this.app = this.options.app;
 		this.collection = new ListCollection();
 		this.collection.on('reset', this.render, this);
 		this.collection.on('hitsupdate', this.hitsUpdate, this)
@@ -66,12 +67,16 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
+		if (this.app.colorRegistry.length == 0) {
+			this.app.createColorRegistry(this.collection.models);
+		}
+
 		this.resultIndex = 0;
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
 
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.options.colors[index]+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query'))+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 

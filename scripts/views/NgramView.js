@@ -10,7 +10,6 @@ module.exports = Backbone.View.extend({
 		Define colors to use in the graph.
 		Todo: implement D3.js color creation functionality
 	*/
-	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
 
 	graphYearTicks: [1971, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
 
@@ -35,6 +34,7 @@ module.exports = Backbone.View.extend({
 	*/
 	initialize: function(options) {
 		this.options = options;
+		this.app = this.options.app;
 		this.percentagesView = this.options.percentagesView ? this.options.percentagesView : false;
 
 		/*
@@ -80,6 +80,10 @@ module.exports = Backbone.View.extend({
 	},
 
 	collectionReset: function() {
+		if (this.app.colorRegistry.length == 0) {
+			this.app.createColorRegistry(this.collection.models);
+		}
+
 		if (this.collection.length > 0 && this.collection.at(0).get('type') == 'wildcard') {
 			this.trigger('wildcardresults');
 			this.wildcardSearch = true;
@@ -476,8 +480,8 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			model.set('color', this.colors[index]);
-			addLine(model.get('buckets'), this.colors[index], index);
+			model.set('color', this.app.getItemColor(model.get('search_query')));
+			addLine(model.get('buckets'), model.get('color'), index);
 		}, this));
 
 		// If the grahp has a set timerange, then adjust the time overlay.
@@ -571,6 +575,14 @@ module.exports = Backbone.View.extend({
 			'-o-transform': 'translate('+xPos+'px, '+yPos+'px)',
 			'transform': 'translate('+xPos+'px, '+yPos+'px)'
 		})
+	},
+
+	getItemColor: function(key) {
+		var found = _.find(this.collection.models, function(model) {
+			return model.get('search_query') == key;
+		});
+
+		return found ? found.get('color') : '';
 	},
 
 	render: function() {

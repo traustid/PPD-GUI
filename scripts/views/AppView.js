@@ -147,6 +147,8 @@ module.exports = Backbone.View.extend({
 	},
 
 	search: function(query, queryMode, yearFrom, yearTo) {
+		this.colorRegistry = [];
+
 		$(document.body).addClass('search-mode');
 
 		if (!this.sliderView) {
@@ -156,7 +158,8 @@ module.exports = Backbone.View.extend({
 		if (this.ngramView == undefined) {
 			this.ngramView = new NgramView({
 				el: this.$el.find('#ngramContianer'),
-				percentagesView: true
+				percentagesView: true,
+				app: this
 			});
 			this.ngramView.on('updategraph', this.onNgramUpdate, this);
 			this.ngramView.on('graphclick', _.bind(function(event) {
@@ -186,8 +189,8 @@ module.exports = Backbone.View.extend({
 			this.hitList = new ListView({
 				el: this.$el.find('#hitlistContainer'),
 				router: this.router,
-				colors: this.ngramView.colors,
-				parties: this.parties
+				parties: this.parties,
+				app: this
 			});
 		}
 
@@ -225,6 +228,24 @@ module.exports = Backbone.View.extend({
 	},
 
 	onNgramUpdate: function() {
+	},
+
+	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
+	colorRegistry: [],
+
+	createColorRegistry: function(models) {
+		this.colorRegistry = _.map(models, _.bind(function(model, index) {
+			return {
+				key: model.get('search_query'),
+				color: this.colors[index]
+			}
+		}, this));
+	},
+
+	getItemColor: function(key) {
+		return _.find(this.colorRegistry, function(color) {
+			return color.key == key;
+		}).color;
 	},
 
 	initSlider: function() {
