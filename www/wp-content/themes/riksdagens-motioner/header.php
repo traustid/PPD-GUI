@@ -23,7 +23,7 @@
 
 <body <?php body_class(); ?>>
 
-<header class="header">
+<header class="header header-background-<?php echo rand(1, 2); ?>">
 	
 	<div class="container">
 		
