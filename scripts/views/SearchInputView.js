@@ -40,7 +40,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	getQueryMode: function() {
-		return this.$el.find('.search-query-mode').val();
+		return this.$el.find('.search-query-mode').val() == null ? 'exact' : this.$el.find('.search-query-mode').val();
 	},
 
 	setQueryMode: function(queryMode) {

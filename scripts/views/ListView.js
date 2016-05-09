@@ -68,7 +68,8 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		if (this.app.colorRegistry.length == 0) {
-			this.app.createColorRegistry(this.collection.models);
+			console.log('ListView:createColorRegistry')
+			this.app.createColorRegistry(this.collection.models, 'search_query');
 		}
 
 		this.resultIndex = 0;

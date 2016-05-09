@@ -233,16 +233,17 @@ module.exports = Backbone.View.extend({
 	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
 	colorRegistry: [],
 
-	createColorRegistry: function(models) {
+	createColorRegistry: function(models, key) {
 		this.colorRegistry = _.map(models, _.bind(function(model, index) {
 			return {
-				key: model.get('search_query'),
+				key: model.get(key != undefined ? key : 'key'),
 				color: this.colors[index]
 			}
 		}, this));
 	},
 
 	getItemColor: function(key) {
+		console.log('getItemColor:'+key);
 		return _.find(this.colorRegistry, function(color) {
 			return color.key == key;
 		}).color;
