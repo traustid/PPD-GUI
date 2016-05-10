@@ -55,4 +55,6 @@
 
 	</div>
 
+	<div class="img-credit">Foto: Melker Dahlstran/<a href="http://riksdagen.se/sv/press/pressbilder/" target="_blank">Riksdagsförvaltningen</a></div>
+
 </header>
