@@ -68,7 +68,6 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		if (this.app.colorRegistry.length == 0) {
-			console.log('ListView:createColorRegistry')
 			this.app.createColorRegistry(this.collection.models, 'search_query');
 		}
 
@@ -77,7 +76,7 @@ module.exports = Backbone.View.extend({
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
 
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query'))+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : ''))+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 

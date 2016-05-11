@@ -82,6 +82,7 @@ function riksdagens_motioner_setup() {
 endif;
 add_action( 'after_setup_theme', 'riksdagens_motioner_setup' );
 
+
 /**
  * Set the content width in pixels, based on the theme's design and stylesheet.
  *

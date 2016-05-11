@@ -230,7 +230,6 @@ module.exports = Backbone.View.extend({
 
 		// Check if we have results or not
 		if (this.collection.length == 0) {
-			console.log('no results');
 			this.trigger('zeroresults');
 			this.$el.addClass('no-results');
 
@@ -480,7 +479,7 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			model.set('color', this.app.getItemColor(model.get(this.wildcardSearch ? 'key' : 'search_query')));
+			model.set('color', this.app.getItemColor(model.get(this.wildcardSearch ? 'key' : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '')));
 			addLine(model.get('buckets'), model.get('color'), index);
 		}, this));
 
@@ -575,14 +574,6 @@ module.exports = Backbone.View.extend({
 			'-o-transform': 'translate('+xPos+'px, '+yPos+'px)',
 			'transform': 'translate('+xPos+'px, '+yPos+'px)'
 		})
-	},
-
-	getItemColor: function(key) {
-		var found = _.find(this.collection.models, function(model) {
-			return model.get('search_query') == key;
-		});
-
-		return found ? found.get('color') : '';
 	},
 
 	render: function() {
