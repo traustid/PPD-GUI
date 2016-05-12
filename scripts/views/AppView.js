@@ -236,13 +236,14 @@ module.exports = Backbone.View.extend({
 	createColorRegistry: function(models, key) {
 		this.colorRegistry = _.map(models, _.bind(function(model, index) {
 			return {
-				key: model.get(key != undefined ? key : 'key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : ''),
+				key: model.get(key != undefined ? key : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : ''),
 				color: this.colors[index]
 			}
 		}, this));
 	},
 
 	getItemColor: function(key) {
+		console.log('getItemColor:'+key);
 		return _.find(this.colorRegistry, function(color) {
 			return color.key == key;
 		}).color;
