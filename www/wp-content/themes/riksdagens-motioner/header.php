@@ -17,7 +17,10 @@
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet" type="text/css">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
-
+<meta property="og:title" content="Riksdags Motioner" /> 
+<meta property="og:image" content="http://riksdagsmotioner.nu/wp-content/themes/riksdagens-motioner/img/share-img.jpg" /> 
+<meta property="og:description" content="Hitta och läs riksdagsmotioner" /> 
+<meta property="og:url" content="http://riksdagsmotioner.nu/">
 <?php wp_head(); ?>
 </head>
 
