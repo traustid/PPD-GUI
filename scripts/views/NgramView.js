@@ -479,7 +479,7 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			model.set('color', this.app.getItemColor(model.get(this.wildcardSearch ? 'key' : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '')));
+			model.set('color', this.app.getItemColor(model.get(this.wildcardSearch ? 'key' : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti.join(',')+')' : '')));
 			addLine(model.get('buckets'), model.get('color'), index);
 		}, this));
 
