@@ -58,7 +58,15 @@ get_header(); ?>
 	
 	</div>
 
-	<div id="hitlistContainer" class="results-component"></div>
+	<div class="hitlist-container wrapper bg-gray">
+
+		<hr class="top-border">
+
+		<div class="arrow"></div>
+	
+		<div id="hitlistContainer" class="results-component"></div>
+
+	</div>
 
 	<div id="pageContent" class="container default-margins page-content">
 		<div class="row">
@@ -148,6 +156,7 @@ get_header(); ?>
 	include get_home_path()."view-templates/queryItemsTemplate.php";
 	include get_home_path()."view-templates/ngramViewTemplate.php";
 	include get_home_path()."view-templates/ngramInfoTemplate.php";
+	include get_home_path()."view-templates/barChartViewTemplate.php";
 
 get_sidebar();
 get_footer();

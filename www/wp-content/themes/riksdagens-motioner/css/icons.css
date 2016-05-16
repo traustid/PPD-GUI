@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?b7ki2');
-    src:    url('fonts/icomoon.eot?b7ki2#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?b7ki2') format('truetype'),
-        url('fonts/icomoon.woff?b7ki2') format('woff'),
-        url('fonts/icomoon.svg?b7ki2#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?duqigr');
+    src:    url('fonts/icomoon.eot?duqigr#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?duqigr') format('truetype'),
+        url('fonts/icomoon.woff?duqigr') format('woff'),
+        url('fonts/icomoon.svg?duqigr#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,33 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-partylogo-c:before {
+    content: "\e904";
+}
+.icon-partylogo-fp:before {
+    content: "\e905";
+}
+.icon-partylogo-kd:before {
+    content: "\e906";
+}
+.icon-partylogo-m:before {
+    content: "\e907";
+}
+.icon-partylogo-mp:before {
+    content: "\e908";
+}
+.icon-partylogo-nyd:before {
+    content: "\e909";
+}
+.icon-partylogo-s:before {
+    content: "\e90a";
+}
+.icon-partylogo-sd:before {
+    content: "\e90b";
+}
+.icon-partylogo-v:before {
+    content: "\e90c";
+}
 .icon-settings:before {
     content: "\e903";
 }

@@ -12,113 +12,147 @@ var ListView = require('./ListView');
 module.exports = Backbone.View.extend({
 	parties: [
 		{
-			letter: "s",
-			name: "Socialdemokraterna",
-			logo: "partylogo-s.png"
+			letter: 's',
+			color: '#ed1b34',
+			name: 'Socialdemokraterna',
+			logo: 'partylogo-s.png',
+			entity: '&#xe90a;'
 		},
 		{
-			letter: "m",
-			name: "Moderata samlingspartiet",
-			logo: "partylogo-m.png"
+			letter: 'm',
+			color: '#52bdec',
+			name: 'Moderata samlingspartiet',
+			logo: 'partylogo-m.png',
+			entity: '&#xe907;'
 		},
 		{
-			letter: "c",
-			name: "Centerpartiet",
-			logo: "partylogo-c.png"
+			letter: 'c',
+			color: '#016a3a',
+			name: 'Centerpartiet',
+			logo: 'partylogo-c.png',
+			entity: '&#xe904;'
 		},
 		{
-			letter: "fp",
-			name: "Folkpartiet",
-			logo: "partylogo-fp.png"
+			letter: 'fp',
+			color: '',
+			name: 'Folkpartiet',
+			logo: 'partylogo-fp.png',
+			entity: '&#xe905;'
 		},
 		{
-			letter: "kd",
-			name: "Kristdemokraterna",
-			logo: "partylogo-kd.png"
+			letter: 'kd',
+			color: '#073192',
+			name: 'Kristdemokraterna',
+			logo: 'partylogo-kd.png',
+			entity: '&#xe906;'
 		},
 		{
-			letter: "v",
-			name: "Vänsterpartiet",
-			logo: "partylogo-v.png"
+			letter: 'v',
+			color: '#da291c',
+			name: 'Vänsterpartiet',
+			logo: 'partylogo-v.png',
+			entity: '&#xe90c;'
 		},
 		{
-			letter: "mp",
-			name: "Miljöpartiet de gröna",
-			logo: "partylogo-mp.png"
+			letter: 'mp',
+			color: '#53a045',
+			name: 'Miljöpartiet de gröna',
+			logo: 'partylogo-mp.png',
+			entity: '&#xe908;'
 		},
 		{
-			letter: "vpk",
-			name: "Vänsterpartiet Kommunisterna"
+			letter: 'vpk',
+			color: '',
+			name: 'Vänsterpartiet Kommunisterna'
 		},
 		{
-			letter: "sd",
-			name: "Sverigedemokraterna ",
-			logo: "partylogo-sd.png"
+			letter: 'sd',
+			color: '#fbc700',
+			name: 'Sverigedemokraterna ',
+			logo: 'partylogo-sd.png',
+			entity: '&#xe90b;'
 		},
 		{
-			letter: "kds",
-			name: "Kristen demokratisk samling"
+			letter: 'kds',
+			color: '',
+			name: 'Kristen demokratisk samling'
 		},
 		{
-			letter: "nyd",
-			name: "Ny Demokrati",
-			logo: "partylogo-nyd.png"
+			letter: 'nyd',
+			color: '',
+			name: 'Ny Demokrati',
+			logo: 'partylogo-nyd.png',
+			entity: '&#xe909;'
 		},
 		{
-			letter: "l",
-			name: "Liberalerna"
+			letter: 'l',
+			color: '#004b92',
+			name: 'Liberalerna'
 		},
 		{
-			letter: "apk",
-			name: "Arbetarpartiet kommunisterna"
+			letter: 'apk',
+			color: '',
+			name: 'Arbetarpartiet kommunisterna'
 		},
 		{
-			letter: "ni",
-			name: ""
+			letter: 'ni',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "i",
-			name: ""
+			letter: 'i',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "kr",
-			name: ""
+			letter: 'kr',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "bör",
-			name: ""
+			letter: 'bör',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "in",
-			name: ""
+			letter: 'in',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "rn",
-			name: ""
+			letter: 'rn',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "vp",
-			name: "Vänsterpartiet"
+			letter: 'vp',
+			color: '',
+			name: 'Vänsterpartiet'
 		},
 		{
-			letter: "e",
-			name: ""
+			letter: 'e',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "nt",
-			name: ""
+			letter: 'nt',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "tn",
-			name: ""
+			letter: 'tn',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "a",
-			name: ""
+			letter: 'a',
+			color: '',
+			name: ''
 		},
 		{
-			letter: "0",
-			name: ""
+			letter: '0',
+			color: '',
+			name: ''
 		}
 	],
 
@@ -230,7 +264,7 @@ module.exports = Backbone.View.extend({
 	onNgramUpdate: function() {
 	},
 
-	colors: ["#00cc88", "#8fb300", "#8c5e00", "#290099", "#0a004d", "#00590c", "#002233", "#e55c00", "#4c1400", "#006680", "#8f00b3", "#8c005e", "#ffcc00", "#36cc00", "#004b8c", "#ff0066", "#002459", "#732e00", "#00a2f2", "#00becc", "#ff00ee", "#00330e", "#003de6", "#73001f", "#403300", "#b20000", "#40001a", "#005953"],
+	colors: ['#00cc88', '#8fb300', '#8c5e00', '#290099', '#0a004d', '#00590c', '#002233', '#e55c00', '#4c1400', '#006680', '#8f00b3', '#8c005e', '#ffcc00', '#36cc00', '#004b8c', '#ff0066', '#002459', '#732e00', '#00a2f2', '#00becc', '#ff00ee', '#00330e', '#003de6', '#73001f', '#403300', '#b20000', '#40001a', '#005953'],
 	colorRegistry: [],
 
 	createColorRegistry: function(models, key) {

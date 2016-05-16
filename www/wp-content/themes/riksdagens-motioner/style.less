@@ -647,10 +647,32 @@ hr {
 .hitlist-container {
 
 	.loading-overlay {
-		top: 98px;
+		top: 349px;
 		left: 41px;
 		right: 41px;
 		bottom: 165px;
+	}
+}
+
+.barchart-container {
+	position: relative;
+
+	padding: 20px 30px 20px 10px;
+
+	border-top: 1px solid #B7B7B7;
+	border-left: 1px solid #B7B7B7;
+	border-right: 1px solid #B7B7B7;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+
+	background: #fff;
+
+	.no-results & {
+		max-height: 0;
+		
+		.chart-container {
+			visibility: hidden;
+		}
 	}
 }
 
@@ -1046,7 +1068,7 @@ hr {
 	}
 	
 	&.result-tabs {
-		margin-bottom: 15px;
+		margin-bottom: 10px;
 
 		a.tab {
 			position: relative;

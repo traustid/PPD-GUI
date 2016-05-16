@@ -3,6 +3,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var ListCollection = require('./../collections/ListCollection');
 var ListItemView = require('./ListItemView.js');
+var BarChartView = require('./BarChartView');
 
 module.exports = Backbone.View.extend({
 	initialize: function(options) {
@@ -32,6 +33,9 @@ module.exports = Backbone.View.extend({
 		this.resultIndex = $(event.currentTarget).data('result-index');
 		this.collection.resultIndex = this.resultIndex;
 		this.renderList();
+
+		this.barChart.resultIndex = this.resultIndex;
+		this.barChart.renderGraph();
 	},
 
 	loadMoreClick: function() {
@@ -42,6 +46,12 @@ module.exports = Backbone.View.extend({
 		var template = _.template($("#hitlistUiTemplate").html());
 
 		this.$el.html(template({}));
+
+		this.barChart = new BarChartView({
+			el: this.$el.find('.barchart-container'),
+			parties: this.options.parties,
+			app: this
+		});
 	},
 	timeRange: [],
 
@@ -57,6 +67,8 @@ module.exports = Backbone.View.extend({
 			this.lastQuery = query;
 			this.lastQueryMode = queryMode;
 			this.collection.search(query, timeRange, queryMode);
+
+			this.barChart.search(query, timeRange, queryMode, this.resultIndex);
 		}
 
 		this.timeRange = timeRange;
