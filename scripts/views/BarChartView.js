@@ -155,9 +155,9 @@ module.exports = Backbone.View.extend({
 			})
 */
 			.attr("x", function(d, i) {
-				return (x(d.key)+(x.rangeBand()-80)/2)+view.graphMargins.left;
+				return (x(d.key)+(x.rangeBand()-50)/2)+view.graphMargins.left;
 			})
-			.attr('width', Math.min.apply(null, [x.rangeBand(), 80]))
+			.attr('width', Math.min.apply(null, [x.rangeBand(), 50]))
 			.attr('y', function(d) {
 				return view.graphHeight;
 			})
