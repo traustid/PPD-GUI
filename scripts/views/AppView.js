@@ -279,7 +279,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	getItemColor: function(key) {
-		console.log('getItemColor:'+key);
 		return _.find(this.colorRegistry, function(color) {
 			return color.key == key;
 		}).color;

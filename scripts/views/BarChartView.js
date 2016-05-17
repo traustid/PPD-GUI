@@ -29,8 +29,7 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, timeRange, queryMode, resultIndex) {
-		this.resultIndex = resultIndex;
+	search: function(query, timeRange, queryMode) {
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
 		this.collection.search(query, timeRange, queryMode);
@@ -45,7 +44,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
-		console.log('BarChartView:renderGraph');
 		// Render the graph
 
 		this.$el.removeClass('loading');
@@ -89,11 +87,11 @@ module.exports = Backbone.View.extend({
 			.orient('left')
 			.tickSubdivide(true);
 
-		x.domain(this.collection.at(this.resultIndex).get('buckets').map(function(d) {
+		x.domain(this.collection.at(0).get('buckets').map(function(d) {
 			return d.key;
 		}));
 
-		y.domain([0, d3.max(this.collection.at(this.resultIndex).get('buckets'), function(d) {
+		y.domain([0, d3.max(this.collection.at(0).get('buckets'), function(d) {
 			return d.doc_count;
 		})]);
 
@@ -139,7 +137,7 @@ module.exports = Backbone.View.extend({
 			.call(yAxis);
 
 		graph.selectAll('.bar')
-			.data(this.collection.at(this.resultIndex).get('buckets'))
+			.data(this.collection.at(0).get('buckets'))
 			.enter().append('rect')
 			.attr('class', 'bar')
 			.attr('fill', function(d) {

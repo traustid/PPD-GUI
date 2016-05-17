@@ -8,6 +8,23 @@ module.exports = Backbone.Model.extend({
 		return dateStr.substr(0, 10);
 	},
 
+	filtersToString: function(addSpace) {
+		if (this.get('filters') && this.get('filters').length > 0) {		
+			var filterStrings = _.map(this.get('filters'), function(filter) {
+				var filterString = '';
+				for (var name in filter) {
+					filterString += name+':('+(filter[name].join(','))+')';
+				}
+				return filterString;
+			});
+
+			return (addSpace ? ' ' : '')+filterStrings.join(' ');
+		}
+		else {
+			return '';
+		}
+	},
+
 	parse: function(data) {
 		_.each(data.hits, _.bind(function(document) {
 			if (document._source.dokintressent) {		

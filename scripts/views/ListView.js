@@ -34,8 +34,8 @@ module.exports = Backbone.View.extend({
 		this.collection.resultIndex = this.resultIndex;
 		this.renderList();
 
-		this.barChart.resultIndex = this.resultIndex;
-		this.barChart.renderGraph();
+		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode);
 	},
 
 	loadMoreClick: function() {
@@ -67,8 +67,6 @@ module.exports = Backbone.View.extend({
 			this.lastQuery = query;
 			this.lastQueryMode = queryMode;
 			this.collection.search(query, timeRange, queryMode);
-
-			this.barChart.search(query, timeRange, queryMode, this.resultIndex);
 		}
 
 		this.timeRange = timeRange;
@@ -85,10 +83,12 @@ module.exports = Backbone.View.extend({
 
 		this.resultIndex = 0;
 
+		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode);
+
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
-
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti.join(',')+')' : ''))+'"></span>'+model.get('search_query')+' '+this.collection.filtersToString(model.get('filters'))+'</a>';
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query')+model.filtersToString(true))+'"></span>'+model.get('search_query')+model.filtersToString(true)+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 
