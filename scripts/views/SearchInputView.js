@@ -86,9 +86,12 @@ module.exports = Backbone.View.extend({
 	},
 
 	getQueryString: function() {
-		return _.map(this.collection.models, function(model) {
+		console.log('getQueryString');
+		var retStr = _.map(this.collection.models, function(model) {
 			return model.get('queryValue')
-		}).join(',');
+		}).join(',').split(' ').join('%20');
+		console.log(retStr);
+		return retStr;
 	},
 
 	validateSingleQuery: function(event) {

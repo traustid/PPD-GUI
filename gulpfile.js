@@ -33,7 +33,7 @@ gulp.task('browserify', function() {
     .bundle()
     .pipe(source('app.min.js'))
     .pipe(buffer())
-//    .pipe(uglify())
+    .pipe(uglify())
     .pipe(gulp.dest('./www/js'));
 });
 

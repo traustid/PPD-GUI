@@ -49,14 +49,13 @@ module.exports = Backbone.Collection.extend({
 			tempCollection.model = ListItemModel;
 			tempCollection.url = this.url;
 			tempCollection.on('reset', _.bind(function()  {
-
 				this.at(resultIndex).set('hits', _.union(this.at(resultIndex).get('hits'), tempCollection.at(0).get('hits')));
 
 				this.trigger('hitsupdate');
 			}, this));
 
 			var searchData = {
-				searchPhrase: this.at(resultIndex).get('search_query')+' '+this.filtersToString(this.at(resultIndex).get('filters')),
+				searchPhrase: this.at(resultIndex).get('search_query')+this.at(resultIndex).filtersToString(true),
 				startDate: this.searchData.startDate,
 				endDate: this.searchData.endDate,
 				queryMode: this.searchData.queryMode,
