@@ -192,7 +192,7 @@ module.exports = Backbone.View.extend({
 		if (this.ngramView == undefined) {
 			this.ngramView = new NgramView({
 				el: this.$el.find('#ngramContianer'),
-				percentagesView: true,
+				percentagesView: false,
 				app: this
 			});
 			this.ngramView.on('updategraph', this.onNgramUpdate, this);
@@ -269,16 +269,16 @@ module.exports = Backbone.View.extend({
 
 	createColorRegistry: function(models, key) {
 		this.colorRegistry = _.map(models, _.bind(function(model, index) {
+			console.log(model);
 			return {
-				key: model.get(key != undefined ? key : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+(
-					model.get('filters')[0].parti.join(',')
-				)+')' : ''),
+				key: key != undefined ? model.get(key) : model.get('query').original_search_terms,
 				color: this.colors[index]
 			}
 		}, this));
 	},
 
 	getItemColor: function(key) {
+		console.log('getItemColor: '+key);
 		return _.find(this.colorRegistry, function(color) {
 			return color.key == key;
 		}).color;

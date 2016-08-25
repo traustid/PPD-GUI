@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
 		Todo: implement D3.js color creation functionality
 	*/
 
-	graphYearTicks: [1971, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015],
+	graphYearTicks: [],
 
 	/*
 		Graph size and visual margins
@@ -26,13 +26,19 @@ module.exports = Backbone.View.extend({
 		left: 60
 	},
 
-	startYear: 1971,
+	startYear: 1700,
 	endYear: 2016,
+
+	graphValueKey: 'doc_count',
 
 	/*
 		Initialize the module
 	*/
 	initialize: function(options) {
+		for (var year = this.startYear; year<this.endYear; year += 20) {
+			this.graphYearTicks.push(year);
+		}
+	
 		this.options = options;
 		this.app = this.options.app;
 		this.percentagesView = this.options.percentagesView ? this.options.percentagesView : false;
@@ -49,7 +55,8 @@ module.exports = Backbone.View.extend({
 		Define DOM events
 	*/
 	events: {
-		'click .tabs.ngram-view-mode a.tab': 'ngramViewModeClick'
+		'click .tabs.ngram-view-mode a.tab': 'ngramViewModeClick',
+		'click .tabs.ngram-result-mode a.tab': 'ngramResultModeClick'
 	},
 
 	/*
@@ -64,6 +71,22 @@ module.exports = Backbone.View.extend({
 		this.percentagesView = $(event.currentTarget).data('viewmode') == 'relative';
 
 		if (currentView != this.percentagesView) {
+			this.updateGraph();
+		}
+	},
+
+	/*
+		DOM event handler: switch between view of different keys in the results, doc_count, auth_count, work_count, part_count
+	*/
+	ngramResultModeClick: function(event) {
+		this.$el.find('.tabs.ngram-result-mode a.tab').removeClass('selected');
+		$(event.currentTarget).addClass('selected');
+
+		var currentGraphValueKey = this.graphValueKey;
+
+		this.graphValueKey = $(event.currentTarget).data('resultmode');
+
+		if (currentGraphValueKey != this.graphValueKey) {
 			this.updateGraph();
 		}
 	},
@@ -106,39 +129,42 @@ module.exports = Backbone.View.extend({
 			.interpolate("monotone")
 			.x(function(d) {
 				// Returns a pixel value for the x range based on the corrent year using the xRange scale object
-				return view.xRange(Number(d.key_as_string.substr(0, 4)));
+				return view.xRange(Number(d.key.substr(0, 4)));
 			})
 			.y(yProcessor)
 	},
 
 	createYRangeValues: function() {
-		this.yRangeValues = _.map(this.collection.at(0).get('buckets'), _.bind(function(bucket) {
+		console.log(this.collection.totalCollection.length);
+		this.yRangeValues = _.map(this.collection.at(0).get('data').buckets, _.bind(function(bucket) {
 			if (this.percentagesView) {
-				var totalByYear = this.collection.getTotalByYear(Number(bucket.key_as_string.substr(0, 4)));
-				return bucket.doc_count/totalByYear;
+				var totalByYear = this.collection.getTotalByYear(Number(bucket.key.substr(0, 4)), this.graphValueKey);
+				return isNaN(bucket[this.graphValueKey]/totalByYear) ? 0 : bucket[this.graphValueKey]/totalByYear;
 			}
 			else {
-				return bucket.doc_count;
+				return bucket[this.graphValueKey];
 			}
 		}, this));
 		
 		if (this.collection.length > 1) {
+			console.log('----------- this.collection.length > 1 ------------')
 			this.collection.each(_.bind(function(model) {
 				this.yRangeValues = _.union(
 					this.yRangeValues, 
-					_.map(this.collection.at(1).get('buckets'), _.bind(function(bucket) {
+					_.map(this.collection.at(1).get('data').buckets, _.bind(function(bucket) {
 						if (this.percentagesView) {
-							var totalByYear = this.collection.getTotalByYear(Number(bucket.key_as_string.substr(0, 4)));
-							return bucket.doc_count/totalByYear;
+							var totalByYear = this.collection.getTotalByYear(Number(bucket.key.substr(0, 4)), this.graphValueKey);
+							return isNaN(bucket[this.graphValueKey]/totalByYear) ? 0 : bucket[this.graphValueKey]/totalByYear;
 						}
 						else {
-							return bucket.doc_count;
+							return bucket[this.graphValueKey];
 						}
 					}, this))
 				);
 			}, this));
 			this.yRangeValues = this.yRangeValues.sort();
 		}
+		console.log(this.yRangeValues);
 	},
 
 	createYRange: function() {
@@ -165,16 +191,16 @@ module.exports = Backbone.View.extend({
 		var yRange = this.createYRange();
 
 		_.each(this.collection.models, _.bind(function(model, index) {
-			var lineData = model.get('buckets');
+			var lineData = model.get('data').buckets;
 
 			var line = this.createLine(_.bind(function(d) {
 				if (this.percentagesView) {					
-					var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
-					var percentage = d.doc_count/totalByYear;
+					var totalByYear = this.collection.getTotalByYear(Number(d.key.substr(0, 4)), this.graphValueKey);
+					var percentage = isNaN(d[this.graphValueKey]/totalByYear) ? 0 : d[this.graphValueKey]/totalByYear;
 					return (yRange(percentage));
 				}
 				else {
-					return (yRange(d.doc_count));
+					return (yRange(d[this.graphValueKey]));
 				}
 			}, this));
 
@@ -194,12 +220,12 @@ module.exports = Backbone.View.extend({
 			.duration(1000)
 			.attr('cy', _.bind(function (d) {
 				if (this.percentagesView) {					
-					var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
-					var percentage = d.doc_count/totalByYear;
+					var totalByYear = this.collection.getTotalByYear(Number(d.key.substr(0, 4)), this.graphValueKey);
+					var percentage = isNaN(d[this.graphValueKey]/totalByYear) ? 0 : d[this.graphValueKey]/totalByYear;
 					return (yRange(percentage));
 				}
 				else {
-					return (yRange(d.doc_count));
+					return (yRange(d[this.graphValueKey]));
 				}
 			}, this));
 	},
@@ -240,15 +266,15 @@ module.exports = Backbone.View.extend({
 		}
 
 		// Collect all x values (year) from the result colleciton
-		this.xRangeValues = _.map(this.collection.at(0).get('buckets'), function(bucket) {
-			return bucket.key_as_string.substr(0, 4);
+		this.xRangeValues = _.map(this.collection.at(0).get('data').buckets, function(bucket) {
+			return bucket.key.substr(0, 4);
 		});
 		if (this.collection.length > 1) {
 			this.collection.each(_.bind(function(model) {
 				this.xRangeValues = _.union(
 					this.xRangeValues, 
-					_.map(this.collection.at(1).get('buckets'), function(bucket) {
-						return bucket.key_as_string.substr(0, 4);
+					_.map(model.get('data').buckets, function(bucket) {
+						return bucket.key.substr(0, 4);
 					})
 				);
 			}, this));
@@ -256,7 +282,7 @@ module.exports = Backbone.View.extend({
 		}
 
 		// Create x range scale which we will use to position points on the graph
-		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([1970, 2016]);
+		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([this.startYear, this.endYear]);
 
 		// Collect all y values from the result collection
 		this.createYRangeValues();
@@ -402,12 +428,12 @@ module.exports = Backbone.View.extend({
 			// Create path data with correct y values
 			var line = this.createLine(_.bind(function(d) {
 				if (this.percentagesView) { // Check if we are rendering relative values to the total document per year or absolute values
-					var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4))); // Get total documents per year
-					var percentage = d.doc_count/totalByYear;
+					var totalByYear = this.collection.getTotalByYear(Number(d.key.substr(0, 4)), this.graphValueKey); // Get total documents per year
+					var percentage = isNaN(d[this.graphValueKey]/totalByYear) ? 0 : d[this.graphValueKey]/totalByYear;
 					return (yRange(percentage));
 				}
 				else {
-					return (yRange(d.doc_count));
+					return (yRange(d[this.graphValueKey]));
 				}
 			}, this));
 
@@ -440,16 +466,16 @@ module.exports = Backbone.View.extend({
 				.attr('class', 'point')
 				.attr('fill', color)
 				.attr('cx', function (d) {
-					return view.xRange(Number(d.key_as_string.substr(0, 4)));
+					return view.xRange(Number(d.key.substr(0, 4)));
 				})
 				.attr('cy', _.bind(function (d) {
 					if (this.percentagesView) {					
-						var totalByYear = this.collection.getTotalByYear(Number(d.key_as_string.substr(0, 4)));
-						var percentage = d.doc_count/totalByYear;
+						var totalByYear = this.collection.getTotalByYear(Number(d.key.substr(0, 4)), this.graphValueKey);
+						var percentage = isNaN(d[this.graphValueKey]/totalByYear) ? 0 : d[this.graphValueKey]/totalByYear;
 						return (yRange(percentage));
 					}
 					else {
-						return (yRange(d.doc_count));
+						return (yRange(d[this.graphValueKey]));
 					}
 				}, this))
 				.attr('r', 0)
@@ -463,7 +489,7 @@ module.exports = Backbone.View.extend({
 					var xPosition = d3.mouse(this)[0] - 50;
 					var yPosition = d3.mouse(this)[1] - 25;
 					tooltip.attr('transform', 'translate(' + xPosition + ',' + yPosition + ')');
-					tooltip.select('text').text(d.key_as_string.substr(0, 4)+': '+d.doc_count);
+					tooltip.select('text').text(d.key.substr(0, 4)+': '+d[this.graphValueKey]);
 				})
 				.transition()
 				.delay(750)
@@ -479,8 +505,9 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			model.set('color', this.app.getItemColor(model.get(this.wildcardSearch ? 'key' : 'search_query')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti.join(',')+')' : '')));
-			addLine(model.get('buckets'), model.get('color'), index);
+			console.log();
+			model.set('color', this.app.getItemColor(model.get('query').original_search_terms));
+			addLine(model.get('data').buckets, model.get('color'), index);
 		}, this));
 
 		// If the grahp has a set timerange, then adjust the time overlay.
@@ -491,6 +518,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	setTimeOverlay: function(values) {
+		return;
 		/*
 			Adjust the visual time range overlay.
 		*/
@@ -544,8 +572,8 @@ module.exports = Backbone.View.extend({
 				color: model.get('color'),
 				key: model.get('key'),
 				filterStrings: filterStrings,
-				data: _.find(model.get('buckets'), function(bucket) {
-					return bucket.key_as_string == year;
+				data: _.find(model.get('data').buckets, function(bucket) {
+					return bucket.key == year;
 				})
 			};
 		}, this));
@@ -555,7 +583,7 @@ module.exports = Backbone.View.extend({
 		this.$el.find('.info-overlay').html(template({
 			data: {
 				year: year,
-				total:this.collection.getTotalByYear(year),
+				total:this.collection.getTotalByYear(year, this.graphValueKey),
 				legends: legends
 			}
 		}));

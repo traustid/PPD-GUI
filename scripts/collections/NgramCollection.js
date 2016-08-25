@@ -3,36 +3,36 @@ var _ = require('underscore');
 var $ = require('jquery');
 
 module.exports = Backbone.Collection.extend({
-	url: 'http://cdh-vir-1.it.gu.se:8900/motioner/timeline/search',
+	url: 'http://cdh-vir-1.it.gu.se:8990/timeline/aggs',
 	includeTotal: false,
 
 	initialize: function() {
 		this.totalCollection = new Backbone.Collection();
-		this.totalCollection.url = 'http://cdh-vir-1.it.gu.se:8900/motioner/timeline/total';
+		this.totalCollection.url = 'http://cdh-vir-1.it.gu.se:8990/timeline/total';
 		this.totalCollection.fetch();
 	},
 
-	getTotalByYear: function(year) {
+	getTotalByYear: function(year, valueKey) {
 		if (this.totalCollection.length == 0) {
 			return null;
 		}
-		return _.filter(this.totalCollection.at(0).get('buckets'), function(bucket) {
-			return Number(bucket.key_as_string) == year;
-		})[0].doc_count;
+		return _.filter(this.totalCollection.at(0).get('data').buckets, function(bucket) {
+			return Number(bucket.key) == year;
+		})[0][valueKey];
 	},
 
 	parse: function(data) {
 		if (this.includeTotal) {
 			data.data.push(this.totalCollection.toJSON()[0]);
 		}
-		return data.data;
+		return data;
 	},
 
 	search: function(query, queryMode) {
 		this.queryString = query;
 
 		this.searchData = {
-			'searchPhrase': query,
+			'searchQuery': query,
 			'queryMode': queryMode == null ? 'exact' : queryMode
 		};
 
