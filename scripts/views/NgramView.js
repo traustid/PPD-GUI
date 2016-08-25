@@ -570,7 +570,7 @@ module.exports = Backbone.View.extend({
 
 			return {
 				color: model.get('color'),
-				key: model.get('key'),
+				key: model.get('query').original_search_terms,
 				filterStrings: filterStrings,
 				data: _.find(model.get('data').buckets, function(bucket) {
 					return bucket.key == year;
