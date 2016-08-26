@@ -15,6 +15,29 @@ module.exports = Backbone.View.extend({
 		left: 25
 	},
 
+	colors: [
+		'#b6ac42', 
+		'#9d4adf', 
+		'#6bbc3e', 
+		'#cf45ab', 
+		'#54a867', 
+		'#9063c7', 
+		'#d68e39', 
+		'#5477d0', 
+		'#d74c31', 
+		'#63b8b5', 
+		'#da446b', 
+		'#697131', 
+		'#d588c2', 
+		'#a5a981', 
+		'#9f4e69', 
+		'#7fa3d1', 
+		'#ad6847', 
+		'#75668d', 
+		'#cc9899', 
+		'#51736e'
+	],
+
 	initialize: function(options) {
 		this.options = options;
 		this.app = this.options.app;
@@ -29,10 +52,10 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, timeRange, queryMode) {
+	search: function(query, timeRange, queryMode, aggregationField) {
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
-		this.collection.search(query, timeRange, queryMode);
+		this.collection.search(query, timeRange, queryMode, aggregationField);
 
 		this.timeRange = timeRange;
 
@@ -87,11 +110,11 @@ module.exports = Backbone.View.extend({
 			.orient('left')
 			.tickSubdivide(true);
 
-		x.domain(this.collection.at(0).get('buckets').map(function(d) {
+		x.domain(_.map(this.collection.at(0).get('data').buckets, function(d) {
 			return d.key;
 		}));
 
-		y.domain([0, d3.max(this.collection.at(0).get('buckets'), function(d) {
+		y.domain([0, d3.max(this.collection.at(0).get('data').buckets, function(d) {
 			return d.doc_count;
 		})]);
 
@@ -102,33 +125,11 @@ module.exports = Backbone.View.extend({
 			.attr('class', 'x axis')
 			.attr('transform', 'translate('+this.graphMargins.left+',' + (this.graphHeight) + ')')
 			.call(xAxis);
-/*	
-		graph.selectAll(".x.axis text")
-			.attr("transform"," translate(0,15) rotate(-65)") // To rotate the texts on x axis. Translate y position a little bit to prevent overlapping on axis line.
-			.attr('font-family', function(d) {
-				var party = _.find(view.options.parties, function(party) {
-					return party.letter.toLowerCase() == d.toLowerCase();
-				});
 
-				return party.entity && party.entity != '' ? 'icomoon' : 'inherit';
-			})
-			.attr('font-size', '16px')
-			.html(function(d) {
-				var party = _.find(view.options.parties, function(party) {
-					return party.letter.toLowerCase() == d.toLowerCase();
-				});
-
-				return party ? (party.entity && party.entity != '' ? party.entity : d) : d;
-			});
-*/
 		graph.selectAll(".x.axis text")
 			.html(function(d) {
-/*
-				var party = _.find(view.options.parties, function(party) {
-					return party.letter.toLowerCase() == d.toLowerCase();
-				});
-*/
-				return d.toUpperCase();
+				return '<title>'+d+'</title>'+d.substr(0, 10)+'...';
+//				return d.toUpperCase();
 			})
 
 		graph.append('g')
@@ -137,15 +138,11 @@ module.exports = Backbone.View.extend({
 			.call(yAxis);
 
 		graph.selectAll('.bar')
-			.data(this.collection.at(0).get('buckets'))
+			.data(this.collection.at(0).get('data').buckets)
 			.enter().append('rect')
 			.attr('class', 'bar')
-			.attr('fill', function(d) {
-				var party = _.find(view.options.parties, function(party) {
-					return party.letter.toLowerCase() == d.key.toLowerCase();
-				});
-
-				return party ? (party.color && party.color != '' ? party.color : '#4F4F4F') : '#4F4F4F';
+			.attr('fill', function(d, index) {
+				return view.colors[index];
 			})
 /*
 			.attr('x', function(d) {

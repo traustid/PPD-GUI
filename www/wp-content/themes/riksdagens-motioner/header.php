@@ -26,7 +26,7 @@
 
 <body <?php body_class(); ?>>
 
-<header class="header header-background-<?php echo rand(1, 2); ?>">
+<header class="header">
 	
 	<div class="container">
 		
@@ -58,6 +58,6 @@
 
 	</div>
 
-	<div class="img-credit">Foto: Melker Dahlstran/<a href="http://riksdagen.se/sv/press/pressbilder/" target="_blank">Riksdagsförvaltningen</a></div>
+	<div class="img-credit"></div>
 
 </header>

@@ -19,7 +19,8 @@ module.exports = Backbone.View.extend({
 	events: {
 		'click .item-title': 'itemTitleClick',
 		'click .result-tabs a.tab': 'resultTabClick',
-		'click .load-more-button': 'loadMoreClick'
+		'click .load-more-button': 'loadMoreClick',
+		'change .aggregation-select': 'aggregationChange'
 	},
 
 	itemTitleClick: function(event) {
@@ -35,7 +36,17 @@ module.exports = Backbone.View.extend({
 		this.renderList();
 
 		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
-		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode);
+		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
+	},
+
+	aggregationChange: function() {
+		this.renderList();
+
+		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		console.log(barChartQuery);
+		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 	},
 
 	loadMoreClick: function() {
@@ -84,7 +95,8 @@ module.exports = Backbone.View.extend({
 		this.resultIndex = 0;
 
 		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
-		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode);
+		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
@@ -119,10 +131,12 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderList: function() {
+		return;
+		
 		this.$el.find('.list-container').html('');
 
 		if (this.collection.at(this.resultIndex).get('hits').length == 0) {
-			this.$el.addClass('no-results');
+//			this.$el.addClass('no-results');
 		}
 		else {
 			this.$el.removeClass('no-results');

@@ -48,6 +48,9 @@ module.exports = Backbone.View.extend({
 		*/
 		this.collection = new NgramCollection();
 		this.collection.on('reset', this.collectionReset, this);
+		this.collection.once('totalCollectionReset', _.bind(function() {
+			this.trigger('totalCollectionReset');
+		}, this));
 		this.render();
 	},
 
@@ -135,7 +138,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	createYRangeValues: function() {
-		console.log(this.collection.totalCollection.length);
 		this.yRangeValues = _.map(this.collection.at(0).get('data').buckets, _.bind(function(bucket) {
 			if (this.percentagesView) {
 				var totalByYear = this.collection.getTotalByYear(Number(bucket.key.substr(0, 4)), this.graphValueKey);
@@ -147,7 +149,6 @@ module.exports = Backbone.View.extend({
 		}, this));
 		
 		if (this.collection.length > 1) {
-			console.log('----------- this.collection.length > 1 ------------')
 			this.collection.each(_.bind(function(model) {
 				this.yRangeValues = _.union(
 					this.yRangeValues, 
@@ -164,7 +165,6 @@ module.exports = Backbone.View.extend({
 			}, this));
 			this.yRangeValues = this.yRangeValues.sort();
 		}
-		console.log(this.yRangeValues);
 	},
 
 	createYRange: function() {
@@ -505,7 +505,6 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			console.log();
 			model.set('color', this.app.getItemColor(model.get('query').original_search_terms));
 			addLine(model.get('data').buckets, model.get('color'), index);
 		}, this));

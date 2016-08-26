@@ -5,8 +5,8 @@
 
 
 	<div class="ngram-tools ngram-view-mode tabs u-pull-left">
-		<a class="tab" data-viewmode="relative">Relativt</a>
-		<a class="tab selected" data-viewmode="absolute">Absolut</a>
+		<a class="tab selected" data-viewmode="relative">Relativt</a>
+		<a class="tab" data-viewmode="absolute">Absolut</a>
 	</div>
 
 	<div class="ngram-tools ngram-result-mode tabs u-pull-right">

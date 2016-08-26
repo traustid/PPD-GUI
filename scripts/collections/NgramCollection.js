@@ -9,7 +9,12 @@ module.exports = Backbone.Collection.extend({
 	initialize: function() {
 		this.totalCollection = new Backbone.Collection();
 		this.totalCollection.url = 'http://cdh-vir-1.it.gu.se:8990/timeline/total';
-		this.totalCollection.fetch();
+		this.totalCollection.once('reset', _.bind(function() {
+			this.trigger('totalCollectionReset');
+		}, this));
+		this.totalCollection.fetch({
+			reset: true
+		});
 	},
 
 	getTotalByYear: function(year, valueKey) {

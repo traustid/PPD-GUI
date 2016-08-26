@@ -3,22 +3,22 @@ var _ = require('underscore');
 var $ = require('jquery');
 
 module.exports = Backbone.Collection.extend({
-	url: 'http://cdh-vir-1.it.gu.se:8900/motioner/barchart/parties',
-	includeTotal: false,
+	url: 'http://cdh-vir-1.it.gu.se:8990/barchart',
 
 	initialize: function() {
 	},
 
 	parse: function(data) {
-		return data.data;
+		return data;
 	},
 
-	search: function(query, timeRange, queryMode) {
+	search: function(query, timeRange, queryMode, aggregationField) {
 		this.searchData = {
-			'searchPhrase': query,
+			'searchQuery': query,
 			'startDate': timeRange[0],
 			'endDate': timeRange[1],
-			'queryMode': queryMode == null ? 'exact' : queryMode
+			'queryMode': queryMode == null ? 'exact' : queryMode,
+			'aggField': aggregationField
 		};
 
 		this.fetch({

@@ -9,156 +9,32 @@ var SliderView = require('./SliderView');
 var ListView = require('./ListView');
 
 module.exports = Backbone.View.extend({
-	parties: [
-		{
-			letter: 's',
-			color: '#ed1b34',
-			name: 'Socialdemokraterna',
-			logo: 'partylogo-s.png',
-			entity: '&#xe90a;'
-		},
-		{
-			letter: 'm',
-			color: '#52bdec',
-			name: 'Moderata samlingspartiet',
-			logo: 'partylogo-m.png',
-			entity: '&#xe907;'
-		},
-		{
-			letter: 'c',
-			color: '#016a3a',
-			name: 'Centerpartiet',
-			logo: 'partylogo-c.png',
-			entity: '&#xe904;'
-		},
-		{
-			letter: 'fp',
-			color: '',
-			name: 'Folkpartiet',
-			logo: 'partylogo-fp.png',
-			entity: '&#xe905;'
-		},
-		{
-			letter: 'kd',
-			color: '#073192',
-			name: 'Kristdemokraterna',
-			logo: 'partylogo-kd.png',
-			entity: '&#xe906;'
-		},
-		{
-			letter: 'v',
-			color: '#da291c',
-			name: 'Vänsterpartiet',
-			logo: 'partylogo-v.png',
-			entity: '&#xe90c;'
-		},
-		{
-			letter: 'mp',
-			color: '#53a045',
-			name: 'Miljöpartiet de gröna',
-			logo: 'partylogo-mp.png',
-			entity: '&#xe908;'
-		},
-		{
-			letter: 'vpk',
-			color: '',
-			name: 'Vänsterpartiet Kommunisterna'
-		},
-		{
-			letter: 'sd',
-			color: '#fbc700',
-			name: 'Sverigedemokraterna ',
-			logo: 'partylogo-sd.png',
-			entity: '&#xe90b;'
-		},
-		{
-			letter: 'kds',
-			color: '',
-			name: 'Kristen demokratisk samling'
-		},
-		{
-			letter: 'nyd',
-			color: '',
-			name: 'Ny Demokrati',
-			logo: 'partylogo-nyd.png',
-			entity: '&#xe909;'
-		},
-		{
-			letter: 'l',
-			color: '#004b92',
-			name: 'Liberalerna'
-		},
-		{
-			letter: 'apk',
-			color: '',
-			name: 'Arbetarpartiet kommunisterna'
-		},
-		{
-			letter: 'ni',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'i',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'kr',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'bör',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'in',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'rn',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'vp',
-			color: '',
-			name: 'Vänsterpartiet'
-		},
-		{
-			letter: 'e',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'nt',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'tn',
-			color: '',
-			name: ''
-		},
-		{
-			letter: 'a',
-			color: '',
-			name: ''
-		},
-		{
-			letter: '0',
-			color: '',
-			name: ''
-		}
-	],
-
-	startYear: 1971,
+	startYear: 1700,
 	endYear: 2016,
 
 	initialize: function() {
+		this.ngramView = new NgramView({
+			el: this.$el.find('#ngramContianer'),
+			percentagesView: true,
+			app: this
+		});
+		this.ngramView.on('updategraph', this.onNgramUpdate, this);
+		this.ngramView.on('graphclick', _.bind(function(event) {
+			this.sliderView.setSliderValues([event.year, event.year+1], true);
+		}, this));
+		this.ngramView.on('timerange', _.bind(function(event) {
+			this.sliderView.setSliderValues([event.values[0], event.values[1]], true);
+		}, this));
+		this.ngramView.on('wildcardresults', _.bind(function() {
+			this.hitList.search(_.first(_.map(this.ngramView.collection.models, function(model) {
+				return model.get('key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '');
+			}), 4).join(','), [yearFrom, yearTo], queryMode);
+		}, this));
+
+		this.ngramView.once('totalCollectionReset', _.bind(this.initializeReady, this));
+	},
+
+	initializeReady: function() {
 		this.router = new AppRouter();
 
 		this.render();
@@ -186,26 +62,6 @@ module.exports = Backbone.View.extend({
 
 		if (!this.sliderView) {
 			this.initSlider();
-		}
-
-		if (this.ngramView == undefined) {
-			this.ngramView = new NgramView({
-				el: this.$el.find('#ngramContianer'),
-				percentagesView: false,
-				app: this
-			});
-			this.ngramView.on('updategraph', this.onNgramUpdate, this);
-			this.ngramView.on('graphclick', _.bind(function(event) {
-				this.sliderView.setSliderValues([event.year, event.year+1], true);
-			}, this));
-			this.ngramView.on('timerange', _.bind(function(event) {
-				this.sliderView.setSliderValues([event.values[0], event.values[1]], true);
-			}, this));
-			this.ngramView.on('wildcardresults', _.bind(function() {
-				this.hitList.search(_.first(_.map(this.ngramView.collection.models, function(model) {
-					return model.get('key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '');
-				}), 4).join(','), [yearFrom, yearTo], queryMode);
-			}, this));
 		}
 
 		if (this.ngramView.lastQuery != query || this.ngramView.lastQueryMode != queryMode) {
@@ -262,7 +118,6 @@ module.exports = Backbone.View.extend({
 
 	createColorRegistry: function(models, key) {
 		this.colorRegistry = _.map(models, _.bind(function(model, index) {
-			console.log(model);
 			return {
 				key: key != undefined ? model.get(key) : model.get('query').original_search_terms,
 				color: this.colors[index]
@@ -271,7 +126,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	getItemColor: function(key) {
-		console.log('getItemColor: '+key);
 		return _.find(this.colorRegistry, function(color) {
 			return color.key == key;
 		}).color;
@@ -280,7 +134,7 @@ module.exports = Backbone.View.extend({
 	initSlider: function() {
 		this.sliderView = new SliderView({
 			el: this.$el.find('#sliderContainer'),
-			range: [1971, 2016]
+			range: [this.startYear, this.endYear]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
 			this.router.navigate('search/'+this.searchInput.getQueryString()+(this.searchInput.getQueryMode() != 'exact' ? '/querymode/'+this.searchInput.getQueryMode() : '')+'/'+event.values[0]+'/'+event.values[1], {

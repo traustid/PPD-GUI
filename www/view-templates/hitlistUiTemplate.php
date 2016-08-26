@@ -3,6 +3,17 @@
 	<div class="container default-margins">
 
 		<div class="row">
+			<div class="twelve columns">
+				<select class="aggregation-select">
+					<option value="authors">authors</option>
+					<option value="works">works</option>
+					<option value="mediatype">mediatype</option>
+					<option value="texttype">texttype</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
 			<div class="twelve columns tabs result-tabs"></div>
 		</div>
 
