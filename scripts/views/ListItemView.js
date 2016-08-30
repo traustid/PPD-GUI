@@ -64,7 +64,7 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		var template = _.template($("#listItemTemplate").html());
-
+/*
 		var htmlString = this.model.get('_source').dokument.html;
 
 		htmlString = htmlString.split('<style>').join('<!--').split('</style>').join('-->');
@@ -91,11 +91,10 @@ module.exports = Backbone.View.extend({
 				}
 			}, this)).join('');
 		}
-
+*/
 		this.$el.html(template({
-			model: this.model,
-			shortText: htmlString,
-			partyLetters: partyLetters
+			model: this.model
+//			shortText: htmlString,
 		}));
 	}
 });

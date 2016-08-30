@@ -89,7 +89,7 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		if (this.app.colorRegistry.length == 0) {
-			this.app.createColorRegistry(this.collection.models, 'search_query');
+			this.app.createColorRegistry(this.collection.models);
 		}
 
 		this.resultIndex = 0;
@@ -100,7 +100,8 @@ module.exports = Backbone.View.extend({
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('search_query')+model.filtersToString(true))+'"></span>'+model.get('search_query')+model.filtersToString(true)+'</a>';
+			console.log(model.get('query').original_search_terms);
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('query').original_search_terms)+'"></span>'+model.get('query').original_search_terms+model.filtersToString(true)+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 
@@ -108,7 +109,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	hitsUpdate: function() {
-		var newHits = this.collection.at(this.resultIndex).get('hits');
+		var newHits = this.collection.at(this.resultIndex).get('data').hits;
 		newHits = _.rest(newHits, this.collection.at(this.resultIndex).get('from_index'));
 
 		_.each(newHits, _.bind(function(model, index) {
@@ -131,16 +132,14 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderList: function() {
-		return;
-		
 		this.$el.find('.list-container').html('');
 
-		if (this.collection.at(this.resultIndex).get('hits').length == 0) {
-//			this.$el.addClass('no-results');
+		if (this.collection.at(this.resultIndex).get('data').hits.length == 0) {
+			this.$el.addClass('no-results');
 		}
 		else {
 			this.$el.removeClass('no-results');
-			_.each(this.collection.at(this.resultIndex).get('hits'), _.bind(function(model, index) {
+			_.each(this.collection.at(this.resultIndex).get('data').hits, _.bind(function(model, index) {
 				var newEl = $('<div class="list-item"/>');
 				this.$el.find('.list-container').append(newEl);
 

@@ -128,7 +128,7 @@ module.exports = Backbone.View.extend({
 
 		graph.selectAll(".x.axis text")
 			.html(function(d) {
-				return '<title>'+d+'</title>'+d.substr(0, 10)+'...';
+				return '<title>'+d+'</title>'+(d.length > 3 ? d.substr(0, 10)+'...' : d);
 //				return d.toUpperCase();
 			})
 

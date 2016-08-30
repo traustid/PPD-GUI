@@ -5,12 +5,12 @@ var ListItemModel = require('./../models/ListItemModel');
 module.exports = Backbone.Collection.extend({
 	model: ListItemModel,
 
-	url: 'http://cdh-vir-1.it.gu.se:8900/motioner/hits',
+	url: 'http://cdh-vir-1.it.gu.se:8990/hitlist',
 
 	search: function(query, timeRange, queryMode) {
 		this.pageIndex = 0;
 		this.searchData = {
-			'searchPhrase': query,
+			'searchQuery': query,
 			'startDate': timeRange[0],
 			'endDate': timeRange[1],
 			'queryMode': queryMode == null ? 'exact' : queryMode

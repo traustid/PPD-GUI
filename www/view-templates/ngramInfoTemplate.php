@@ -5,7 +5,7 @@
 		<% _.each(data.legends, function(item, index) { %>
 		<div class="item" data-index="<%= index %>">
 			<div class="color" style="background-color: <%= item.color %>"></div>
-			<div class="label"><strong><%= item.key+' '+item.filterStrings.join(' ') %></strong>: <%= item.data.doc_count %> <span class="text-light">(<%= Math.round((item.data.doc_count/data.total)*10000)/10000 %>%)</span></div>
+			<div class="label"><strong><%= item.key+' '+item.filterStrings.join(' ') %></strong>: <%= item.data.doc_count %> <span class="text-light">(<%= isNaN(Math.round((item.data.doc_count/data.total)*10000)/10000) ? 0 : Math.round((item.data.doc_count/data.total)*10000)/10000 %>%)</span></div>
 		</div>
 	<% }) %>
 	
