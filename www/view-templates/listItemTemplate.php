@@ -4,11 +4,11 @@
 
 		<a class="item-title">
 
-			<div class="title"><strong><%= model.get('_source').dokument.titel %></strong> <%= model.get('_source').dokument.subtitel %></div>
+			<div class="title"><strong><%= model.get('_source').meta_info.shorttitle %></strong> <%= authorNames.join(', ') %></div>
 			<div class="title-attribs">
-				<%= partyLetters %>
-				<%= model.get('_source').dokument.dateFormatted %>
+				<%= year  %>
 			</div>
+			<%= '<div class="author-image" style="background-image: url(img/'+authorIDs.join('_face.jpeg)"></div><div class="author-image" style="background-image: url(img/')+'_face.jpeg)"></div>'  %>
 		</a>
 
 		<div class="item-content">
@@ -17,23 +17,27 @@
 
 
 				<div class="eight columns">
-					<p><%= shortText %></p>
+					<p></p>
 				</div>
 
 				<div class="four columns">
-					<a href="" class="button u-full-width full-text-button"><span class="icon-sheet"></span> Läs hela</a><br/>
-					<a href="<%= model.get('_source').dokument.dokument_url_html %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (html)</a>
+					<% _.each(model.get('_source').meta_info.authorid.authors, function(author) { %>
+						<h3><%= author.name %>
+							<% if (author.birth || author.death) { %>
+								<br/><span class="text-light">
+								<%= author.birth+(author.death ? '-'+author.death : '') %>
+								</span>
+							<% } %>
+						</h3>
+						<p></p>
+					<% }) %>
 
-					<% if (model.get('_source').dokbilaga && model.get('_source').dokbilaga.length) { %>
-						<% _.each(model.get('_source').dokbilaga.bilaga, function(file) { %>
-							<a href="<%= file.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= file.filtyp %>)</a>	
-						<% }) %>
-					<% } %>
+					<hr/>
 
-					<% if (model.get('_source').dokbilaga && model.get('_source').dokbilaga.bilaga) { %>
-						<a href="<%= model.get('_source').dokbilaga.bilaga.fil_url %>" target="_blank" class="button u-full-width"><span class="icon-up-arrow"></span> Dokument (<%= model.get('_source').dokbilaga.bilaga.filtyp %>)</a>	
-					<% } %>
+					<p><strong>Förlag</strong><br/>
+						<%= model.get('_source').meta_info.publisher.name+', '+model.get('_source').meta_info.publisher.place %></p>
 
+					
 				</div>
 			</div>
 

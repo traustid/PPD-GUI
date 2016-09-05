@@ -18,7 +18,6 @@ module.exports = Backbone.View.extend({
 
 	selfClick: function() {
 		console.log(this.model);
-		console.log(this.model.get('_source').dokintressent.intressent);
 	},
 
 	itemTitleClick: function(event) {
@@ -92,9 +91,29 @@ module.exports = Backbone.View.extend({
 			}, this)).join('');
 		}
 */
+		var authorNames = [];
+		var authorIDs = [];
+
+		if (this.model.get('_source').meta_info.authorid && this.model.get('_source').meta_info.authorid.authors) {
+			authorNames = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
+				return author.name;
+			});
+			authorIDs = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
+				return author.id;
+			});
+		}
+
+		var year = '';
+
+		if (this.model.get('_source').meta_info.imprintyear) {
+			year = (new Date('1929-01-01')).getFullYear()
+		}
+
 		this.$el.html(template({
-			model: this.model
-//			shortText: htmlString,
+			model: this.model,
+			authorNames: authorNames,
+			authorIDs: authorIDs,
+			year: (new Date(this.model.get('_source').meta_info.imprintyear)).getFullYear()
 		}));
 	}
 });

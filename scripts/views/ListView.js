@@ -35,7 +35,7 @@ module.exports = Backbone.View.extend({
 		this.collection.resultIndex = this.resultIndex;
 		this.renderList();
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 	},
@@ -43,7 +43,7 @@ module.exports = Backbone.View.extend({
 	aggregationChange: function() {
 		this.renderList();
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
 		console.log(barChartQuery);
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
@@ -94,7 +94,12 @@ module.exports = Backbone.View.extend({
 
 		this.resultIndex = 0;
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('search_query')+this.collection.at(this.resultIndex).filtersToString(' ');
+		console.log('ListView: render');
+		console.log(this.collection.at(this.resultIndex));
+
+		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
+
+		console.log(barChartQuery);
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 
