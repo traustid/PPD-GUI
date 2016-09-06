@@ -61,38 +61,48 @@ module.exports = Backbone.View.extend({
 		});
 	},
 
+	getPageUrl: function() {
+//	http://litteraturbanken.se/#!/forfattare/SodergranE/titlar/BrokigaIakttagelser/sida/22/etext
+		var url = '';
+
+		console.log(this.model.get('_source').meta_info.mediatype);
+
+//		if (this.model.get('_source').meta_info.mediatype == 'etext') {
+
+			var author = this.model.get('_source').meta_info.authorid.authors.length > 0 ? 
+				this.model.get('_source').meta_info.authorid.authors[0].id :
+				this.model.get('_source').meta_info.authorid.editors.length > 0 ?
+				this.model.get('_source').meta_info.authorid.editors[0].id :
+				''
+			;
+
+			url = 'http://litteraturbanken.se/#!/forfattare/'+author+'/titlar/'+this.model.get('_source').meta_info.titleid+'/sida/'+this.model.get('_source').page_idx+'/'+this.model.get('_source').meta_info.mediatype;
+//		}
+
+		return url;
+	},
+
+
+	highlight: function(data, search) {
+		function preg_quote(str) {
+			// http://kevin.vanzonneveld.net
+			// +   original by: booeyOH
+			// +   improved by: Ates Goral (http://magnetiq.com)
+			// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+			// +   bugfixed by: Onno Marsman
+
+			return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+		}
+		return data.replace( new RegExp( "(" + preg_quote( search ) + ")" , 'gi' ), "<span class=\"highlight\">$1</span>" );
+	},
+
 	render: function() {
 		var template = _.template($("#listItemTemplate").html());
-/*
-		var htmlString = this.model.get('_source').dokument.html;
 
-		htmlString = htmlString.split('<style>').join('<!--').split('</style>').join('-->');
-
-		htmlString = $.truncate(htmlString, {
-			length: 300,
-			ellipsis: '<br/><a href="" class="button full-text-button">&hellip;</a>'
-		});
-
-		var partyLetters = '';
-		if (this.model.get('parties').length > 0) {
-			partyLetters = _.map(this.model.get('parties'), _.bind(function(party) {
-				var partyItem = _.findWhere(this.options.parties, {letter: party.toLowerCase()});
-				if (partyItem) {				
-					if (partyItem.logo) {
-						return '<div title="'+partyItem.name+'" class="party-letter image" style="background-image: url(img/'+partyItem.logo+')"></div>';
-					}
-					else {
-						return '<div title="'+partyItem.name+'" class="party-letter letter">'+party.toUpperCase()+'</div>';
-					}
-				}
-				else {
-					return '<div class="party-letter letter">'+party.toUpperCase()+'</div>';
-				}
-			}, this)).join('');
-		}
-*/
 		var authorNames = [];
 		var authorIDs = [];
+
+		console.log(this.options.searchTermAnalyzed);
 
 		if (this.model.get('_source').meta_info.authorid && this.model.get('_source').meta_info.authorid.authors) {
 			authorNames = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
@@ -109,11 +119,15 @@ module.exports = Backbone.View.extend({
 			year = (new Date('1929-01-01')).getFullYear()
 		}
 
+		var pageContentText = this.highlight(this.model.get('_source').page_content_original, this.options.searchTermAnalyzed);
+
 		this.$el.html(template({
 			model: this.model,
 			authorNames: authorNames,
 			authorIDs: authorIDs,
-			year: (new Date(this.model.get('_source').meta_info.imprintyear)).getFullYear()
+			year: (new Date(this.model.get('_source').meta_info.imprintyear)).getFullYear(),
+			pageUrl: this.getPageUrl(),
+			pageContentText
 		}));
 	}
 });

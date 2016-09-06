@@ -45,6 +45,12 @@ h1, h2, h3, h4 {
 	}
 }
 
+h2 {
+	.text-light {
+		font-size: 2.3rem;
+	}
+}
+
 .text-center {
 	text-align: center;
 }
@@ -777,9 +783,9 @@ hr {
    			}
 
    			.author-image {
-   				display: inline-block;
-
-   				float: right;
+   				position: absolute;
+				
+				right: 80px;
 
    				width: 40px;
    				height: 40px;
@@ -847,6 +853,23 @@ hr {
 				margin-left: 25px;
     			margin-right: 25px;
     		}
+
+    		blockquote {
+				margin-left: 0;
+				margin-right: 0;
+				padding: 1.5rem;
+				
+				border-left: 4px solid #bbbbbb;
+				border-top: 1px solid #e6e6e6;
+				border-right: 1px solid #e6e6e6;
+				border-bottom: 1px solid #e6e6e6;
+    		}
+
+    		.highlight {
+				background: #ffff52;
+
+				border: 1px solid #ccc;
+    		}
 	
 			.date {
 
@@ -890,14 +913,12 @@ hr {
 				}
 
 				.author-image {
-					position: absolute;
-
 					right: 75px;
-
-					margin-top: -31px;
 
 					width: 80px;
 					height: 80px;
+
+					margin-top: -30px;
 
 					background-size: 80px 80px;
 

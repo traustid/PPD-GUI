@@ -17,7 +17,24 @@
 
 
 				<div class="eight columns">
-					<p></p>
+					<%= model.get('_source').meta_info.title.length > 100 ? '<h2 title="'+model.get('_source').meta_info.title+'">'+model.get('_source').meta_info.title.substr(0, 100)+'...</h2>' : '<h2>'+model.get('_source').meta_info.title+'</h2>' %></h2>
+					<p><strong>Sidnummer:</strong> <%= model.get('_source').page_idx %></p>
+					<blockquote><%= pageContentText %></blockquote>
+
+					<% if (pageUrl != '') { %>
+						<a href="<%= pageUrl %>" target="_blank" class="button"><span class="icon-up-arrow"></span> Läs på Litteraturbanken</a>
+					<% } %>
+
+					<div style="display:none">
+						<% if (model.get('_source').meta_info.part_info) { %>
+							texttype: <%= model.get('_source').meta_info.texttype %><br/>
+							part title: <%= model.get('_source').meta_info.part_info.title %><br/>
+							part texttype: <%= model.get('_source').meta_info.part_info.texttype %><br/>
+							part startpagename: <%= model.get('_source').meta_info.part_info.startpagename %><br/>
+							part endpagename: <%= model.get('_source').meta_info.part_info.endpagename %><br/>
+							page_idx: <%= model.get('_source').page_idx %>
+						<% } %>
+					</div>
 				</div>
 
 				<div class="four columns">
@@ -34,10 +51,11 @@
 
 					<hr/>
 
-					<p><strong>Förlag</strong><br/>
-						<%= model.get('_source').meta_info.publisher.name+', '+model.get('_source').meta_info.publisher.place %></p>
+					<p>
+						<strong>Förlag</strong><br/>
+						<%= model.get('_source').meta_info.publisher.name+', '+model.get('_source').meta_info.publisher.place %>
+					</p>
 
-					
 				</div>
 			</div>
 
