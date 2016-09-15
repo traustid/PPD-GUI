@@ -12,6 +12,15 @@ module.exports = Backbone.View.extend({
 	startYear: 1700,
 	endYear: 2016,
 
+	textTypes: [
+		{
+			label: 'etext'
+		},
+		{
+			label: 'faksimil'
+		}
+	],
+
 	initialize: function() {
 		this.ngramView = new NgramView({
 			el: this.$el.find('#ngramContianer'),
@@ -56,6 +65,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	search: function(query, queryMode, yearFrom, yearTo) {
+		console.log('search: query: '+query);
 		this.colorRegistry = [];
 
 		$(document.body).addClass('search-mode');
@@ -72,7 +82,7 @@ module.exports = Backbone.View.extend({
 			this.hitList = new ListView({
 				el: this.$el.find('#hitlistContainer'),
 				router: this.router,
-				parties: this.parties,
+				textTypes: this.textTypes,
 				app: this
 			});
 		}
@@ -149,7 +159,7 @@ module.exports = Backbone.View.extend({
 	render: function() {
 		this.searchInput = new SearchInputView({
 			el: this.$el.find('#searchInput'),
-			parties: this.parties
+			textTypes: this.textTypes
 		});
 
 		this.searchInput.on('search', _.bind(function(event) {

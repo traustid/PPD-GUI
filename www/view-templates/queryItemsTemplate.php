@@ -12,17 +12,21 @@
 				<div class="form-content">
 					<div class="overlay"></div>
 					<div class="row">
-						<div class="twelve columns">
+						<div class="six columns">
 							<label>Söksträng:</label>
 							<input type="text" class="query-form-input u-full-width" value="<%= model.get('queryString') %>"/>
-
-							<label>Parti:</label>
-							<div class="query-parties check-list">
+						</div>
+						<div class="six columns">
+							<label>Författare:</label>
+							<input type="text" class="query-author u-full-width" value="<%= model.get('authorString') %>"/>
+							<label>Texttyp:</label>
+							<div class="query-types check-list">
 							
-								<% _.each(parties, function(party) { 
-									if (party.name != '') { %>
+								<% _.each(textTypes, function(type) {
+									if (type.label != '') { %>
+										<% console.log(type); %>
 
-									<label><input type="checkbox" name="query-parties" value="<%= party.letter %>" <%= model.get('parties').indexOf(party.letter.toUpperCase()) > -1 ? 'checked' : '' %>><%= party.name %> (<strong><%= party.letter.toUpperCase() %></strong>)</label>
+										<label><input type="checkbox" name="query-types" value="<%= type.label %>" <%= model.get('textTypes').indexOf(type.label.toLowerCase()) > -1 ? 'checked' : '' %>><%= type.label %></label>
 
 									<% }
 								}) %>

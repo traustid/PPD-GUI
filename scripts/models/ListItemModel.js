@@ -3,18 +3,17 @@ var _ = require('underscore');
 
 module.exports = Backbone.Model.extend({
 	formatDate: function(dateStr) {
-//		var d = new Date(dateStr);
-//		return d.toLocaleDateString();
 		return dateStr.substr(0, 10);
 	},
 
 	filtersToString: function(addSpace) {
-		if (this.get('filters') && this.get('filters').length > 0) {		
-			var filterStrings = _.map(this.get('filters'), function(filter) {
+		console.log('ListCollection: filtersToString');
+		if (this.get('query').filters && this.get('query').filters.length > 0) {		
+			var filterStrings = _.map(this.get('query').filters, function(filter) {
+				console.log(filter);
 				var filterString = '';
-				for (var name in filter) {
-					filterString += name+':('+(filter[name].join(','))+')';
-				}
+				filterString = filter.key+':('+(filter.terms.join(','))+')';
+
 				return filterString;
 			});
 

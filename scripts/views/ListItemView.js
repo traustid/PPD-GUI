@@ -65,8 +65,6 @@ module.exports = Backbone.View.extend({
 //	http://litteraturbanken.se/#!/forfattare/SodergranE/titlar/BrokigaIakttagelser/sida/22/etext
 		var url = '';
 
-		console.log(this.model.get('_source').meta_info.mediatype);
-
 //		if (this.model.get('_source').meta_info.mediatype == 'etext') {
 
 			var author = this.model.get('_source').meta_info.authorid.authors.length > 0 ? 
@@ -101,8 +99,6 @@ module.exports = Backbone.View.extend({
 
 		var authorNames = [];
 		var authorIDs = [];
-
-		console.log(this.options.searchTermAnalyzed);
 
 		if (this.model.get('_source').meta_info.authorid && this.model.get('_source').meta_info.authorid.authors) {
 			authorNames = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {

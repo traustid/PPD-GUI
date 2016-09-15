@@ -9,6 +9,8 @@
 					<option value="works">works</option>
 					<option value="mediatype">mediatype</option>
 					<option value="texttype">texttype</option>
+					<option value="fraktur">fraktur</option>
+					<option value="gender">gender</option>
 				</select>
 			</div>
 		</div>

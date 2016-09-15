@@ -93,7 +93,9 @@ module.exports = Backbone.View.extend({
 
 		this.resultIndex = 0;
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
+		console.log('ListView: render');
+		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
+		console.log(barChartQuery);
 
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);

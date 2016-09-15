@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) parti:\([A-Z,|a-z,]+?$/g)) {
+		if (this.queryInput.val().match(/(.*?)( typ:\([A-Z,|a-z,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) typ:\([A-Z,|a-z,]+?$/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}
@@ -86,16 +86,14 @@ module.exports = Backbone.View.extend({
 	},
 
 	getQueryString: function() {
-		console.log('getQueryString');
 		var retStr = _.map(this.collection.models, function(model) {
 			return model.get('queryValue')
 		}).join(',').split(' ').join('%20');
-		console.log(retStr);
 		return retStr;
 	},
 
 	validateSingleQuery: function(event) {
-		if (this.queryInput.val().match(/(.*?)( parti:\([A-Z,|a-z,]+\))?/g)) {
+		if (this.queryInput.val().match(/(.*?)( typ:\([A-Z,|a-z,]+\))?/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 
@@ -126,24 +124,36 @@ module.exports = Backbone.View.extend({
 	addQueryItem: function(queryValue) {
 		queryValue = queryValue.substr(queryValue.length-1) == ',' ? queryValue.substr(0, queryValue.length-1) : queryValue;
 
-		var queryString = queryValue.split(' parti:(')[0];
-		
-		var partyStrings = queryValue.match(/parti:(\([A-Z,|a-z,]+\))/g);
+		var queryString = queryValue.split(/ typ:\(| författare:\(/)[0];
 
-		var partyArray = [];
+		var textTypeStrings = queryValue.match(/typ:(\([A-Z,|a-z,]+\))/g);
+		var authorStrings = queryValue.match(/författare:(\([A-Z,|a-z,]+\))/g);
 
-		if (partyStrings) {
-			var partyString = partyStrings[0].substr(7);
-			partyString = partyString.substr(0, partyString.length-1);
-			partyArray = partyString.split(',');
+		console.log('authorStrings:');
+		console.log(authorStrings);
+
+		var textTypeArray = [];
+
+		if (textTypeStrings) {
+			var textTypeString = textTypeStrings[0].substr(5);
+			textTypeString = textTypeString.substr(0, textTypeString.length-1);
+			textTypeArray = textTypeString.split(',');
+		}
+
+		var authorString = '';
+
+		if (authorStrings) {
+			authorString = authorStrings[0].substr(12);
+			authorString = authorString.substr(0, authorString.length-1);
 		}
 
 		this.collection.add({
 			queryValue: queryValue,
 			queryString: queryString,
-			parties: _.map(partyArray, function(party) {
-				return party.toUpperCase();
-			})
+			textTypes: _.map(textTypeArray, function(textType) {
+				return textType.toLowerCase();
+			}),
+			authorString: authorString
 		});
 	},
 
@@ -152,7 +162,7 @@ module.exports = Backbone.View.extend({
 
 		this.queryItems.html(template({
 			models: this.collection.models,
-			parties: this.options.parties
+			textTypes: this.options.textTypes
 		}));
 
 		_.each(this.queryItems.find('.item'), _.bind(function(item) {
@@ -199,18 +209,21 @@ module.exports = Backbone.View.extend({
 		var form = this.$el.find('.item[data-index='+index+']');
 		var queryString = form.find('.query-form-input').val();
 
-		var selectedParties = [];
+		var selectedTextTypes = [];
 
-		_.map(form.find('.query-parties input'), _.bind(function(input) {
+		_.map(form.find('.query-types input'), _.bind(function(input) {
 			if (input.checked) {
-				selectedParties.push($(input).val().toUpperCase());
+				selectedTextTypes.push($(input).val().toLowerCase());
 			}
 		}, this));
 
+		var selectedAuthors = form.find('.query-author').val();
+
 		this.collection.at(index).set({
-			queryValue: queryString+(selectedParties.length > 0 ? ' parti:('+selectedParties.join(',')+')' : ''),
+			queryValue: queryString+(selectedTextTypes.length > 0 ? ' typ:('+selectedTextTypes.join(',')+')' : '')+(selectedAuthors.length > 0 ? ' författare:('+selectedAuthors+')' : ''),
 			queryString: queryString,
-			parties: selectedParties
+			textTypes: selectedTextTypes,
+			authorString: selectedAuthors
 		});
 
 	},
