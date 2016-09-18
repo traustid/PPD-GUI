@@ -44,7 +44,7 @@ module.exports = Backbone.View.extend({
 		this.renderList();
 
 		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
-		console.log(barChartQuery);
+
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 	},
@@ -93,16 +93,14 @@ module.exports = Backbone.View.extend({
 
 		this.resultIndex = 0;
 
-		console.log('ListView: render');
 		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
-		console.log(barChartQuery);
 
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
 		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
 
 		var resultsTabsHtml = '';
 		_.each(this.collection.models, _.bind(function(model, index) {
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('query').original_search_terms)+'"></span>'+model.get('query').original_search_terms+model.filtersToString(true)+'</a>';
+			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('query').original_search_terms+model.filtersToString(true))+'"></span>'+model.get('query').original_search_terms+model.filtersToString(true)+'</a>';
 		}, this));
 		this.$el.find('.result-tabs').html(resultsTabsHtml);
 

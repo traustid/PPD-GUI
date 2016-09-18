@@ -13,7 +13,7 @@
 		<a class="tab selected" data-resultmode="doc_count">doc_count</a>
 		<a class="tab" data-resultmode="auth_count">auth_count</a>
 		<a class="tab" data-resultmode="work_count">work_count</a>
-		<a class="tab" data-resultmode="part_count">part_count</a>
+		<a class="tab" data-resultmode="term_freq">term_freq</a>
 	</div>
 
 	<svg class="chart-container" width="100%" height="500"></svg>

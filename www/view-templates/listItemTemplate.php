@@ -8,7 +8,7 @@
 			<div class="title-attribs">
 				<%= year  %>
 			</div>
-			<%= '<div class="author-image" style="background-image: url(img/'+authorIDs.join('_face.jpeg)"></div><div class="author-image" style="background-image: url(img/')+'_face.jpeg)"></div>'  %>
+			<%= showAuthorImage ? '<div class="author-image" style="background-image: url(img/'+authorIDs.join('_face.jpeg)"></div><div class="author-image" style="background-image: url(img/')+'_face.jpeg)"></div>' : '' %>
 		</a>
 
 		<div class="item-content">
@@ -19,7 +19,7 @@
 				<div class="eight columns">
 					<%= model.get('_source').meta_info.title.length > 100 ? '<h2 title="'+model.get('_source').meta_info.title+'">'+model.get('_source').meta_info.title.substr(0, 100)+'...</h2>' : '<h2>'+model.get('_source').meta_info.title+'</h2>' %></h2>
 					<p><strong>Sidnummer:</strong> <%= model.get('_source').page_idx %></p>
-					<blockquote><%= pageContentText %></blockquote>
+					<blockquote><%= model.get('highlight').page_content_original %></blockquote>
 
 					<% if (pageUrl != '') { %>
 						<a href="<%= pageUrl %>" target="_blank" class="button"><span class="icon-up-arrow"></span> Läs på Litteraturbanken</a>

@@ -79,7 +79,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	/*
-		DOM event handler: switch between view of different keys in the results, doc_count, auth_count, work_count, part_count
+		DOM event handler: switch between view of different keys in the results, doc_count, auth_count, work_count, term_freq
 	*/
 	ngramResultModeClick: function(event) {
 		this.$el.find('.tabs.ngram-result-mode a.tab').removeClass('selected');
@@ -194,9 +194,12 @@ module.exports = Backbone.View.extend({
 			var lineData = model.get('data').buckets;
 
 			var line = this.createLine(_.bind(function(d) {
-				if (this.percentagesView) {					
-					var totalByYear = this.collection.getTotalByYear(Number(d.key.substr(0, 4)), this.graphValueKey);
+				if (this.percentagesView) {
+					var year = Number(d.key.substr(0, 4));
+
+					var totalByYear = this.collection.getTotalByYear(Number(year), this.graphValueKey);
 					var percentage = isNaN(d[this.graphValueKey]/totalByYear) ? 0 : d[this.graphValueKey]/totalByYear;
+
 					return (yRange(percentage));
 				}
 				else {
@@ -505,7 +508,7 @@ module.exports = Backbone.View.extend({
 
 		// Iterate through each results item and add a line for each item.
 		_.each(this.collection.models, _.bind(function(model, index) {
-			model.set('color', this.app.getItemColor(model.get('query').original_search_terms));
+			model.set('color', this.app.getItemColor(model.get('query').original_search_terms+model.filtersToString(true)));
 			addLine(model.get('data').buckets, model.get('color'), index);
 		}, this));
 
@@ -556,21 +559,11 @@ module.exports = Backbone.View.extend({
 			Position the info/legends box for the current year and feed the right data into it.
 		*/
 		var legends = _.map(this.collection.models, _.bind(function(model) {
-			var filterStrings = [];
-			if (model.get('filters') && model.get('filters').length > 0) {
-				filterStrings = _.map(model.get('filters'), function(filter) {
-					var filterString = '';
-					for (var name in filter) {
-						filterString += name+':('+(filter[name].join(','))+')';
-					}
-					return filterString;
-				});
-			}
-
+			console.log(model.filtersToString(true));
 			return {
 				color: model.get('color'),
 				key: model.get('query').original_search_terms,
-				filterStrings: filterStrings,
+				filterString: model.filtersToString(true),
 				data: _.find(model.get('data').buckets, function(bucket) {
 					return bucket.key == year;
 				})
@@ -582,7 +575,8 @@ module.exports = Backbone.View.extend({
 		this.$el.find('.info-overlay').html(template({
 			data: {
 				year: year,
-				total:this.collection.getTotalByYear(year, this.graphValueKey),
+				total: this.collection.getTotalByYear(year, this.graphValueKey),
+				graphValueKey: this.graphValueKey,
 				legends: legends
 			}
 		}));

@@ -5,6 +5,140 @@ var _ = require('underscore');
 require('../lib/jquery.truncate');
 
 module.exports = Backbone.View.extend({
+	authorImages: [
+		"AfzeliusAA",
+		"AgardhCA",
+		"AgrellA",
+		"AlmqvistCJL",
+		"AnderssonD",
+		"AnderssonO",
+		"AndraeT",
+		"AngeredStrandbergH",
+		"ArmfeltGM",
+		"AroseniusI",
+		"ArvidiA",
+		"AtterbomPDA",
+		"BaathAU",
+		"BauerJ",
+		"BellmanCM",
+		"BenedictssonV",
+		"BenzonK",
+		"BergerH",
+		"BergmanB",
+		"BergmanHj",
+		"Birgitta",
+		"BlancheA",
+		"BondesonA",
+		"BottigerCW",
+		"BremerF",
+		"BrennerSE",
+		"BureusJ",
+		"CederborghF",
+		"CelsiusO",
+		"CreutzGP",
+		"DagermanS",
+		"DulciU",
+		"DuseSA",
+		"EdelfeldtI",
+		"EhrensvardCA",
+		"EkebladJ",
+		"EkelundJ",
+		"EkelundV",
+		"ElkanS",
+		"EnglundP",
+		"FitinghoffL",
+		"FlygareCarlenE",
+		"FranzenFM",
+		"FrodingG",
+		"FrostensonK",
+		"GeijerEG",
+		"GjorwellCC",
+		"GoranssonL",
+		"GrandelL",
+		"GustafIII",
+		"GyllenborgC",
+		"GyllenborgGF",
+		"HallstromP",
+		"HanssonO",
+		"HebbeW",
+		"HedbergT",
+		"HeidenstamV",
+		"HiarneU",
+		"HolmstromI",
+		"Horatius",
+		"HorbergP",
+		"JosephsonE",
+		"KarlfeldtEA",
+		"KellgrenJH",
+		"KeyE",
+		"KnorringS",
+		"KolmodinO",
+		"LagerlofS",
+		"LarssonC",
+		"LefflerAC",
+		"LeijonhufvudAG",
+		"LenngrenAM",
+		"LenstromCJ",
+		"LeopoldCG",
+		"LevertinO",
+		"LidmanSv",
+		"LindegrenE",
+		"LindqvistS",
+		"LinneCvon",
+		"LithouG",
+		"LivijnC",
+		"LjungstedtA",
+		"Lo-JohanssonI",
+		"LowenhjelmH",
+		"LucidorL",
+		"LundegardA",
+		"MartinsonH",
+		"MennanderCF",
+		"MesseniusJ",
+		"MolinL",
+		"NordenflychtHC",
+		"NordstromL",
+		"NybergJC",
+		"NybomJ",
+		"OswaldG",
+		"PalmbladVF",
+		"ParlandH",
+		"RalambHG",
+		"RambachJJ",
+		"RegisJ",
+		"RosensteinN",
+		"RudbeckOaldre",
+		"RunebergFC",
+		"RunebergJL",
+		"RuniusJ",
+		"RydbergV",
+		"SandelM",
+		"SatherbergH",
+		"SchwartzMS",
+		"SilfverstolpeM",
+		"SjobergB",
+		"SnellmanJV",
+		"SnoilskyC",
+		"SodergranE",
+		"SondenPA",
+		"SpegelH",
+		"StagneliusEJ",
+		"StiernhielmG",
+		"StrindbergA",
+		"Sturzen-BeckerOP",
+		"SwedbergJ",
+		"SwedenborgE",
+		"TegnerE",
+		"ThorildT",
+		"WagmanFO",
+		"WallenbergJ",
+		"WallengrenA",
+		"WallinJO",
+		"WastbergP",
+		"WellanderJ",
+		"WingardJ"
+	],
+
 	initialize: function(options) {
 		this.options = options;
 		this.render();
@@ -80,33 +214,24 @@ module.exports = Backbone.View.extend({
 		return url;
 	},
 
-
-	highlight: function(data, search) {
-		function preg_quote(str) {
-			// http://kevin.vanzonneveld.net
-			// +   original by: booeyOH
-			// +   improved by: Ates Goral (http://magnetiq.com)
-			// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-			// +   bugfixed by: Onno Marsman
-
-			return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
-		}
-		return data.replace( new RegExp( "(" + preg_quote( search ) + ")" , 'gi' ), "<span class=\"highlight\">$1</span>" );
-	},
-
 	render: function() {
 		var template = _.template($("#listItemTemplate").html());
 
 		var authorNames = [];
 		var authorIDs = [];
 
+		var showAuthorImage = false;
+
 		if (this.model.get('_source').meta_info.authorid && this.model.get('_source').meta_info.authorid.authors) {
 			authorNames = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
 				return author.name;
 			});
-			authorIDs = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
+			authorIDs = _.map(this.model.get('_source').meta_info.authorid.authors, _.bind(function(author) {
+				if (this.authorImages.indexOf(author.id) > -1) {
+					showAuthorImage = true;
+				}
 				return author.id;
-			});
+			}, this));
 		}
 
 		var year = '';
@@ -115,15 +240,13 @@ module.exports = Backbone.View.extend({
 			year = (new Date('1929-01-01')).getFullYear()
 		}
 
-		var pageContentText = this.highlight(this.model.get('_source').page_content_original, this.options.searchTermAnalyzed);
-
 		this.$el.html(template({
 			model: this.model,
 			authorNames: authorNames,
 			authorIDs: authorIDs,
 			year: (new Date(this.model.get('_source').meta_info.imprintyear)).getFullYear(),
 			pageUrl: this.getPageUrl(),
-			pageContentText
+			showAuthorImage: showAuthorImage
 		}));
 	}
 });

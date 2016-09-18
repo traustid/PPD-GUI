@@ -1,8 +1,11 @@
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
+var NgramItemModel = require('./../models/NgramItemModel');
 
 module.exports = Backbone.Collection.extend({
+	model: NgramItemModel,
+
 	url: 'http://cdh-vir-1.it.gu.se:8990/timeline/aggs',
 	includeTotal: false,
 

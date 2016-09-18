@@ -56,7 +56,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/(.*?)( typ:\([A-Z,|a-z,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) typ:\([A-Z,|a-z,]+?$/g)) {
+		if (this.queryInput.val().match(/(.*?)( typ:\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) typ:\([A-ZÖÄÅ,|a-zöäå,]+?$/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}
@@ -93,7 +93,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	validateSingleQuery: function(event) {
-		if (this.queryInput.val().match(/(.*?)( typ:\([A-Z,|a-z,]+\))?/g)) {
+		if (this.queryInput.val().match(/(.*?)( typ:\([A-ZÖÄÅ,|a-zöäå,]+\))?/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 
@@ -126,11 +126,8 @@ module.exports = Backbone.View.extend({
 
 		var queryString = queryValue.split(/ typ:\(| författare:\(/)[0];
 
-		var textTypeStrings = queryValue.match(/typ:(\([A-Z,|a-z,]+\))/g);
-		var authorStrings = queryValue.match(/författare:(\([A-Z,|a-z,]+\))/g);
-
-		console.log('authorStrings:');
-		console.log(authorStrings);
+		var textTypeStrings = queryValue.match(/typ:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
+		var authorStrings = queryValue.match(/författare:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
 
 		var textTypeArray = [];
 

@@ -129,7 +129,7 @@ module.exports = Backbone.View.extend({
 	createColorRegistry: function(models, key) {
 		this.colorRegistry = _.map(models, _.bind(function(model, index) {
 			return {
-				key: key != undefined ? model.get(key) : model.get('query').original_search_terms,
+				key: key != undefined ? model.get(key) : model.get('query').original_search_terms+model.filtersToString(true),
 				color: this.colors[index]
 			}
 		}, this));

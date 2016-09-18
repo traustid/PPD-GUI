@@ -7,10 +7,8 @@ module.exports = Backbone.Model.extend({
 	},
 
 	filtersToString: function(addSpace) {
-		console.log('ListCollection: filtersToString');
 		if (this.get('query').filters && this.get('query').filters.length > 0) {		
 			var filterStrings = _.map(this.get('query').filters, function(filter) {
-				console.log(filter);
 				var filterString = '';
 				filterString = filter.key+':('+(filter.terms.join(','))+')';
 
@@ -70,7 +68,6 @@ module.exports = Backbone.Model.extend({
 						]: [];
 				}
 			}
-//			console.log(document.proposals);
 
 			document._source.dokument.dateFormatted = this.formatDate(document._source.dokument.datum)
 		}, this));

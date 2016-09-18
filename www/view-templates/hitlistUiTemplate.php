@@ -3,8 +3,9 @@
 	<div class="container default-margins">
 
 		<div class="row">
-			<div class="twelve columns">
-				<select class="aggregation-select">
+			<div class="ten columns tabs result-tabs"></div>
+			<div class="two columns">
+				<select class="aggregation-select u-pull-right" style="margin-right: 10px">
 					<option value="authors">authors</option>
 					<option value="works">works</option>
 					<option value="mediatype">mediatype</option>
@@ -13,10 +14,6 @@
 					<option value="gender">gender</option>
 				</select>
 			</div>
-		</div>
-
-		<div class="row">
-			<div class="twelve columns tabs result-tabs"></div>
 		</div>
 
 		<div class="row">
