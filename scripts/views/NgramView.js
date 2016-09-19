@@ -26,23 +26,21 @@ module.exports = Backbone.View.extend({
 		left: 60
 	},
 
-	startYear: 1700,
-	endYear: 2016,
-
 	graphValueKey: 'doc_count',
 
 	/*
 		Initialize the module
 	*/
 	initialize: function(options) {
-		for (var year = this.startYear; year<this.endYear; year += 20) {
-			this.graphYearTicks.push(year);
-		}
-	
 		this.options = options;
+
 		this.app = this.options.app;
 		this.percentagesView = this.options.percentagesView ? this.options.percentagesView : false;
 
+		for (var year = this.options.startYear; year<this.options.endYear; year += 20) {
+			this.graphYearTicks.push(year);
+		}
+	
 		/*
 			Initialize the collection that handles API calls
 		*/
@@ -285,7 +283,7 @@ module.exports = Backbone.View.extend({
 		}
 
 		// Create x range scale which we will use to position points on the graph
-		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([this.startYear, this.endYear]);
+		this.xRange = d3.scale.linear().range([this.graphMargins.left, this.graphWidth - this.graphMargins.right]).domain([this.options.startYear, this.options.endYear]);
 
 		// Collect all y values from the result collection
 		this.createYRangeValues();
@@ -520,19 +518,17 @@ module.exports = Backbone.View.extend({
 	},
 
 	setTimeOverlay: function(values) {
-		return;
 		/*
 			Adjust the visual time range overlay.
 		*/
 		this.timeOverlay = values;
-		if (this.timeOverlay[0] == this.startYear && this.timeOverlay[1] == this.endYear) {
+		if (this.timeOverlay[0] == this.options.startYear && this.timeOverlay[1] == this.options.endYear) {
 			this.vis.select('rect.timerange-overlay')
 				.transition()
 				.duration(100)
 				.style('opacity', 0);
 		}
 		else {
-
 			this.vis.select('rect.timerange-overlay')
 				.attr('x', this.xRange(Number(values[0])+0.2))
 				.attr('width', this.xRange(Number(values[1])-0.2)-this.xRange(Number(values[0])+0.2))

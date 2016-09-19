@@ -40,10 +40,13 @@ module.exports = Backbone.Collection.extend({
 	},
 
 	addPage: function(resultIndex) {
-		if (this.at(resultIndex).get('from_index')+20 < this.at(resultIndex).get('total_hit_count')) {
+		if (this.at(resultIndex).get('query').from_index+20 < this.at(resultIndex).get('data').total_hits) {
 			
-			this.at(resultIndex).set('from_index', this.at(resultIndex).get('from_index')+20);
-			this.searchData.fromIndex = this.at(resultIndex).get('from_index');
+			var originalQuery = this.at(resultIndex).get('query');
+			originalQuery.from_index = this.at(resultIndex).get('query').from_index+20;
+			this.at(resultIndex).set('query', originalQuery);
+
+			this.searchData.fromIndex = this.at(resultIndex).get('query').from_index;
 
 			var tempCollection = new Backbone.Collection();
 			tempCollection.model = ListItemModel;
@@ -55,7 +58,7 @@ module.exports = Backbone.Collection.extend({
 			}, this));
 
 			var searchData = {
-				searchPhrase: this.at(resultIndex).get('search_query')+this.at(resultIndex).filtersToString(true),
+				searchQuery: this.at(resultIndex).get('query').original_search_terms+this.at(resultIndex).filtersToString(true),
 				startDate: this.searchData.startDate,
 				endDate: this.searchData.endDate,
 				queryMode: this.searchData.queryMode,

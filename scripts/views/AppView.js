@@ -25,8 +25,11 @@ module.exports = Backbone.View.extend({
 		this.ngramView = new NgramView({
 			el: this.$el.find('#ngramContianer'),
 			percentagesView: true,
-			app: this
+			app: this,
+			startYear: this.startYear,
+			endYear: this.endYear
 		});
+		
 		this.ngramView.on('updategraph', this.onNgramUpdate, this);
 		this.ngramView.on('graphclick', _.bind(function(event) {
 			this.sliderView.setSliderValues([event.year, event.year+1], true);
