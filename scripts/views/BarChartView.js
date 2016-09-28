@@ -53,8 +53,11 @@ module.exports = Backbone.View.extend({
 	lastQuery: '',
 
 	search: function(query, timeRange, queryMode, aggregationField) {
+		console.log('BarChartView:search');
+
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
+		this.lastAggregationField = aggregationField;
 		this.collection.search(query, timeRange, queryMode, aggregationField);
 
 		this.timeRange = timeRange;
@@ -64,6 +67,14 @@ module.exports = Backbone.View.extend({
 
 	collectionReset: function() {
 		this.renderGraph();
+	},
+
+	barClick: function(event) {
+		console.log(event);
+		this.trigger('barclick', {
+			key: event.key,
+			aggregationField: this.lastAggregationField
+		});
 	},
 
 	renderGraph: function() {
@@ -141,6 +152,20 @@ module.exports = Backbone.View.extend({
 			.data(this.collection.at(0).get('data').buckets)
 			.enter().append('rect')
 			.attr('class', 'bar')
+			.on('mouseenter', function() {
+				d3.select(this)
+					.transition()
+					.duration(400)
+					.attr('opacity', 0.5);
+			})
+			.on('mouseleave', function() {
+				d3.select(this)
+					.transition()
+					.duration(400)
+					.attr('opacity', 1);
+			})
+			.on('click', _.bind(this.barClick, this))
+			.attr('opacity', 1)
 			.attr('fill', function(d, index) {
 				return view.colors[index];
 			})

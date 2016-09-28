@@ -23,10 +23,25 @@ module.exports = Backbone.View.extend({
 		top: 20,
 		right: 0,
 		bottom: 20,
-		left: 60
+		left: 100
 	},
 
-	graphValueKey: 'doc_count',
+	graphValueKey: 'term_freq',
+
+	yAxisLabels: {
+		absolute: {
+			term_freq: 'Antal träffar',
+			doc_count: 'Antal sidor med träff',
+			work_count: 'Antal olika verk',
+			auth_count: 'Antal olika författare'
+		},
+		relative: {
+			term_freq: 'Antal träffar relativt totala antalet termer',
+			doc_count: 'Antal sidor med träff relativt totala antalet sidor',
+			work_count: 'Antalet olika verk relativt totala antalet verk publicerade detta år',
+			auth_count: 'Antalet olika författare relativt totala antalet författare med publikationer '
+		}
+	},
 
 	/*
 		Initialize the module
@@ -234,6 +249,8 @@ module.exports = Backbone.View.extend({
 	updateGraph: function() {
 		this.createYRangeValues();
 
+		this.yAxisLabel.text(this.yAxisLabels[this.percentagesView ? 'relative' : 'absolute'][this.graphValueKey]);
+
 		this.updateYAxis();
 		this.updateLines();
 		this.updateCircles();
@@ -380,6 +397,7 @@ module.exports = Backbone.View.extend({
 			.tickFormat(function(d, i) {
 				return d;
 			});
+
 		this.vis.append('svg:g')
 			.attr('class', 'x axis')
 			.attr('transform', 'translate(0,' + (this.graphHeight - this.graphMargins.bottom) + ')')
@@ -392,10 +410,17 @@ module.exports = Backbone.View.extend({
 			.innerTickSize(-this.graphWidth)
 			.orient('left')
 			.tickSubdivide(true);
+
 		this.vis.append('svg:g')
 			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + (this.graphMargins.left) + ',0)')
 			.call(yAxis);
+
+		this.yAxisLabel = this.vis.append("text")
+			.attr('class', 'axisLabel')
+			.attr("text-anchor", "middle")
+			.attr("transform", "translate("+ (10) +","+(this.graphHeight/2)+")rotate(-90)")
+			.text(this.yAxisLabels[this.percentagesView ? 'relative' : 'absolute'][this.graphValueKey]);
 
 		// Add the vertical line to the svg
 		this.verticalLine = this.vis.append('line')
@@ -417,6 +442,12 @@ module.exports = Backbone.View.extend({
 				color: color value for the line
 				index: index of the line in the context of results items from the API (results.data.[...])
 				*/
+
+			// Filter data for graph to fit between time boundaries
+			lineData = _.filter(lineData, _.bind(function(dataItem) {
+				var year = Number(dataItem.key.substr(0, 4));
+				return year > this.options.startYear && year < this.options.endYear;
+			}, this));
 
 			/*
 				When the graph renders, y values animate from 0 to the correcct value.
@@ -480,17 +511,9 @@ module.exports = Backbone.View.extend({
 					}
 				}, this))
 				.attr('r', 0)
-				.on('mouseover', function() {
-					tooltip.style('display', null);
-				})
-				.on('mouseout', function() {
-					tooltip.style('display', 'none')
-				})
 				.on('mousemove', function(d) {
 					var xPosition = d3.mouse(this)[0] - 50;
 					var yPosition = d3.mouse(this)[1] - 25;
-					tooltip.attr('transform', 'translate(' + xPosition + ',' + yPosition + ')');
-					tooltip.select('text').text(d.key.substr(0, 4)+': '+d[this.graphValueKey]);
 				})
 				.transition()
 				.delay(750)
@@ -555,7 +578,6 @@ module.exports = Backbone.View.extend({
 			Position the info/legends box for the current year and feed the right data into it.
 		*/
 		var legends = _.map(this.collection.models, _.bind(function(model) {
-			console.log(model.filtersToString(true));
 			return {
 				color: model.get('color'),
 				key: model.get('query').original_search_terms,
@@ -573,7 +595,8 @@ module.exports = Backbone.View.extend({
 				year: year,
 				total: this.collection.getTotalByYear(year, this.graphValueKey),
 				graphValueKey: this.graphValueKey,
-				legends: legends
+				legends: legends,
+				totalLabelText: this.yAxisLabels.absolute[this.graphValueKey]
 			}
 		}));
 

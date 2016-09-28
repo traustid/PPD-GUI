@@ -19,14 +19,14 @@
 						<div class="six columns">
 							<label>Författare:</label>
 							<input type="text" class="query-author u-full-width" value="<%= model.get('authorString') %>"/>
-							<label>Texttyp:</label>
+							<label>Mediatyp:</label>
 							<div class="query-types check-list">
 							
-								<% _.each(textTypes, function(type) {
+								<% _.each(mediaTypes, function(type) {
 									if (type.label != '') { %>
 										<% console.log(type); %>
 
-										<label><input type="checkbox" name="query-types" value="<%= type.label %>" <%= model.get('textTypes').indexOf(type.label.toLowerCase()) > -1 ? 'checked' : '' %>><%= type.label %></label>
+										<label><input type="checkbox" name="query-types" value="<%= type.label %>" <%= model.get('mediaTypes').indexOf(type.label.toLowerCase()) > -1 ? 'checked' : '' %>><%= type.label %></label>
 
 									<% }
 								}) %>

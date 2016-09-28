@@ -5,6 +5,9 @@ var ListCollection = require('./../collections/ListCollection');
 var ListItemView = require('./ListItemView.js');
 var BarChartView = require('./BarChartView');
 
+
+var QueryParser = require('./../utils/QueryParser');
+
 module.exports = Backbone.View.extend({
 	initialize: function(options) {
 		this.options = options;
@@ -43,10 +46,10 @@ module.exports = Backbone.View.extend({
 	aggregationChange: function() {
 		this.renderList();
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
+//		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
 
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
+		this.barChart.search(this.lastQuery, this.timeRange, this.lastQueryMode, aggregationField);
 	},
 
 	loadMoreClick: function() {
@@ -62,24 +65,61 @@ module.exports = Backbone.View.extend({
 			el: this.$el.find('.barchart-container'),
 			app: this
 		});
+		this.barChart.on('barclick', this.barClick, this);
 	},
+
+	aggFilters: {
+		authors: 'författare',
+		mediatype: 'mediatype',
+		gender: 'kön',
+		works: 'verk',
+		texttype: 'typ'
+	},
+
+	barClick: function(event) {
+		console.log(event);
+
+		var parser = new QueryParser(this.lastQuery);
+
+		var parsedQuery = parser.parsed;
+
+		var newFilter = {
+			key: this.aggFilters[event.aggregationField],
+			values: [
+				event.key
+			]
+		};
+
+		_.each(parsedQuery, _.bind(function(queryItem) {
+			if (_.findIndex(queryItem.filters, _.bind(function(filter) {
+				return filter.key == this.aggFilters[event.aggregationField];
+			}, this)) > -1) {
+				var index = _.findIndex(queryItem.filters, _.bind(function(filter) {
+					return filter.key == this.aggFilters[event.aggregationField];
+				}, this));
+
+				queryItem.filters.splice(index, 1);
+			}
+
+			queryItem.filters.push(newFilter);
+		}, this));
+
+		this.disableContainerRender = true;
+		this.collection.search(parser.build(parsedQuery), this.timeRange, this.lastQueryMode);
+	},
+
 	timeRange: [],
 
 	resultIndex: 0,
 
 	search: function(query, timeRange, queryMode) {
-		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
-
-		if (searchTerms[0].split(' parti:(')[0].indexOf('*') > -1) {
-//			Do nothing, wait for ngram to trigger wildcard results event
-		}
-		else {
-			this.lastQuery = query;
-			this.lastQueryMode = queryMode;
-			this.collection.search(query, timeRange, queryMode);
-		}
+		this.disableContainerRender = false;
 
 		this.timeRange = timeRange;
+
+		this.lastQuery = query;
+		this.lastQueryMode = queryMode;
+		this.collection.search(query, timeRange, queryMode);
 
 		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
 
@@ -87,22 +127,26 @@ module.exports = Backbone.View.extend({
 	},
 
 	render: function() {
-		if (this.app.colorRegistry.length == 0) {
-			this.app.createColorRegistry(this.collection.models);
+		if (!this.disableContainerRender) {
+			console.log('disableContainerRender = false');
+
+			if (this.app.colorRegistry.length == 0) {
+				this.app.createColorRegistry(this.collection.models);
+			}
+
+			this.resultIndex = 0;
+
+			var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
+
+			var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
+			this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
+
+			var resultsTabsHtml = '';
+			_.each(this.collection.models, _.bind(function(model, index) {
+				resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('query').original_search_terms+model.filtersToString(true))+'"></span>'+model.get('query').original_search_terms+model.filtersToString(true)+'</a>';
+			}, this));
+			this.$el.find('.result-tabs').html(resultsTabsHtml);
 		}
-
-		this.resultIndex = 0;
-
-		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
-
-		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
-
-		var resultsTabsHtml = '';
-		_.each(this.collection.models, _.bind(function(model, index) {
-			resultsTabsHtml += '<a class="tab'+(index == this.resultIndex ? ' selected' : '')+'" data-result-index="'+index+'"><span class="line-color" style="border-color: '+this.app.getItemColor(model.get('query').original_search_terms+model.filtersToString(true))+'"></span>'+model.get('query').original_search_terms+model.filtersToString(true)+'</a>';
-		}, this));
-		this.$el.find('.result-tabs').html(resultsTabsHtml);
 
 		this.renderList();
 	},

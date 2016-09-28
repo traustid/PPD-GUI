@@ -114,11 +114,16 @@
 }
 .noUi-handle .handle-number {
 	position: absolute;
-	top: -22px;
 	font-size: 1.1rem;
 	left: 50%;
 	transform: translateX(-50%);
 	font-weight: bold;
+}
+.noUi-handle-upper .handle-number {
+	bottom: -22px;
+}
+.noUi-handle-lower .handle-number {
+	top: -22px;
 }
 .noUi-active {
 	background: #3fb2d6;
