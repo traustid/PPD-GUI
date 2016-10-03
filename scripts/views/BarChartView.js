@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
 	graphMargins: {
 		top: 20,
 		right: 0,
-		bottom: 25,
+		bottom: 35,
 		left: 25
 	},
 
@@ -53,8 +53,6 @@ module.exports = Backbone.View.extend({
 	lastQuery: '',
 
 	search: function(query, timeRange, queryMode, aggregationField) {
-		console.log('BarChartView:search');
-
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
 		this.lastAggregationField = aggregationField;
@@ -70,7 +68,20 @@ module.exports = Backbone.View.extend({
 	},
 
 	barClick: function(event) {
-		console.log(event);
+		var bar = this.vis.select('.bar[data-label="'+event.key+'"]')[0][0];
+		var barPosition = bar.x.baseVal.value;
+		var barWidth = bar.width.baseVal.value;
+
+		this.vis.selectAll('.bar-arrow')
+			.transition()
+			.duration(400)
+			.attr('opacity', 0);
+
+		this.vis.select('.bar-container[data-label="'+event.key+'"]').select('.bar-arrow')
+			.transition()
+			.duration(400)
+			.attr('opacity', 1);		
+
 		this.trigger('barclick', {
 			key: event.key,
 			aggregationField: this.lastAggregationField
@@ -150,32 +161,45 @@ module.exports = Backbone.View.extend({
 
 		graph.selectAll('.bar')
 			.data(this.collection.at(0).get('data').buckets)
-			.enter().append('rect')
+			.enter()
+			.append('g')
+			.attr('class', 'bar-container')
+			.attr('data-label', function(d) {
+				return d.key;
+			})
+			.attr('transform', function(d, i) {
+				return 'translate('+((x(d.key)+(x.rangeBand()-50)/2)+view.graphMargins.left)+', 0)';
+			})
+			.append('rect')
 			.attr('class', 'bar')
 			.on('mouseenter', function() {
-				d3.select(this)
-					.transition()
-					.duration(400)
-					.attr('opacity', 0.5);
+				view.$el.find('.info-overlay').addClass('visible');
 			})
-			.on('mouseleave', function() {
-				d3.select(this)
-					.transition()
-					.duration(400)
-					.attr('opacity', 1);
+			.on('mouseout', function() {
+				view.$el.find('.info-overlay').removeClass('visible');
+			})
+			.on('mousemove', function(d) {
+				view.$el.find('.info-overlay').html('<strong>'+d.key+'</strong>: '+d.doc_count);
+
+				var xPos = d3.event.screenX;
+				var yPos = d3.event.screenY-20;
+				console.log(d)
+
+				view.$el.find('.info-overlay').css({
+					'-webkit-transform': 'translate('+xPos+'px, '+yPos+'px)',
+					'-moz-transform': 'translate('+xPos+'px, '+yPos+'px)',
+					'-ms-transform': 'translate('+xPos+'px, '+yPos+'px)',
+					'-o-transform': 'translate('+xPos+'px, '+yPos+'px)',
+					'transform': 'translate('+xPos+'px, '+yPos+'px)'
+				})
 			})
 			.on('click', _.bind(this.barClick, this))
+			.attr('data-label', function(d) {
+				return d.key;
+			})
 			.attr('opacity', 1)
 			.attr('fill', function(d, index) {
 				return view.colors[index];
-			})
-/*
-			.attr('x', function(d) {
-				return x(d.key)+view.graphMargins.left;
-			})
-*/
-			.attr("x", function(d, i) {
-				return (x(d.key)+(x.rangeBand()-50)/2)+view.graphMargins.left;
 			})
 			.attr('width', Math.min.apply(null, [x.rangeBand(), 50]))
 			.attr('y', function(d) {
@@ -190,6 +214,17 @@ module.exports = Backbone.View.extend({
 			.attr('height', function(d) {
 				return view.graphHeight-y(d.doc_count);
 			});
+
+		graph.selectAll('.bar-container')
+			.append('path')
+			.attr('class', 'bar-arrow')
+			.attr('fill', '#ec7217')
+			.attr('d',d3.svg.symbol().type('triangle-down'))
+			.attr('transform', 'translate(25, '+(view.graphHeight+(view.graphMargins.bottom-5))+')')
+			.attr('y', function(d) {
+				return view.graphHeight;
+			})
+			.attr('opacity', 0);
 
 		this.trigger('rendergraph'); // Trigger 'renderGraph' event.
 	},

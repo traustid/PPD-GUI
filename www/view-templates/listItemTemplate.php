@@ -18,7 +18,18 @@
 
 				<div class="eight columns">
 					<%= model.get('_source').meta_info.title.length > 100 ? '<h2 title="'+model.get('_source').meta_info.title+'">'+model.get('_source').meta_info.title.substr(0, 100)+'...</h2>' : '<h2>'+model.get('_source').meta_info.title+'</h2>' %></h2>
+
 					<p><strong>Sidnummer:</strong> <%= model.get('_source').page_idx %></p>
+					<p><strong>Texttyp:</strong> <%= model.get('_source').meta_info.texttype %></p>
+
+					<% if (model.get('_source').meta_info.part_info) { %>
+						<hr/>
+
+						<p><strong>Pagerange:</strong> <%= model.get('_source').meta_info.part_info.startpagename %>-<%= model.get('_source').meta_info.part_info.endpagename %></p>
+						<p><strong>Title:</strong> <%= model.get('_source').meta_info.part_info.title %></p>
+						<p><strong>Texttyp:</strong> <%= model.get('_source').meta_info.part_info.texttype %></p>
+					<% } %>
+
 					<blockquote><%= model.get('highlight').page_content_original %></blockquote>
 
 					<% if (pageUrl != '') { %>

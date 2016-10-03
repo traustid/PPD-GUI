@@ -77,7 +77,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	barClick: function(event) {
-		console.log(event);
+		this.$el.addClass('loading');
 
 		var parser = new QueryParser(this.lastQuery);
 

@@ -6,12 +6,12 @@
 			<div class="ten columns tabs result-tabs"></div>
 			<div class="two columns">
 				<select class="aggregation-select u-pull-right" style="margin-right: 10px">
-					<option value="authors">authors</option>
-					<option value="works">works</option>
-					<option value="mediatype">mediatype</option>
-					<option value="texttype">texttype</option>
+					<option value="authors">Författare</option>
+					<option value="gender">Kön</option>
+					<option value="works">Verk</option>
+					<option value="mediatype">Mediatyp</option>
+					<option value="texttype">Texttyp</option>
 					<option value="fraktur">fraktur</option>
-					<option value="gender">gender</option>
 				</select>
 			</div>
 		</div>
