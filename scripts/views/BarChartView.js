@@ -172,17 +172,33 @@ module.exports = Backbone.View.extend({
 			})
 			.append('rect')
 			.attr('class', 'bar')
-			.on('mouseenter', function() {
+			.on('mouseenter', function(d) {
 				view.$el.find('.info-overlay').addClass('visible');
+				d3.select(this)
+					.transition()
+					.duration(400)
+					.attr('opacity', 0.5);
+				view.vis.select('.bar-container[data-label="'+d.key+'"]').select('.bar-arrow')
+					.transition()
+					.duration(400)
+					.attr('opacity', 0.5);
 			})
-			.on('mouseout', function() {
+			.on('mouseout', function(d) {
 				view.$el.find('.info-overlay').removeClass('visible');
+				d3.select(this)
+					.transition()
+					.duration(400)
+					.attr('opacity', 1);
+				view.vis.select('.bar-container[data-label="'+d.key+'"]').select('.bar-arrow')
+					.transition()
+					.duration(400)
+					.attr('opacity', 0);
 			})
 			.on('mousemove', function(d) {
 				view.$el.find('.info-overlay').html('<strong>'+d.key+'</strong>: '+d.doc_count);
 
-				var xPos = d3.event.screenX;
-				var yPos = d3.event.screenY-20;
+				var xPos = d3.event.screenX+20;
+				var yPos = d3.event.screenY-30;
 				console.log(d)
 
 				view.$el.find('.info-overlay').css({
