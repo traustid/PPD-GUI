@@ -7,13 +7,14 @@ module.exports = Backbone.Collection.extend({
 
 	url: 'http://cdh-vir-1.it.gu.se:8990/hitlist',
 
-	search: function(query, timeRange, queryMode) {
+	search: function(query, timeRange, queryMode, modernSpelling) {
 		this.pageIndex = 0;
 		this.searchData = {
 			'searchQuery': query,
 			'startDate': timeRange[0],
 			'endDate': timeRange[1],
-			'queryMode': queryMode == null ? 'exact' : queryMode
+			'queryMode': queryMode == null ? 'exact' : queryMode,
+			'modernSpelling': modernSpelling
 		};
 
 		this.fetch({

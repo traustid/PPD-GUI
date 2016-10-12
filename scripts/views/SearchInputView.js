@@ -19,7 +19,13 @@ module.exports = Backbone.View.extend({
 		'keyup .query-input': 'queryInputKeyUp',
 		'input .query-input': 'queryInputChange',
 		'click .search-button': 'searchButtonClick',
-		'click .clear-input': 'clearInputClick'
+		'click .clear-input': 'clearInputClick',
+		'click .search-query-options .options-button': 'searchOptionsButtonClick',
+		'click .popup-controller': 'popupControlClick'
+	},
+
+	searchOptionsButtonClick: function() {
+		this.$el.find('.search-query-options').toggleClass('open');
 	},
 
 	clearInputClick: function(event) {
@@ -28,6 +34,10 @@ module.exports = Backbone.View.extend({
 		this.queryInput.val('');
 		this.collection.reset();
 		this.render();
+	},
+
+	popupControlClick: function(event) {
+		event.stopPropagation();
 	},
 
 	searchButtonClick: function() {
@@ -47,16 +57,22 @@ module.exports = Backbone.View.extend({
 		this.$el.find('.search-query-mode').val(queryMode);
 	},
 
+	getModernSpellingValue: function() {
+		return this.$el.find('.auto-modern-spelling').is(':checked');
+	},
+
 	search: function() {
 		this.trigger('search', {
 			queryString: this.getQueryString(),
 			query: this.collection.models,
-			queryMode: this.getQueryMode()
+			queryMode: this.getQueryMode(),
+			modernSpelling: this.getModernSpellingValue()
 		});
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/(.*?)( mediatype:\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g) && ! this.queryInput.val().match(/(.*?) mediatype:\([A-ZÖÄÅ,|a-zöäå,]+?$/g)) {
+		if (this.queryInput.val().match(/[A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g)) {
+			console.log('queryInputChange');
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}
@@ -93,13 +109,16 @@ module.exports = Backbone.View.extend({
 	},
 
 	validateSingleQuery: function(event) {
-		if (this.queryInput.val().match(/(.*?)( mediatype:\([A-ZÖÄÅ,|a-zöäå,]+\))?/g)) {
+		console.log('validateSingleQuery');
+		if (this.queryInput.val().match(/[A-ZÖÄÅ,|a-zöäå,]+(:\([A-ZÖÄÅ,|a-zöäå,]+\))?/g)) {
+			console.log('validateSingleQuery: true');
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 
 			return true;
 		}
 		else {
+			console.log('validateSingleQuery: false');
 			return false;
 		}
 	},
@@ -126,15 +145,16 @@ module.exports = Backbone.View.extend({
 	addQueryItem: function(queryValue) {
 		queryValue = queryValue.substr(queryValue.length-1) == ',' ? queryValue.substr(0, queryValue.length-1) : queryValue;
 
-		var queryString = queryValue.split(/ mediatype:\(| författare:\(/)[0];
+		var queryString = queryValue.split(/ [A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))/)[0];
 
 		var mediaTypeStrings = queryValue.match(/mediatype:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
 		var authorStrings = queryValue.match(/författare:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
+		var genderStrings = queryValue.match(/kön:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
 
 		var mediaTypeArray = [];
 
 		if (mediaTypeStrings) {
-			var mediaTypeString = mediaTypeStrings[0].substr(5);
+			var mediaTypeString = mediaTypeStrings[0].substr("mediatype:(".length);
 			mediaTypeString = mediaTypeString.substr(0, mediaTypeString.length-1);
 			mediaTypeArray = mediaTypeString.split(',');
 		}
@@ -142,15 +162,26 @@ module.exports = Backbone.View.extend({
 		var authorString = '';
 
 		if (authorStrings) {
-			authorString = authorStrings[0].substr(12);
+			authorString = authorStrings[0].substr("författare:(".length);
 			authorString = authorString.substr(0, authorString.length-1);
+		}
+
+		var genderArray = [];
+
+		if (genderStrings) {
+			var genderString = genderStrings[0].substr("kön:(".length);
+			genderString = genderString.substr(0, genderString.length-1);
+			genderArray = genderString.split(',');
 		}
 
 		this.collection.add({
 			queryValue: queryValue,
-			queryString: queryString,
+			queryString: queryString.match(/[A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))/) ? '' : queryString,
 			mediaTypes: _.map(mediaTypeArray, function(mediaType) {
 				return mediaType.toLowerCase();
+			}),
+			gender: _.map(genderArray, function(gender) {
+				return gender.toLowerCase();
 			}),
 			authorString: authorString
 		});
@@ -169,33 +200,33 @@ module.exports = Backbone.View.extend({
 				this.collection.remove(this.collection.at($(item).data('index')));
 			}, this));
 			$(item).find('.label').click(_.bind(function() {
-				$(item).toggleClass('form-open');
+				$(item).toggleClass('open');
 
-				if ($(item).hasClass('form-open')) {
+				if ($(item).hasClass('open')) {
 					$(item).find('.query-form-input').focus();
 					$(item).find('.query-form-input')[0].setSelectionRange(0, $(item).find('.query-form-input').val().length);
 				}
 			}, this));
 
 			$(item).find('.form-cancel-button').click(_.bind(function() {
-				$(item).removeClass('form-open');
+				$(item).removeClass('open');
 			}, this));
 
 			$(item).find('.query-form-input').keyup(_.bind(function() {
 				if (event.keyCode == 13) {
 					this.updateForm($(item).data('index'));
-					$(item).removeClass('form-open');
+					$(item).removeClass('open');
 
 					this.searchButtonClick();
 				}
 				if (event.keyCode == 27) {
-					$(item).removeClass('form-open');
+					$(item).removeClass('open');
 				}
 			}, this));
 
 			$(item).find('.form-save-button').click(_.bind(function() {
 				this.updateForm($(item).data('index'));
-				$(item).removeClass('form-open');
+				$(item).removeClass('open');
 
 				this.searchButtonClick();
 			}, this));
@@ -209,17 +240,26 @@ module.exports = Backbone.View.extend({
 		var queryString = form.find('.query-form-input').val();
 
 		var selectedMediaTypes = [];
-
 		_.map(form.find('.query-types input'), _.bind(function(input) {
 			if (input.checked) {
 				selectedMediaTypes.push($(input).val().toLowerCase());
 			}
 		}, this));
 
+		var selectedGender = [];
+		_.map(form.find('.query-gender input'), _.bind(function(input) {
+			if (input.checked) {
+				selectedGender.push($(input).val().toLowerCase());
+			}
+		}, this));
+
 		var selectedAuthors = form.find('.query-author').val();
 
 		this.collection.at(index).set({
-			queryValue: queryString+(selectedMediaTypes.length > 0 ? ' mediatype:('+selectedMediaTypes.join(',')+')' : '')+(selectedAuthors.length > 0 ? ' författare:('+selectedAuthors+')' : ''),
+			queryValue: queryString+
+				(selectedMediaTypes.length > 0 ? ' mediatype:('+selectedMediaTypes.join(',')+')' : '')+
+				(selectedAuthors.length > 0 ? ' författare:('+selectedAuthors+')' : '')+
+				(selectedGender.length > 0 ? ' kön:('+selectedGender.join(',')+')' : ''),
 			queryString: queryString,
 			mediaTypes: selectedMediaTypes,
 			authorString: selectedAuthors

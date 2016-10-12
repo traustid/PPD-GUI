@@ -66,6 +66,7 @@ module.exports = Backbone.View.extend({
 			app: this
 		});
 		this.barChart.on('barclick', this.barClick, this);
+		this.barChart.on('bardeselect', this.barDeselect, this);
 	},
 
 	aggFilters: {
@@ -108,18 +109,24 @@ module.exports = Backbone.View.extend({
 		this.collection.search(parser.build(parsedQuery), this.timeRange, this.lastQueryMode);
 	},
 
+	barDeselect: function() {
+		this.disableContainerRender = true;
+		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode);
+	},
+
 	timeRange: [],
 
 	resultIndex: 0,
 
-	search: function(query, timeRange, queryMode) {
+	search: function(query, timeRange, queryMode, modernSpelling) {
 		this.disableContainerRender = false;
 
 		this.timeRange = timeRange;
 
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
-		this.collection.search(query, timeRange, queryMode);
+		this.lastModernSpelling = modernSpelling;
+		this.collection.search(query, timeRange, queryMode, modernSpelling);
 
 		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
 

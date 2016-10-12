@@ -12,12 +12,28 @@
 
 				<a href="#" class="clear-input" style="display: none"><span class="icon-close"></span></a>
 
-				<select class="search-query-mode">
-					<option value="exact">Exakt matchning</option>
-					<option value="spanNear">Orden nära varandra</option>
-					<option value="spanNearOrdinal">Orden nära och i ordning</option>
-					<option value="anywhere">Orden var som helst i dokumentet</option>
-				</select>
+				<div class="search-query-options popup-controller">
+					
+					<button class="options-button"></button>
+
+					<div class="options-content popup-container">
+						<label>Query mode:</label>
+						<select class="search-query-mode">
+							<option value="exact" selected="selected">Exakt matchning</option>
+							<option value="spanNear">Orden nära varandra</option>
+							<option value="spanNearOrdinal">Orden nära och i ordning</option>
+							<option value="anywhere">Orden var som helst i dokumentet</option>
+						</select>
+
+						<hr/>
+
+						<label>
+							<input type="checkbox" class="auto-modern-spelling"/>
+							Search modern spelling
+						</label>
+					</div>
+
+				</div>
 			</div>
 
 		</div>

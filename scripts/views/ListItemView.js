@@ -223,7 +223,9 @@ module.exports = Backbone.View.extend({
 		var showAuthorImage = false;
 
 		if (this.model.get('_source').meta_info.authorid && this.model.get('_source').meta_info.authorid.authors) {
-			authorNames = _.map(this.model.get('_source').meta_info.authorid.authors, function(author) {
+			authorNames = _.map(_.filter(this.model.get('_source').meta_info.authorid.authors, function(author) {
+				return author.name.toLowerCase() != 'saknas';
+			}), function(author) {
 				return author.name;
 			});
 			authorIDs = _.map(this.model.get('_source').meta_info.authorid.authors, _.bind(function(author) {

@@ -9,10 +9,10 @@ module.exports = Backbone.View.extend({
 	graphHeight: 500,
 
 	graphMargins: {
-		top: 20,
-		right: 0,
-		bottom: 35,
-		left: 25
+		top: 40,
+		right: 30,
+		bottom: 50,
+		left: 35
 	},
 
 	colors: [
@@ -68,33 +68,76 @@ module.exports = Backbone.View.extend({
 	},
 
 	barClick: function(event) {
-		var bar = this.vis.select('.bar[data-label="'+event.key+'"]')[0][0];
-		var barPosition = bar.x.baseVal.value;
-		var barWidth = bar.width.baseVal.value;
+		if (this.selectedBar && this.selectedBar == event.key) {
+			this.vis.selectAll('.bar-arrow')
+				.transition()
+				.duration(400)
+				.attr('opacity', 0);
 
-		this.vis.selectAll('.bar-arrow')
-			.transition()
-			.duration(400)
-			.attr('opacity', 0);
+			this.vis.selectAll('.bar')
+				.transition()
+				.duration(400)
+				.attr('opacity', 1);
 
-		this.vis.select('.bar-container[data-label="'+event.key+'"]').select('.bar-arrow')
-			.transition()
-			.duration(400)
-			.attr('opacity', 1);		
+			this.vis.select('.arrows-line')
+				.transition()
+				.duration(400)
+				.attr('opacity', 0);
 
-		this.trigger('barclick', {
-			key: event.key,
-			aggregationField: this.lastAggregationField
-		});
+			this.selectedBar = undefined;
+			this.trigger('bardeselect');
+		}
+		else {
+			this.selectedBar = event.key;
+
+			var bar = this.vis.select('.bar[data-label="'+event.key+'"]');
+			var barEl = bar[0][0];
+
+			var barPosition = barEl.x.baseVal.value;
+			var barWidth = barEl.width.baseVal.value;
+
+			this.vis.selectAll('.bar')
+				.transition()
+				.duration(400)
+				.attr('opacity', 0.4);
+
+			this.vis.selectAll('.bar-arrow')
+				.transition()
+				.duration(400)
+				.attr('opacity', 0);
+
+			bar.transition()
+				.duration(400)
+				.attr('opacity', 1);
+
+			this.vis.select('.arrows-line')
+				.transition()
+				.duration(400)
+				.attr('opacity', 1);
+
+			this.vis.select('.bar-container[data-label="'+event.key+'"]').selectAll('.bar-arrow')
+				.transition()
+				.duration(400)
+				.attr('opacity', 1);		
+
+			this.trigger('barclick', {
+				key: event.key,
+				aggregationField: this.lastAggregationField
+			});
+		}
 	},
 
 	renderGraph: function() {
 		// Render the graph
 
+		// Begin by emptying possible filters
+		this.trigger('bardeselect');
+		this.selectedBar = undefined;
+
 		this.$el.removeClass('loading');
 		var view = this;
 
-		this.graphWidth = this.$el.find('.chart-container').width();
+		this.graphWidth = this.$el.find('.chart-container').width()-this.graphMargins.left-this.graphMargins.right;
 		this.graphHeight = (this.graphWidth/1120) * 200;
 
 		this.$el.find('svg.chart-container').attr('height', this.graphHeight+this.graphMargins.top+this.graphMargins.bottom);
@@ -123,7 +166,7 @@ module.exports = Backbone.View.extend({
 		var xAxis = d3.svg.axis()
 			.scale(x)
 			.tickSize(1)
-			.innerTickSize(-(this.graphHeight-this.graphMargins.bottom-this.graphMargins.top))
+			.innerTickSize(-(this.graphHeight-this))
 			.orient('bottom');
 
 		var yAxis = d3.svg.axis()
@@ -151,8 +194,17 @@ module.exports = Backbone.View.extend({
 		graph.selectAll(".x.axis text")
 			.html(function(d) {
 				return '<title>'+d+'</title>'+(d.length > 10 ? d.substr(0, 10)+'...' : d);
-//				return d.toUpperCase();
 			})
+
+		graph.append('rect')
+			.attr('class', 'arrows-line')
+			.attr('fill', '#f0f0f0')
+			.attr('stroke', '#bdbdbd')
+			.attr('height', 26)
+			.attr('x', -(view.graphMargins.left+1))
+			.attr('width', view.graphWidth+view.graphMargins.left+view.graphMargins.right+2)
+			.attr('y', Math.ceil(view.graphHeight+24))
+			.attr('opacity', 0);
 
 		graph.append('g')
 			.attr('class', 'y axis')
@@ -174,32 +226,51 @@ module.exports = Backbone.View.extend({
 			.attr('class', 'bar')
 			.on('mouseenter', function(d) {
 				view.$el.find('.info-overlay').addClass('visible');
-				d3.select(this)
-					.transition()
-					.duration(400)
-					.attr('opacity', 0.5);
-				view.vis.select('.bar-container[data-label="'+d.key+'"]').select('.bar-arrow')
-					.transition()
-					.duration(400)
-					.attr('opacity', 0.5);
+
+				if (view.selectedBar) {
+						d3.select(this)
+							.transition()
+							.duration(400)
+							.attr('opacity', 0.7);
+					
+
+				}
+				else {
+					d3.select(this)
+						.transition()
+						.duration(400)
+						.attr('opacity', 0.5);
+				}
 			})
 			.on('mouseout', function(d) {
 				view.$el.find('.info-overlay').removeClass('visible');
-				d3.select(this)
-					.transition()
-					.duration(400)
-					.attr('opacity', 1);
-				view.vis.select('.bar-container[data-label="'+d.key+'"]').select('.bar-arrow')
-					.transition()
-					.duration(400)
-					.attr('opacity', 0);
+
+				if (view.selectedBar) {
+					if (view.selectedBar == d.key) {
+						d3.select(this)
+							.transition()
+							.duration(400)
+							.attr('opacity', 1);
+					}
+					else {
+						d3.select(this)
+							.transition()
+							.duration(400)
+							.attr('opacity', 0.4);
+					}
+				}
+				else {
+					d3.select(this)
+						.transition()
+						.duration(400)
+						.attr('opacity', 1);
+				}
 			})
 			.on('mousemove', function(d) {
 				view.$el.find('.info-overlay').html('<strong>'+d.key+'</strong>: '+d.doc_count);
 
 				var xPos = d3.event.screenX+20;
 				var yPos = d3.event.screenY-30;
-				console.log(d)
 
 				view.$el.find('.info-overlay').css({
 					'-webkit-transform': 'translate('+xPos+'px, '+yPos+'px)',
@@ -234,12 +305,34 @@ module.exports = Backbone.View.extend({
 		graph.selectAll('.bar-container')
 			.append('path')
 			.attr('class', 'bar-arrow')
-			.attr('fill', '#ec7217')
-			.attr('d',d3.svg.symbol().type('triangle-down'))
-			.attr('transform', 'translate(25, '+(view.graphHeight+(view.graphMargins.bottom-5))+')')
+			.attr('d', 'M0,9.26429605180997L13.078685485212741,-5.26429605180997 -13.078685485212741,-5.26429605180997Z')
+			.attr('transform', 'translate(25, '+(view.graphHeight+(view.graphMargins.bottom-18))+')')
 			.attr('y', function(d) {
 				return view.graphHeight;
 			})
+			.attr('fill', '#eaeaea')
+			.attr('opacity', 0);
+
+		graph.selectAll('.bar-container')
+			.append('path')
+			.attr('class', 'bar-arrow')
+			.attr('d', 'M0,7.26429605180997L12.078685485212741,-5.26429605180997 -12.078685485212741,-5.26429605180997Z')
+			.attr('transform', 'translate(25, '+(view.graphHeight+(view.graphMargins.bottom-20))+')')
+			.attr('y', function(d) {
+				return view.graphHeight;
+			})
+			.attr('fill', '#ffffff')
+			.attr('stroke', '#b0b0b0')
+			.attr('opacity', 0);
+
+		graph.selectAll('.bar-container')
+			.append('rect')
+			.attr('class', 'bar-arrow')
+			.attr('fill', '#fff')
+			.attr('x', 14)
+			.attr('y', view.graphHeight+24)
+			.attr('width', Math.min.apply(null, [x.rangeBand(), 50])-28)
+			.attr('height', 2)
 			.attr('opacity', 0);
 
 		this.trigger('rendergraph'); // Trigger 'renderGraph' event.

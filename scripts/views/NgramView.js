@@ -43,6 +43,13 @@ module.exports = Backbone.View.extend({
 		}
 	},
 
+	popupLabels: {
+		term_freq: 'Total antalet träffar',
+		doc_count: 'Total antalet sidor med träff',
+		work_count: 'Total antalet olika verk',
+		auth_count: 'Total antalet olika författare'
+	},
+
 	/*
 		Initialize the module
 	*/
@@ -109,11 +116,12 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, queryMode) {
+	search: function(query, queryMode, modernSpelling) {
 		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
 
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
+		this.lastModernSpelling = modernSpelling;
 		this.$el.addClass('loading');
 		this.collection.search(query, queryMode);
 	},
@@ -596,7 +604,7 @@ module.exports = Backbone.View.extend({
 				total: this.collection.getTotalByYear(year, this.graphValueKey),
 				graphValueKey: this.graphValueKey,
 				legends: legends,
-				totalLabelText: this.yAxisLabels.absolute[this.graphValueKey]
+				totalLabelText: this.popupLabels[this.graphValueKey]
 			}
 		}));
 

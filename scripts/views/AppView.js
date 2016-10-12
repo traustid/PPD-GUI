@@ -62,16 +62,16 @@ module.exports = Backbone.View.extend({
 		this.router.on('route:view', _.bind(function(document) {
 		}, this));
 
-		this.router.on('route:search', _.bind(function(query, queryMode, yearFrom, yearTo, document) {
+		this.router.on('route:search', _.bind(function(query, queryMode, modernSpelling, yearFrom, yearTo, document) {
 			$('html').removeClass('has-overlay');
 			$('#textViewer').removeClass('visible');
-			this.search(query, queryMode, yearFrom == null ? this.startYear : yearFrom, yearTo == null ? this.endYear : yearTo);
+			this.search(query, queryMode, modernSpelling, yearFrom == null ? this.startYear : yearFrom, yearTo == null ? this.endYear : yearTo);
 		}, this));
 
 		Backbone.history.start();
 	},
 
-	search: function(query, queryMode, yearFrom, yearTo) {
+	search: function(query, queryMode, modernSpelling, yearFrom, yearTo) {
 		this.colorRegistry = [];
 
 		$(document.body).addClass('search-mode');
@@ -80,8 +80,8 @@ module.exports = Backbone.View.extend({
 			this.initSlider();
 		}
 
-		if (this.ngramView.lastQuery != query || this.ngramView.lastQueryMode != queryMode) {
-			this.ngramView.search(query, queryMode);
+		if (this.ngramView.lastQuery != query || this.ngramView.lastQueryMode != queryMode || this.ngramView.lastModernSpelling != modernSpelling) {
+			this.ngramView.search(query, queryMode, modernSpelling);
 		}
 
 		if (this.hitList == undefined) {
@@ -97,7 +97,7 @@ module.exports = Backbone.View.extend({
 			this.searchInput.resetQueryItems(query);
 		}
 
-		if (query != this.hitList.lastQuery || queryMode != this.hitList.lastQueryMode || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1])) {
+		if (query != this.hitList.lastQuery || queryMode != this.hitList.lastQueryMode || modernSpelling != this.hitList.lastModernSpelling || (yearFrom != this.hitList.timeRange[0] || yearTo != this.hitList.timeRange[1])) {
 			/*
 				When updating the search, we have to ckeck if we are making a wildcard search or not.
 			*/
@@ -106,13 +106,14 @@ module.exports = Backbone.View.extend({
 
 			if (this.ngramView.wildcardSearch && searchTerms[0].split(' parti:(')[0].indexOf('*') > -1) {
 
+				// Deprecated //
 				// Update hitlist based on wildcard results fron the ngramView
 				this.hitList.search(_.first(_.map(this.ngramView.collection.models, function(model) {
 					return model.get('key')+(model.get('filters') && model.get('filters')[0] && model.get('filters')[0].parti ? ' parti:('+model.get('filters')[0].parti[0]+')' : '');
 				}), 4).join(','), [yearFrom, yearTo], queryMode);
 			}
 			else {
-				this.hitList.search(query, [yearFrom, yearTo], queryMode);
+				this.hitList.search(query, [yearFrom, yearTo], queryMode, modernSpelling);
 			}
 		}
 
@@ -153,7 +154,10 @@ module.exports = Backbone.View.extend({
 			range: [this.startYear, this.endYear]
 		});
 		this.sliderView.on('change', _.bind(function(event) {
-			this.router.navigate('search/'+this.searchInput.getQueryString()+(this.searchInput.getQueryMode() != 'exact' ? '/querymode/'+this.searchInput.getQueryMode() : '')+'/'+event.values[0]+'/'+event.values[1], {
+			this.router.navigate('search/'+this.searchInput.getQueryString()+
+				(this.searchInput.getQueryMode() != 'exact' ? '/querymode/'+this.searchInput.getQueryMode() : '')+
+				(this.searchInput.getModernSpellingValue() == true ? '/modernspelling/'+this.searchInput.getModernSpellingValue() : '')+
+				'/'+event.values[0]+'/'+event.values[1], {
 				trigger: true
 			});
 		}, this));
@@ -169,10 +173,17 @@ module.exports = Backbone.View.extend({
 		});
 
 		this.searchInput.on('search', _.bind(function(event) {
-			this.router.navigate('search/'+event.queryString+(event.queryMode != 'exact' ? '/querymode/'+event.queryMode : ''), {
+			this.router.navigate('search/'+event.queryString+
+				(event.queryMode != 'exact' ? '/querymode/'+event.queryMode : '')+
+				(event.modernSpelling == true ? '/modernspelling/'+event.modernSpelling : ''), {
 				trigger: true
 			});
 		}, this));
+
+		$(window).click(_.bind(function() {
+			this.$el.find('.popup-controller').removeClass('open');
+		}, this));
+
 		return this;
 	}
 });
