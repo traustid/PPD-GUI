@@ -123,7 +123,7 @@ module.exports = Backbone.View.extend({
 		this.lastQueryMode = queryMode;
 		this.lastModernSpelling = modernSpelling;
 		this.$el.addClass('loading');
-		this.collection.search(query, queryMode);
+		this.collection.search(query, queryMode, modernSpelling);
 	},
 
 	collectionReset: function() {

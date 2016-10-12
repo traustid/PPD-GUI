@@ -111,7 +111,7 @@ module.exports = Backbone.View.extend({
 
 	barDeselect: function() {
 		this.disableContainerRender = true;
-		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode);
+		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastModernSpelling);
 	},
 
 	timeRange: [],
@@ -146,7 +146,7 @@ module.exports = Backbone.View.extend({
 			var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
 
 			var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-			this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
+			this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, this.lastModernSpelling, aggregationField);
 
 			var resultsTabsHtml = '';
 			_.each(this.collection.models, _.bind(function(model, index) {

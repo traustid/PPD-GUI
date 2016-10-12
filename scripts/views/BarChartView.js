@@ -52,11 +52,12 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, timeRange, queryMode, aggregationField) {
+	search: function(query, timeRange, queryMode, modernSpelling, aggregationField) {
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
 		this.lastAggregationField = aggregationField;
-		this.collection.search(query, timeRange, queryMode, aggregationField);
+		this.lastModernSpelling = modernSpelling;
+		this.collection.search(query, timeRange, queryMode, modernSpelling, aggregationField);
 
 		this.timeRange = timeRange;
 
@@ -131,7 +132,10 @@ module.exports = Backbone.View.extend({
 		// Render the graph
 
 		// Begin by emptying possible filters
-		this.trigger('bardeselect');
+		if (this.selectedBar) {
+			this.trigger('bardeselect');
+		}
+
 		this.selectedBar = undefined;
 
 		this.$el.removeClass('loading');

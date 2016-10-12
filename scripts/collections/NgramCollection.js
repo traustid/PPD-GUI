@@ -36,12 +36,13 @@ module.exports = Backbone.Collection.extend({
 		return data;
 	},
 
-	search: function(query, queryMode) {
+	search: function(query, queryMode, modernSpelling) {
 		this.queryString = query;
 
 		this.searchData = {
 			'searchQuery': query,
-			'queryMode': queryMode == null ? 'exact' : queryMode
+			'queryMode': queryMode == null ? 'exact' : queryMode,
+			'modernSpelling': modernSpelling
 		};
 
 		this.fetch({
