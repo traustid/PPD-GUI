@@ -4,7 +4,7 @@
 
 		<a class="item-title">
 
-			<div class="title"><strong><%= model.get('_source').meta_info.shorttitle %></strong> <%= authorNames.join(', ') %></div>
+			<div class="title"><strong><%= model.get('_source').meta_info.shorttitle == null ? model.get('_source').meta_info.title : model.get('_source').meta_info.shorttitle %></strong> <%= authorNames.join(', ') %></div>
 			<div class="title-attribs">
 				<%= year  %>
 			</div>
