@@ -52,12 +52,12 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, timeRange, queryMode, modernSpelling, aggregationField) {
+	search: function(query, timeRange, queryMode, queryTranslated, aggregationField) {
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
 		this.lastAggregationField = aggregationField;
-		this.lastModernSpelling = modernSpelling;
-		this.collection.search(query, timeRange, queryMode, modernSpelling, aggregationField);
+		this.lastQueryTranslated = queryTranslated;
+		this.collection.search(query, timeRange, queryMode, queryTranslated, aggregationField);
 
 		this.timeRange = timeRange;
 

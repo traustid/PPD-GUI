@@ -54,11 +54,15 @@ module.exports = Backbone.View.extend({
 	},
 
 	setQueryMode: function(queryMode) {
-		this.$el.find('.search-query-mode').val(queryMode);
+		this.$el.find('.search-query-mode').val(queryMode == null ? 'exact' : queryMode);
 	},
 
-	getModernSpellingValue: function() {
+	getQueryTranslatedValue: function() {
 		return this.$el.find('.auto-modern-spelling').is(':checked');
+	},
+
+	setQueryTranslatedValue: function(queryTranslated) {
+		this.$el.find('.auto-modern-spelling').prop('checked', queryTranslated);
 	},
 
 	search: function() {
@@ -66,13 +70,14 @@ module.exports = Backbone.View.extend({
 			queryString: this.getQueryString(),
 			query: this.collection.models,
 			queryMode: this.getQueryMode(),
-			modernSpelling: this.getModernSpellingValue()
+			queryTranslated: this.getQueryTranslatedValue()
 		});
 	},
 
 	queryInputChange: function(event) {
-		if (this.queryInput.val().match(/[A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g)) {
-			console.log('queryInputChange');
+		console.log('queryInputChange');
+		if (this.queryInput.val().match(/[A-ZÖÄÅ|a-zöäå]+( [A-ZÖÄÅ|a-zöäå]+:\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g) ||
+				this.queryInput.val().match(/[A-ZÖÄÅ|a-zöäå]+:\([A-ZÖÄÅ,|a-zöäå,]+\),/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 		}

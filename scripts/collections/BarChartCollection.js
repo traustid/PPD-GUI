@@ -12,14 +12,14 @@ module.exports = Backbone.Collection.extend({
 		return data;
 	},
 
-	search: function(query, timeRange, queryMode, modernSpelling, aggregationField) {
+	search: function(query, timeRange, queryMode, queryTranslated, aggregationField) {
 		this.searchData = {
-			'searchQuery': query,
-			'startDate': timeRange[0],
-			'endDate': timeRange[1],
-			'queryMode': queryMode == null ? 'exact' : queryMode,
-			'modernSpelling': modernSpelling,
-			'aggField': aggregationField
+			searchQuery: query,
+			startDate: timeRange[0],
+			endDate: timeRange[1],
+			queryMode: queryMode == null ? 'exact' : queryMode,
+			queryTranslated: queryTranslated == null ? 'false' : 'true',
+			aggField: aggregationField
 		};
 
 		this.fetch({

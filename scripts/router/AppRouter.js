@@ -5,7 +5,7 @@ var $ = require('jquery');
 module.exports = Backbone.Router.extend({
 	routes: {
 		"": "default",
-		"search/:query(/querymode/:querymode)(/modernspelling/:modernspelling)(/:yearfrom/:yearto)(/view/:document)": "search",
+		"search/:query(/querymode/:querymode)(/querytranslated/:querytranslated)(/:yearfrom/:yearto)(/view/:document)": "search",
 		"view/:document": "view"
 	}
 });

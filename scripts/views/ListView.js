@@ -23,9 +23,37 @@ module.exports = Backbone.View.extend({
 		'click .item-title': 'itemTitleClick',
 		'click .result-tabs a.tab': 'resultTabClick',
 		'click .load-more-button': 'loadMoreClick',
-		'change .aggregation-select': 'aggregationChange'
+		'change .aggregation-select': 'aggregationChange',
+		'click .list-options-menu .menu-button': 'optionsButtonClick',
+		'click .popup-controller': 'popupControlClick',
+		'click .sort-button': 'sortButtonClick'
 	},
 
+	optionsButtonClick: function(event) {
+		$(event.currentTarget).parent().toggleClass('open');
+	},
+
+	popupControlClick: function(event) {
+		event.stopPropagation();
+	},
+
+	sortButtonClick: function(event) {
+		event.preventDefault();
+
+		this.collection.sortField = $(event.currentTarget).data('field');
+		this.collection.sortOrder = $(event.currentTarget).data('order');
+
+		this.$el.find('.popup-controller').removeClass('open');
+
+		this.$el.find('.sort-menu-item .item-label').removeClass('selected');
+		this.$el.find('.sort-menu-item .sort-button').removeClass('selected');
+
+		this.$el.find('.sort-menu-item .item-label[data-field="'+this.collection.sortField+'"]').addClass('selected');
+		this.$el.find('.sort-menu-item .sort-button[data-field="'+this.collection.sortField+'"][data-order="'+this.collection.sortOrder+'"]').addClass('selected');
+
+		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
+	},
+	
 	itemTitleClick: function(event) {
 		$(event.currentTarget).parent().toggleClass('item-open');
 	},
@@ -111,22 +139,22 @@ module.exports = Backbone.View.extend({
 
 	barDeselect: function() {
 		this.disableContainerRender = true;
-		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastModernSpelling);
+		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
 	},
 
 	timeRange: [],
 
 	resultIndex: 0,
 
-	search: function(query, timeRange, queryMode, modernSpelling) {
+	search: function(query, timeRange, queryMode, queryTranslated) {
 		this.disableContainerRender = false;
 
 		this.timeRange = timeRange;
 
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
-		this.lastModernSpelling = modernSpelling;
-		this.collection.search(query, timeRange, queryMode, modernSpelling);
+		this.lastQueryTranslated = queryTranslated;
+		this.collection.search(query, timeRange, queryMode, queryTranslated);
 
 		this.$el.find('.list-header-label').text('"'+query+'", '+timeRange[0]+'-'+timeRange[1]);
 
@@ -146,7 +174,7 @@ module.exports = Backbone.View.extend({
 			var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
 
 			var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-			this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, this.lastModernSpelling, aggregationField);
+			this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated, aggregationField);
 
 			var resultsTabsHtml = '';
 			_.each(this.collection.models, _.bind(function(model, index) {

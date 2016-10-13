@@ -22,7 +22,24 @@
 
 		<div class="row">
 
-			<div class="twelve columns doc-list list-container"></div>
+			<div class="twelve columns doc-list">
+				<div class="list-header">
+					
+					<div class="list-sort-menu list-options-menu popup-controller">
+						
+						<button class="menu-button sort"></button>
+
+						<div class="menu-content popup-container">
+							<div class="menu-item sort-menu-item"><span class="item-label selected" data-field="score">Score</span> <button class="sort-button arrow-up selected" data-field="score" data-order="asc"></button> <button class="sort-button arrow-down" data-field="score" data-order="desc"></button></div>
+							<div class="menu-item sort-menu-item"><span class="item-label" data-field="date">Datum</span> <button class="sort-button arrow-up" data-field="date" data-order="asc"></button> <button class="sort-button arrow-down" data-field="date" data-order="desc"></button></div>
+							<div class="menu-item sort-menu-item"><span class="item-label" data-field="titel">Titel</span> <button class="sort-button arrow-up" data-field="titel" data-order="asc"></button> <button class="sort-button arrow-down" data-field="titel" data-order="desc"></button></div>
+						</div>
+
+					</div>
+
+				</div>
+				<div class="list-container"></div>
+			</div>
 
 			<div class="no-results-overlay">Inga träffar</div>
 

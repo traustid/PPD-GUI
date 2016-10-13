@@ -7,14 +7,19 @@ module.exports = Backbone.Collection.extend({
 
 	url: 'http://cdh-vir-1.it.gu.se:8990/hitlist',
 
-	search: function(query, timeRange, queryMode, modernSpelling) {
+	sortField: 'score',
+	sortOrder: 'asc',
+
+	search: function(query, timeRange, queryMode, queryTranslated) {
 		this.pageIndex = 0;
 		this.searchData = {
-			'searchQuery': query,
-			'startDate': timeRange[0],
-			'endDate': timeRange[1],
-			'queryMode': queryMode == null ? 'exact' : queryMode,
-			'modernSpelling': modernSpelling
+			searchQuery: query,
+			startDate: timeRange[0],
+			endDate: timeRange[1],
+			queryMode: queryMode == null ? 'exact' : queryMode,
+			queryTranslated: queryTranslated == null ? 'false' : 'true',
+			sortField: this.sortField,
+			sortOrder: this.sortOrder
 		};
 
 		this.fetch({
@@ -63,6 +68,8 @@ module.exports = Backbone.Collection.extend({
 				startDate: this.searchData.startDate,
 				endDate: this.searchData.endDate,
 				queryMode: this.searchData.queryMode,
+				sortField: this.searchData.sortField,
+				sortOrder: this.searchData.sortOrder,
 				fromIndex: this.searchData.fromIndex
 			};
 

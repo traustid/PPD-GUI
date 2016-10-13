@@ -44,7 +44,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	popupLabels: {
-		term_freq: 'Total antalet träffar',
+		term_freq: 'Totalt antal ord detta år',
 		doc_count: 'Total antalet sidor med träff',
 		work_count: 'Total antalet olika verk',
 		auth_count: 'Total antalet olika författare'
@@ -116,14 +116,14 @@ module.exports = Backbone.View.extend({
 
 	lastQuery: '',
 
-	search: function(query, queryMode, modernSpelling) {
+	search: function(query, queryMode, queryTranslated) {
 		var searchTerms = query.split(/(?![^)(]*\([^)(]*?\)\)),(?![^\(]*\))/g);
 
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
-		this.lastModernSpelling = modernSpelling;
+		this.lastQueryTranslated = queryTranslated;
 		this.$el.addClass('loading');
-		this.collection.search(query, queryMode, modernSpelling);
+		this.collection.search(query, queryMode, queryTranslated);
 	},
 
 	collectionReset: function() {
