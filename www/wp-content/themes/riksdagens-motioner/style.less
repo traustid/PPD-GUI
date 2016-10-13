@@ -866,11 +866,13 @@ hr {
 			}
 
 			.menu-content {
-				position: relative;
+				position: absolute;
 
 				left: -10px;
 
-				padding: 10px 15px 3px;
+				width: 150px;
+
+				padding: 10px 15px 0 15px;
 			
 				background: #fff;
 			
@@ -889,6 +891,8 @@ hr {
 				z-index: 10;
 
 				.menu-item:not(:last-child) {
+					height: 33px;
+
 					margin-bottom: 6px;
 
 					border-bottom: 1px solid #eee;
@@ -896,9 +900,6 @@ hr {
 
 				.item-label {
 					display: inline-block;
-					
-					position: relative;
-					top: 5px;
 					
 					width: 60px;
 
@@ -908,9 +909,12 @@ hr {
 				}
 
 				.sort-button {
+					float: right;
+
 					height: auto;
 
 					padding: 13px;
+					margin-right: 5px;
 
 					background-position: center;
 					background-repeat: no-repeat;
