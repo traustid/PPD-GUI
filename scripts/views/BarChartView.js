@@ -55,7 +55,7 @@ module.exports = Backbone.View.extend({
 	search: function(query, timeRange, queryMode, queryTranslated, aggregationField) {
 		this.lastQuery = query;
 		this.lastQueryMode = queryMode;
-		this.lastAggregationField = aggregationField;
+		this.lastAggregationField = aggregationField == undefined ? this.lastAggregationField : aggregationField;
 		this.lastQueryTranslated = queryTranslated;
 		this.collection.search(query, timeRange, queryMode, queryTranslated, aggregationField);
 
@@ -69,7 +69,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	barClick: function(event) {
-		if (this.selectedBar && this.selectedBar == event.key) {
+		if (this.selectedBar && this.selectedBar.key == event.key) {
 			this.vis.selectAll('.bar-arrow')
 				.transition()
 				.duration(400)
@@ -89,7 +89,13 @@ module.exports = Backbone.View.extend({
 			this.trigger('bardeselect');
 		}
 		else {
-			this.selectedBar = event.key;
+			console.log('BarChartView: barChart');
+			console.log(event);
+
+			this.selectedBar = {
+				key: event.key,
+				aggregationField: this.lastAggregationField
+			};
 
 			var bar = this.vis.select('.bar[data-label="'+event.key+'"]');
 			var barEl = bar[0][0];
@@ -250,7 +256,7 @@ module.exports = Backbone.View.extend({
 				view.$el.find('.info-overlay').removeClass('visible');
 
 				if (view.selectedBar) {
-					if (view.selectedBar == d.key) {
+					if (view.selectedBar.key == d.key) {
 						d3.select(this)
 							.transition()
 							.duration(400)

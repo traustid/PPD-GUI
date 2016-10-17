@@ -17,7 +17,7 @@
 					<button class="options-button"></button>
 
 					<div class="options-content popup-container">
-						<label>Query mode:</label>
+						<label>Sökmetod:</label>
 						<select class="search-query-mode">
 							<option value="exact" selected="selected">Exakt matchning</option>
 							<option value="spanNear">Orden nära varandra</option>
@@ -29,7 +29,7 @@
 
 						<label>
 							<input type="checkbox" class="auto-modern-spelling"/>
-							Search modern spelling
+							Sök i automatmoderniserad stavning
 						</label>
 					</div>
 

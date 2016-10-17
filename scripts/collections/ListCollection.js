@@ -8,7 +8,7 @@ module.exports = Backbone.Collection.extend({
 	url: 'http://cdh-vir-1.it.gu.se:8990/hitlist',
 
 	sortField: 'score',
-	sortOrder: 'asc',
+	sortOrder: 'desc',
 
 	search: function(query, timeRange, queryMode, queryTranslated) {
 		this.pageIndex = 0;

@@ -51,7 +51,12 @@ module.exports = Backbone.View.extend({
 		this.$el.find('.sort-menu-item .item-label[data-field="'+this.collection.sortField+'"]').addClass('selected');
 		this.$el.find('.sort-menu-item .sort-button[data-field="'+this.collection.sortField+'"][data-order="'+this.collection.sortOrder+'"]').addClass('selected');
 
-		this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
+		if (this.barChart.selectedBar) {
+			this.aggregationFilterSearch(this.barChart.selectedBar.aggregationField, this.barChart.selectedBar.key);
+		}
+		else {
+			this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
+		}
 	},
 	
 	itemTitleClick: function(event) {
@@ -66,9 +71,12 @@ module.exports = Backbone.View.extend({
 		this.collection.resultIndex = this.resultIndex;
 		this.renderList();
 
-		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
+		var parser = new QueryParser(this.lastQuery);
+		console.log(parser.build([parser.parsed[this.resultIndex]]));
+
+		var barChartQuery = parser.build([parser.parsed[this.resultIndex]]);
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, aggregationField);
+		this.barChart.search(barChartQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated, aggregationField);
 	},
 
 	aggregationChange: function() {
@@ -77,7 +85,10 @@ module.exports = Backbone.View.extend({
 //		var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(' ');
 
 		var aggregationField = this.$el.find('.aggregation-select').find(":selected").val();
-		this.barChart.search(this.lastQuery, this.timeRange, this.lastQueryMode, aggregationField);
+
+		this.barChart.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated, aggregationField);
+
+		this.barDeselect();
 	},
 
 	loadMoreClick: function() {
@@ -108,23 +119,29 @@ module.exports = Backbone.View.extend({
 	barClick: function(event) {
 		this.$el.addClass('loading');
 
+		this.disableContainerRender = true;
+
+		this.aggregationFilterSearch(event.aggregationField, event.key);
+	},
+
+	aggregationFilterSearch(aggregationField, fieldValue) {
 		var parser = new QueryParser(this.lastQuery);
 
 		var parsedQuery = parser.parsed;
 
 		var newFilter = {
-			key: this.aggFilters[event.aggregationField],
+			key: this.aggFilters[aggregationField],
 			values: [
-				event.key
+				fieldValue
 			]
 		};
 
 		_.each(parsedQuery, _.bind(function(queryItem) {
 			if (_.findIndex(queryItem.filters, _.bind(function(filter) {
-				return filter.key == this.aggFilters[event.aggregationField];
+				return filter.key == this.aggFilters[aggregationField];
 			}, this)) > -1) {
 				var index = _.findIndex(queryItem.filters, _.bind(function(filter) {
-					return filter.key == this.aggFilters[event.aggregationField];
+					return filter.key == this.aggFilters[aggregationField];
 				}, this));
 
 				queryItem.filters.splice(index, 1);
@@ -133,8 +150,7 @@ module.exports = Backbone.View.extend({
 			queryItem.filters.push(newFilter);
 		}, this));
 
-		this.disableContainerRender = true;
-		this.collection.search(parser.build(parsedQuery), this.timeRange, this.lastQueryMode);
+		this.collection.search(parser.build(parsedQuery), this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
 	},
 
 	barDeselect: function() {
@@ -147,6 +163,7 @@ module.exports = Backbone.View.extend({
 	resultIndex: 0,
 
 	search: function(query, timeRange, queryMode, queryTranslated) {
+		this.resultIndex = 0;
 		this.disableContainerRender = false;
 
 		this.timeRange = timeRange;
@@ -163,13 +180,9 @@ module.exports = Backbone.View.extend({
 
 	render: function() {
 		if (!this.disableContainerRender) {
-			console.log('disableContainerRender = false');
-
 			if (this.app.colorRegistry.length == 0) {
 				this.app.createColorRegistry(this.collection.models);
 			}
-
-			this.resultIndex = 0;
 
 			var barChartQuery = this.collection.at(this.resultIndex).get('query').original_search_terms+this.collection.at(this.resultIndex).filtersToString(true);
 
