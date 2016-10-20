@@ -37,6 +37,12 @@ module.exports = Backbone.View.extend({
 		event.stopPropagation();
 	},
 
+	sortFieldLabels: {
+		score: 'relevans',
+		date: 'datum',
+		title: 'titel'
+	},
+
 	sortButtonClick: function(event) {
 		event.preventDefault();
 
@@ -57,6 +63,10 @@ module.exports = Backbone.View.extend({
 		else {
 			this.collection.search(this.lastQuery, this.timeRange, this.lastQueryMode, this.lastQueryTranslated);
 		}
+
+		var labelText = 'Sorterat '+(this.collection.sortOrder == 'asc' ? 'stigande' : 'fallande')+' på '+this.sortFieldLabels[this.collection.sortField];
+
+		this.$el.find('.list-sort-label').text(labelText);
 	},
 	
 	itemTitleClick: function(event) {

@@ -14,10 +14,35 @@ module.exports = Backbone.View.extend({
 
 	mediaTypes: [
 		{
-			label: 'etext'
+			label: 'Etext',
+			value: 'etext'
 		},
 		{
-			label: 'faksimil'
+			label: 'faksimil',
+			value: 'faksimil'
+		}
+	],
+
+	genders: [
+		{
+			label: 'Kvinna',
+			value: 'kvinna'
+		},
+		{
+			label: 'Man',
+			value: 'man'
+		},
+		{
+			label: 'Okänt',
+			value: 'okänt'
+		},
+		{
+			label: 'Ej tillämplig',
+			value: 'ej tillämplig'
+		},
+		{
+			label: 'Saknas',
+			value: 'saknas'
 		}
 	],
 
@@ -28,7 +53,7 @@ module.exports = Backbone.View.extend({
 
 		this.ngramView = new NgramView({
 			el: this.$el.find('#ngramContianer'),
-			percentagesView: true,
+			percentagesView: false,
 			app: this,
 			startYear: this.startYear,
 			endYear: this.endYear
@@ -173,7 +198,8 @@ module.exports = Backbone.View.extend({
 	render: function() {
 		this.searchInput = new SearchInputView({
 			el: this.$el.find('#searchInput'),
-			mediaTypes: this.mediaTypes
+			mediaTypes: this.mediaTypes,
+			genders: this.genders
 		});
 
 		this.searchInput.on('search', _.bind(function(event) {

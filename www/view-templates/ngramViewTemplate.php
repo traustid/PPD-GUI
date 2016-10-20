@@ -5,13 +5,13 @@
 
 
 	<div class="ngram-tools ngram-view-mode tabs u-pull-left">
-		<a class="tab selected" data-viewmode="relative">Relativt</a>
-		<a class="tab" data-viewmode="absolute">Absolut</a>
+		<a class="tab selected" data-viewmode="absolute">Absolut</a>
+		<a class="tab" data-viewmode="relative">Relativt</a>
 	</div>
 
 	<div class="ngram-tools ngram-result-mode tabs u-pull-right">
-		<a class="tab selected" data-resultmode="term_freq">Träffar</a>
-		<a class="tab" data-resultmode="doc_count">Sidor</a>
+		<a class="tab selected" data-resultmode="doc_count">Sidor</a>
+		<a class="tab" data-resultmode="term_freq">Träffar</a>
 		<a class="tab" data-resultmode="work_count">Verk</a>
 		<a class="tab" data-resultmode="auth_count">Författare</a>
 	</div>

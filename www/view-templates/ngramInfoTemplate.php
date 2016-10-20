@@ -9,7 +9,7 @@
 				<strong><%= item.key+' '+item.filterString %></strong>: 
 				<%= item.data[data.graphValueKey] %> 
 				<span class="text-light">
-					(<%= isNaN(Math.round((item.data[data.graphValueKey]/data.total)*1000)/1000) ? 0 : Math.round((item.data[data.graphValueKey]/data.total)*1000)/1000 %>%)
+					(<%= isNaN(Math.round((item.data[data.graphValueKey]/data.total)*1000)/10) ? 0 : Math.round((item.data[data.graphValueKey]/data.total)*1000)/10 %>%)
 				</span>
 			</div>
 		</div>

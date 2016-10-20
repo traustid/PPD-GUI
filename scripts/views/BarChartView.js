@@ -12,7 +12,7 @@ module.exports = Backbone.View.extend({
 		top: 40,
 		right: 30,
 		bottom: 50,
-		left: 35
+		left: 40
 	},
 
 	colors: [
@@ -171,7 +171,6 @@ module.exports = Backbone.View.extend({
 
 		var y = d3.scale.linear()
 			.range([this.graphHeight, 0]);
-//			.range([this.graphHeight-this.graphMargins.top-this.graphMargins.bottom, 0]);
 
 		var xAxis = d3.svg.axis()
 			.scale(x)
@@ -195,6 +194,12 @@ module.exports = Backbone.View.extend({
 
 		var graph = this.vis.append('g')
 			.attr('transform', 'translate('+this.graphMargins.left+', '+this.graphMargins.top+')');
+
+		this.yAxisLabel = this.vis.append("text")
+			.attr('class', 'axisLabel')
+			.attr("text-anchor", "middle")
+			.attr("transform", "translate("+ (25) +","+((this.graphHeight/2)+40)+") rotate(-90)")
+			.text('Antal sidor');
 
 		graph.append('g')
 			.attr('class', 'x axis')

@@ -11,7 +11,6 @@
 					<option value="works">Verk</option>
 					<option value="mediatype">Mediatyp</option>
 					<option value="texttype">Texttyp</option>
-					<option value="fraktur">fraktur</option>
 				</select>
 			</div>
 		</div>
@@ -27,27 +26,27 @@
 					
 					<div class="list-sort-menu list-options-menu popup-controller">
 						
-						<button class="menu-button sort"></button>
+						<button class="menu-button sort"><span class="list-sort-label">Sorterat stigande på relevans</span></button>
 
 						<div class="menu-content popup-container">
 
 							<div class="menu-item sort-menu-item"><span class="item-label selected" data-field="score">Relevans</span> 
-								<button class="sort-button arrow-down" data-field="score" data-order="desc"></button>
-								<button class="sort-button arrow-up selected" data-field="score" data-order="asc"></button>
+								<button class="sort-button arrow-down" data-field="score" data-order="desc" title="Fallande"></button>
+								<button class="sort-button arrow-up selected" data-field="score" data-order="asc" title="Stigande"></button>
 							</div>
 
 							<div class="u-cf"></div>
 
 							<div class="menu-item sort-menu-item"><span class="item-label" data-field="date">Datum</span> 
-								<button class="sort-button arrow-down" data-field="date" data-order="desc"></button>
-								<button class="sort-button arrow-up" data-field="date" data-order="asc"></button>
+								<button class="sort-button arrow-down" data-field="date" data-order="desc" title="Fallande"></button>
+								<button class="sort-button arrow-up" data-field="date" data-order="asc" title="Stigande"></button>
 							</div>
 
 							<div class="u-cf"></div>
 
 							<div class="menu-item sort-menu-item"><span class="item-label" data-field="title">Titel</span> 
-								<button class="sort-button arrow-down" data-field="title" data-order="desc"></button>
-								<button class="sort-button arrow-up" data-field="title" data-order="asc"></button>
+								<button class="sort-button arrow-down" data-field="title" data-order="desc" title="Fallande"></button>
+								<button class="sort-button arrow-up" data-field="title" data-order="asc" title="Stigande"></button>
 							</div>
 							
 						</div>

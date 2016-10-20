@@ -26,7 +26,7 @@ module.exports = Backbone.View.extend({
 		left: 100
 	},
 
-	graphValueKey: 'term_freq',
+	graphValueKey: 'doc_count',
 
 	yAxisLabels: {
 		absolute: {
@@ -427,7 +427,7 @@ module.exports = Backbone.View.extend({
 		this.yAxisLabel = this.vis.append("text")
 			.attr('class', 'axisLabel')
 			.attr("text-anchor", "middle")
-			.attr("transform", "translate("+ (10) +","+(this.graphHeight/2)+")rotate(-90)")
+			.attr("transform", "translate("+ (10) +","+(this.graphHeight/2)+") rotate(-90)")
 			.text(this.yAxisLabels[this.percentagesView ? 'relative' : 'absolute'][this.graphValueKey]);
 
 		// Add the vertical line to the svg

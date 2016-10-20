@@ -75,7 +75,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	queryInputChange: function(event) {
-		console.log('queryInputChange');
 		if (this.queryInput.val().match(/[A-ZÖÄÅ|a-zöäå]+( [A-ZÖÄÅ|a-zöäå]+:\([A-ZÖÄÅ,|a-zöäå,]+\))?,/g) ||
 				this.queryInput.val().match(/[A-ZÖÄÅ|a-zöäå]+:\([A-ZÖÄÅ,|a-zöäå,]+\),/g)) {
 			this.addQueryItem(this.queryInput.val());
@@ -114,16 +113,13 @@ module.exports = Backbone.View.extend({
 	},
 
 	validateSingleQuery: function(event) {
-		console.log('validateSingleQuery');
-		if (this.queryInput.val().match(/[A-ZÖÄÅ,|a-zöäå,]+(:\([A-ZÖÄÅ,|a-zöäå,]+\))?/g)) {
-			console.log('validateSingleQuery: true');
+		if (this.queryInput.val().match(/[A-ZÖÄÅ,|a-zöäå,]+(:\([A-ZÖÄÅ, |a-zöäå, ]+\))?/g)) {
 			this.addQueryItem(this.queryInput.val());
 			this.queryInput.val('');
 
 			return true;
 		}
 		else {
-			console.log('validateSingleQuery: false');
 			return false;
 		}
 	},
@@ -150,11 +146,12 @@ module.exports = Backbone.View.extend({
 	addQueryItem: function(queryValue) {
 		queryValue = queryValue.substr(queryValue.length-1) == ',' ? queryValue.substr(0, queryValue.length-1) : queryValue;
 
-		var queryString = queryValue.split(/ [A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))/)[0];
+		var queryString = queryValue.split(/ [A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ, |a-zöäå, ]+\))/)[0];
 
-		var mediaTypeStrings = queryValue.match(/mediatype:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
-		var authorStrings = queryValue.match(/författare:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
-		var genderStrings = queryValue.match(/kön:(\([A-ZÖÄÅ,|a-zöäå,]+\))/g);
+		var mediaTypeStrings = queryValue.match(/mediatype:(\([A-ZÖÄÅ, |a-zöäå, ]+\))/g);
+		var authorStrings = queryValue.match(/författare:(\([A-ZÖÄÅ, |a-zöäå,]+\))/g);
+		var genderStrings = queryValue.match(/kön:(\([A-ZÖÄÅ, |a-zöäå, ]+\))/g);
+		var searchModernEditionsStrings = queryValue.match(/edition:(\([A-ZÖÄÅ|a-zöäå]+\))/g);
 
 		var mediaTypeArray = [];
 
@@ -179,16 +176,25 @@ module.exports = Backbone.View.extend({
 			genderArray = genderString.split(',');
 		}
 
+		var searchModernEditions = false;
+
+		console.log(searchModernEditionsStrings)
+
+		if (searchModernEditionsStrings && searchModernEditionsStrings[0] == 'edition:(modern)') {
+			searchModernEditions = true;
+		}
+
 		this.collection.add({
 			queryValue: queryValue,
-			queryString: queryString.match(/[A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ,|a-zöäå,]+\))/) ? '' : queryString,
+			queryString: queryString.match(/[A-ZÖÄÅ,|a-zöäå,]+:(\([A-ZÖÄÅ, |a-zöäå, ]+\))/) ? '' : queryString,
 			mediaTypes: _.map(mediaTypeArray, function(mediaType) {
 				return mediaType.toLowerCase();
 			}),
 			gender: _.map(genderArray, function(gender) {
 				return gender.toLowerCase();
 			}),
-			authorString: authorString
+			authorString: authorString,
+			searchModernEditions: searchModernEditions
 		});
 	},
 
@@ -197,7 +203,8 @@ module.exports = Backbone.View.extend({
 
 		this.queryItems.html(template({
 			models: this.collection.models,
-			mediaTypes: this.options.mediaTypes
+			mediaTypes: this.options.mediaTypes,
+			genders: this.options.genders
 		}));
 
 		_.each(this.queryItems.find('.item'), _.bind(function(item) {
@@ -208,8 +215,8 @@ module.exports = Backbone.View.extend({
 				$(item).toggleClass('open');
 
 				if ($(item).hasClass('open')) {
-					$(item).find('.query-form-input').focus();
-					$(item).find('.query-form-input')[0].setSelectionRange(0, $(item).find('.query-form-input').val().length);
+					$(item).find('.query-form-search-input').focus();
+					$(item).find('.query-form-search-input')[0].setSelectionRange(0, $(item).find('.query-form-search-input').val().length);
 				}
 			}, this));
 
@@ -242,7 +249,7 @@ module.exports = Backbone.View.extend({
 
 	updateForm: function(index) {
 		var form = this.$el.find('.item[data-index='+index+']');
-		var queryString = form.find('.query-form-input').val();
+		var queryString = form.find('.query-form-search-input').val();
 
 		var selectedMediaTypes = [];
 		_.map(form.find('.query-types input'), _.bind(function(input) {
@@ -251,6 +258,10 @@ module.exports = Backbone.View.extend({
 			}
 		}, this));
 
+		if (selectedMediaTypes.length == this.options.mediaTypes.length) {
+			selectedMediaTypes = [];
+		}
+
 		var selectedGender = [];
 		_.map(form.find('.query-gender input'), _.bind(function(input) {
 			if (input.checked) {
@@ -258,16 +269,24 @@ module.exports = Backbone.View.extend({
 			}
 		}, this));
 
+		if (selectedGender.length == this.options.genders.length) {
+			selectedGender = [];
+		}
+
 		var selectedAuthors = form.find('.query-author').val();
+
+		var searchModernEditions = form.find('.query-modern-editions').is(':checked');
 
 		this.collection.at(index).set({
 			queryValue: queryString+
 				(selectedMediaTypes.length > 0 ? ' mediatype:('+selectedMediaTypes.join(',')+')' : '')+
 				(selectedAuthors.length > 0 ? ' författare:('+selectedAuthors+')' : '')+
-				(selectedGender.length > 0 ? ' kön:('+selectedGender.join(',')+')' : ''),
+				(selectedGender.length > 0 ? ' kön:('+selectedGender.join(',')+')' : '')+
+				(searchModernEditions ? ' edition:(modern)' : ''),
 			queryString: queryString,
 			mediaTypes: selectedMediaTypes,
-			authorString: selectedAuthors
+			authorString: selectedAuthors,
+			searchModernEditions: searchModernEditions
 		});
 
 	},
