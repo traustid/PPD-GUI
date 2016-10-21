@@ -58,7 +58,10 @@ module.exports = Backbone.Collection.extend({
 			tempCollection.model = ListItemModel;
 			tempCollection.url = this.url;
 			tempCollection.on('reset', _.bind(function()  {
-				this.at(resultIndex).set('hits', _.union(this.at(resultIndex).get('hits'), tempCollection.at(0).get('hits')));
+				var data = this.at(resultIndex).get('data');
+				data.hits = _.union(data.hits, tempCollection.at(0).get('data').hits);
+				console.log(data);
+				this.at(resultIndex).set('data', data);
 
 				this.trigger('hitsupdate');
 			}, this));

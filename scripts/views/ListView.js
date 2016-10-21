@@ -211,7 +211,7 @@ module.exports = Backbone.View.extend({
 
 	hitsUpdate: function() {
 		var newHits = this.collection.at(this.resultIndex).get('data').hits;
-		newHits = _.rest(newHits, this.collection.at(this.resultIndex).get('from_index'));
+		newHits = _.rest(newHits, this.collection.at(this.resultIndex).get('query').from_index);
 
 		_.each(newHits, _.bind(function(model, index) {
 			var newEl = $('<div class="list-item"/>');
@@ -220,8 +220,7 @@ module.exports = Backbone.View.extend({
 			var itemView = new ListItemView({
 				el: newEl,
 				model: new Backbone.Model(model),
-				router: this.options.router,
-				searchTermAnalyzed: this.collection.at(this.resultIndex).get('query').analyzed_search_terms
+				router: this.options.router
 			});		
 		}, this));
 
@@ -251,9 +250,8 @@ module.exports = Backbone.View.extend({
 				var itemView = new ListItemView({
 					el: newEl,
 					model: new Backbone.Model(model),
-					router: this.options.router,
-					searchTermAnalyzed: this.collection.at(this.resultIndex).get('query').analyzed_search_terms
-				});		
+					router: this.options.router
+				});
 			}, this));
 		}
 
