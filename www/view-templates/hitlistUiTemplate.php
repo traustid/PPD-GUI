@@ -26,13 +26,13 @@
 					
 					<div class="list-sort-menu list-options-menu popup-controller">
 						
-						<button class="menu-button sort"><span class="list-sort-label">Sorterat stigande på relevans</span></button>
+						<button class="menu-button sort"><span class="list-sort-label">Sorterat fallande på relevans</span></button>
 
 						<div class="menu-content popup-container">
 
 							<div class="menu-item sort-menu-item"><span class="item-label selected" data-field="score">Relevans</span> 
-								<button class="sort-button arrow-down" data-field="score" data-order="desc" title="Fallande"></button>
-								<button class="sort-button arrow-up selected" data-field="score" data-order="asc" title="Stigande"></button>
+								<button class="sort-button arrow-down selected" data-field="score" data-order="desc" title="Fallande"></button>
+								<button class="sort-button arrow-up" data-field="score" data-order="asc" title="Stigande"></button>
 							</div>
 
 							<div class="u-cf"></div>
