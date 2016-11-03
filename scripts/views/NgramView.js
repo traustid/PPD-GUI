@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
 
 	popupLabels: {
 		term_freq: 'Totalt antal ord detta år',
-		doc_count: 'Total antalet sidor med träff',
+		doc_count: 'Total antalet sidor',
 		work_count: 'Total antalet olika verk',
 		auth_count: 'Total antalet olika författare'
 	},

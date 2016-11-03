@@ -22,7 +22,7 @@
 							<option value="exact" selected="selected">Exakt matchning</option>
 							<option value="spanNear">Orden nära varandra</option>
 							<option value="spanNearOrdinal">Orden nära och i ordning</option>
-							<option value="anywhere">Orden var som helst i dokumentet</option>
+							<option value="anywhere">Orden var som helst på sidan</option>
 						</select>
 
 						<hr/>
